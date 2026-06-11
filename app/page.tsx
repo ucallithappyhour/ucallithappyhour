@@ -3,30 +3,46 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="page">
-      <div className="overlay">
-        <div className="container">
-          <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
-<div
-  style={{
-    position: "absolute",
-    inset: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "clamp(160px, 22vw, 280px)",
-    fontWeight: 900,
-    letterSpacing: "-8px",
-    color: "rgba(255,255,255,0.06)",
-    zIndex: 0,
-    pointerEvents: "none",
-    textAlign: "center",
-    whiteSpace: "nowrap",
-    userSelect: "none"
-  }}
->
-  BRIAN QUINN
-</div>
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+          overflow: "hidden"
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "7vh",
+            left: "50%",
+            transform: "translateX(-50%)",
+            fontSize: "clamp(90px, 14vw, 220px)",
+            fontWeight: 900,
+            letterSpacing: "-7px",
+            color: "rgba(255,255,255,0.075)",
+            whiteSpace: "nowrap",
+            lineHeight: 1,
+            userSelect: "none"
+          }}
+        >
+          BRIAN QUINN
+        </div>
 
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.25) 35%, rgba(0,0,0,0.75) 72%, rgba(0,0,0,1) 100%)"
+          }}
+        />
+      </div>
+
+      <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
+        <div className="container">
+          <div className="hero">
             <div style={{ position: "relative", zIndex: 1 }}>
               <div className="brand">U Call It Happy Hour</div>
 
