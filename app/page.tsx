@@ -7,23 +7,23 @@ export default function Home() {
         <div className="container">
           <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
             <div
-              style={{
-                position: "absolute",
-                left: "50%",
-                top: "42%",
-                transform: "translate(-50%, -50%)",
-                fontSize: "clamp(150px, 24vw, 360px)",
-                fontWeight: 900,
-                letterSpacing: "-10px",
-                color: "rgba(255,255,255,0.075)",
-                zIndex: 0,
-                pointerEvents: "none",
-                whiteSpace: "nowrap",
-                lineHeight: 0.8
-              }}
-            >
-              BRIAN QUINN
-            </div>
+  style={{
+    position: "absolute",
+    top: -40,
+    left: -140,
+    fontSize: "clamp(260px, 34vw, 520px)",
+    fontWeight: 900,
+    letterSpacing: "-16px",
+    color: "rgba(255,255,255,0.06)",
+    zIndex: 0,
+    pointerEvents: "none",
+    lineHeight: 0.78,
+    userSelect: "none"
+  }}
+>
+  <div>BRIAN</div>
+  <div>QUINN</div>
+</div>
 
             <div style={{ position: "relative", zIndex: 1 }}>
               <div className="brand">U Call It Happy Hour</div>
