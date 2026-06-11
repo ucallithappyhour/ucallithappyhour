@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Home() {
+export default function BrianQuinnPage() {
   return (
     <main className="page">
       <div className="overlay">
@@ -34,7 +34,15 @@ export default function Home() {
 
               <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
-              <div className="event-card">
+              <div
+                className="event-card"
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  gap: 24
+                }}
+              >
                 <div>
                   <p className="performer">Brian Quinn</p>
 
@@ -49,14 +57,13 @@ export default function Home() {
 
                 <div
                   style={{
-                    marginLeft: "auto",
                     textAlign: "center",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "flex-start",
-minWidth: 140,
-paddingTop: 10
+                    minWidth: 130,
+                    paddingTop: 4
                   }}
                 >
                   <img
