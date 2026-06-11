@@ -5,26 +5,24 @@ export default function Home() {
     <main className="page">
       <div className="overlay">
         <div className="container">
-          <div className="hero">
+          <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
             <div
               style={{
                 position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "clamp(120px, 22vw, 340px)",
-                fontWeight: 1000,
-                letterSpacing: "-14px",
-                color: "rgba(255,255,255,0.11)",
-                textTransform: "uppercase",
-                filter: "blur(0.3px)",
+                left: "50%",
+                top: "42%",
+                transform: "translate(-50%, -50%)",
+                fontSize: "clamp(150px, 24vw, 360px)",
+                fontWeight: 900,
+                letterSpacing: "-10px",
+                color: "rgba(255,255,255,0.075)",
                 zIndex: 0,
                 pointerEvents: "none",
-                textAlign: "center"
+                whiteSpace: "nowrap",
+                lineHeight: 0.8
               }}
             >
-              Brian Quinn
+              BRIAN QUINN
             </div>
 
             <div style={{ position: "relative", zIndex: 1 }}>
@@ -34,39 +32,41 @@ export default function Home() {
 
               <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
-              <div className="event-card">
-                <div>
-                  <p className="performer">Brian Quinn</p>
+              <div
+                className="event-card"
+                style={{
+                  position: "relative",
+                  minHeight: 210,
+                  paddingRight: 210
+                }}
+              >
+                <p className="performer">Brian Quinn</p>
 
-                  <div className="details">
-                    Screwballs • Every Friday • 5–7 PM
-                  </div>
-
-                  <Link className="btn" href="/request-song">
-                    Request a Song
-                  </Link>
+                <div className="details">
+                  Screwballs • Every Friday • 5–7 PM
                 </div>
+
+                <Link className="btn" href="/request-song">
+                  Request a Song
+                </Link>
 
                 <div
                   style={{
-                    marginLeft: "auto",
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-minWidth: 140,
-paddingTop: 10
+                    position: "absolute",
+                    top: 26,
+                    right: 32,
+                    textAlign: "center"
                   }}
                 >
                   <img
                     src="/brian-logo.jpg"
                     alt="Brian Quinn Logo"
                     style={{
-                      width: 90,
-                      height: 90,
+                      width: 95,
+                      height: 95,
                       objectFit: "contain",
-                      marginBottom: 8
+                      display: "block",
+                      margin: "0 auto 8px"
                     }}
                   />
 
@@ -77,7 +77,8 @@ paddingTop: 10
                     style={{
                       color: "#ffd84d",
                       fontWeight: 800,
-                      textDecoration: "none"
+                      textDecoration: "none",
+                      fontSize: 16
                     }}
                   >
                     💵 Tip Brian →
