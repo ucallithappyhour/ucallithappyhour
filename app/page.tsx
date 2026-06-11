@@ -13,14 +13,15 @@ export default function Home() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "clamp(120px, 18vw, 260px)",
-                fontWeight: 900,
-                letterSpacing: "-6px",
-                color: "rgba(255,255,255,0.04)",
+                fontSize: "clamp(120px, 22vw, 340px)",
+                fontWeight: 1000,
+                letterSpacing: "-14px",
+                color: "rgba(255,255,255,0.11)",
+                textTransform: "uppercase",
+                filter: "blur(0.3px)",
                 zIndex: 0,
                 pointerEvents: "none",
-                textAlign: "center",
-                whiteSpace: "nowrap",
+                textAlign: "center"
               }}
             >
               Brian Quinn
@@ -29,24 +30,11 @@ export default function Home() {
             <div style={{ position: "relative", zIndex: 1 }}>
               <div className="brand">U Call It Happy Hour</div>
 
-              <h1 className="title">
-                Request tonight&apos;s songs.
-              </h1>
+              <h1 className="title">Request tonight&apos;s songs.</h1>
 
-              <p className="tagline">
-                Influence tomorrow&apos;s setlist.
-              </p>
+              <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
-              <div
-                className="event-card"
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "30px",
-                  flexWrap: "wrap",
-                }}
-              >
+              <div className="event-card">
                 <div>
                   <p className="performer">Brian Quinn</p>
 
@@ -54,39 +42,44 @@ export default function Home() {
                     Screwballs • Every Friday • 5–7 PM
                   </div>
 
-                  <br />
-
                   <Link className="btn" href="/request-song">
                     Request a Song
                   </Link>
                 </div>
 
-                <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    marginLeft: "auto",
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: 170
+                  }}
+                >
                   <img
-                    src="/brian-logo.png"
+                    src="/brian-logo.jpg"
                     alt="Brian Quinn Logo"
                     style={{
-                      maxWidth: "180px",
-                      maxHeight: "120px",
+                      width: 120,
+                      height: 120,
                       objectFit: "contain",
+                      marginBottom: 12
                     }}
                   />
-
-                  <br />
-                  <br />
 
                   <a
                     href="https://venmo.com/Brian-Quinn-41"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="details"
                     style={{
-                      textDecoration: "none",
-                      color: "inherit",
-                      fontWeight: 600,
+                      color: "#ffd84d",
+                      fontWeight: 800,
+                      textDecoration: "none"
                     }}
                   >
-                    Tip Brian →
+                    💵 Tip Brian →
                   </a>
                 </div>
               </div>
@@ -107,9 +100,7 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">
-              Tip Brian directly on Venmo.
-            </span>
+            <span className="details">Tip Brian directly on Venmo.</span>
 
             <br />
             <br />
