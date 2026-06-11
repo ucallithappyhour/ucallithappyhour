@@ -6,26 +6,43 @@ export default function Home() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <div className="brand">U Call It Happy Hour</div>
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "clamp(70px, 13vw, 190px)",
+                fontWeight: 900,
+                letterSpacing: "-6px",
+                color: "rgba(255,255,255,0.08)",
+                zIndex: 0,
+                pointerEvents: "none",
+                textAlign: "center"
+              }}
+            >
+              Brian Quinn
+            </div>
 
-            <h1 className="title">
-              Request tonight&apos;s songs.
-            </h1>
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div className="brand">U Call It Happy Hour</div>
 
-            <p className="tagline">
-              Influence tomorrow&apos;s setlist.
-            </p>
+              <h1 className="title">Request tonight&apos;s songs.</h1>
 
-            <div className="event-card">
-              <p className="performer">Brian Quinn</p>
+              <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
-              <div className="details">
-                Screwballs • Every Friday • 5–7 PM
+              <div className="event-card">
+                <p className="performer">Brian Quinn</p>
+
+                <div className="details">
+                  Screwballs • Every Friday • 5–7 PM
+                </div>
+
+                <Link className="btn" href="/request-song">
+                  Request a Song
+                </Link>
               </div>
-
-              <Link className="btn" href="/request-song">
-                Request a Song
-              </Link>
             </div>
           </div>
 
@@ -33,9 +50,8 @@ export default function Home() {
             <h2>How it works</h2>
 
             <p>
-              Search Brian&apos;s current catalog. Request a song for
-              tonight. If your song isn&apos;t listed, suggest it for a
-              future show.
+              Search Brian&apos;s current catalog. Request a song for tonight.
+              If your song isn&apos;t listed, suggest it for a future show.
             </p>
           </div>
 
@@ -44,9 +60,7 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">
-              Tip Brian directly on Venmo.
-            </span>
+            <span className="details">Tip Brian directly on Venmo.</span>
 
             <br />
             <br />
@@ -62,8 +76,8 @@ export default function Home() {
           </div>
 
           <div className="footer">
-            Demo catalog: Alice in Chains MTV Unplugged,
-            The Brian Quinn Band, and Octane.
+            Demo catalog: Alice in Chains MTV Unplugged, The Brian Quinn Band,
+            and Octane.
           </div>
         </div>
       </div>
