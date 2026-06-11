@@ -247,7 +247,7 @@ export default function RequestSongPage() {
                   disabled={loading || !name.trim()}
                   style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading || !name.trim() ? "not-allowed" : "pointer" }}
                 >
-                  {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight&apos;s Request" : "Suggest for Future Show"}
+                  {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight's Request" : "Suggest for Future Show"}
                 </button>
               </>
             ) : (
