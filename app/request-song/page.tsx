@@ -65,6 +65,7 @@ export default function RequestSongPage() {
     setMode("tonight");
     setName("");
     setDedication("");
+    setLoading(false);
     setSuccessMode(null);
   }
 
@@ -75,6 +76,7 @@ export default function RequestSongPage() {
     setFutureArtist("");
     setName("");
     setDedication("");
+    setLoading(false);
     setSuccessMode(null);
   }
 
@@ -89,23 +91,28 @@ export default function RequestSongPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.from("song_requests").insert({
-      song: title,
-      artist,
-      requester_name: name.trim(),
-      dedication: dedication.trim(),
-      status: "pending",
-      request_type: mode
-    });
+    try {
+      const { error } = await supabase.from("song_requests").insert({
+        song: title,
+        artist,
+        requester_name: name.trim() || null,
+        dedication: dedication.trim() || null,
+        status: "pending",
+        request_type: mode
+      });
 
-    setLoading(false);
+      if (error) {
+        alert("Request did not send: " + error.message);
+        setLoading(false);
+        return;
+      }
 
-    if (error) {
-      alert("Something went wrong. Please try again.");
-      return;
+      setSuccessMode(mode);
+    } catch (err) {
+      alert("Request did not send. Please try again.");
     }
 
-    setSuccessMode(mode);
+    setLoading(false);
   }
 
   return (
