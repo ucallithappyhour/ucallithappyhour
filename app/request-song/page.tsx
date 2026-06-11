@@ -95,7 +95,7 @@ export default function RequestSongPage() {
       return;
     }
 
-    setSubmitted(true);
+    if (mode === "future") {
   }
 
   const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
