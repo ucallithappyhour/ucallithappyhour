@@ -230,20 +230,7 @@ export default function RequestSongPage() {
 
 {mode === "tonight" && (
   <>
-    <p>Want to support the artist?</p>
-
-    <a
-      href="https://venmo.com/Brian-Quinn-41"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ color: "#ffd84d", fontSize: 20 }}
-    >
-      Tip Brian on Venmo
-    </a>
-
-    <br />
-    <br />
-  </>
+      </>
 )}
 
                 <button
