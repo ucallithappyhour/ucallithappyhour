@@ -5,26 +5,24 @@ export default function Home() {
     <main className="page">
       <div className="overlay">
         <div className="container">
-          <div className="hero">
+          <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
             <div
               style={{
                 position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "clamp(120px, 19vw, 310px)",
+                left: "50%",
+                top: "42%",
+                transform: "translate(-50%, -50%)",
+                fontSize: "clamp(150px, 24vw, 360px)",
                 fontWeight: 900,
                 letterSpacing: "-10px",
-                color: "rgba(255,255,255,0.10)",
+                color: "rgba(255,255,255,0.075)",
                 zIndex: 0,
                 pointerEvents: "none",
-                textAlign: "center",
                 whiteSpace: "nowrap",
                 lineHeight: 0.8
               }}
             >
-              Brian Quinn
+              BRIAN QUINN
             </div>
 
             <div style={{ position: "relative", zIndex: 1 }}>
@@ -38,8 +36,8 @@ export default function Home() {
                 className="event-card"
                 style={{
                   position: "relative",
-                  minHeight: 240,
-                  paddingRight: 190
+                  minHeight: 210,
+                  paddingRight: 210
                 }}
               >
                 <p className="performer">Brian Quinn</p>
@@ -55,7 +53,7 @@ export default function Home() {
                 <div
                   style={{
                     position: "absolute",
-                    top: 28,
+                    top: 26,
                     right: 32,
                     textAlign: "center"
                   }}
@@ -64,8 +62,8 @@ export default function Home() {
                     src="/brian-logo.jpg"
                     alt="Brian Quinn Logo"
                     style={{
-                      width: 100,
-                      height: 100,
+                      width: 95,
+                      height: 95,
                       objectFit: "contain",
                       display: "block",
                       margin: "0 auto 8px"
