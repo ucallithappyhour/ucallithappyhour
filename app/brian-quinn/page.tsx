@@ -13,14 +13,15 @@ export default function Home() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "clamp(180px, 28vw, 420px)",
+                fontSize: "clamp(120px, 19vw, 310px)",
                 fontWeight: 900,
-                letterSpacing: "-8px",
-                color: "rgba(255,255,255,0.07)",
+                letterSpacing: "-10px",
+                color: "rgba(255,255,255,0.10)",
                 zIndex: 0,
                 pointerEvents: "none",
                 textAlign: "center",
-                overflow: "hidden"
+                whiteSpace: "nowrap",
+                lineHeight: 0.8
               }}
             >
               Brian Quinn
@@ -36,43 +37,38 @@ export default function Home() {
               <div
                 className="event-card"
                 style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  gap: 24
+                  position: "relative",
+                  minHeight: 240,
+                  paddingRight: 190
                 }}
               >
-                <div>
-                  <p className="performer">Brian Quinn</p>
+                <p className="performer">Brian Quinn</p>
 
-                  <div className="details">
-                    Screwballs • Every Friday • 5–7 PM
-                  </div>
-
-                  <Link className="btn" href="/request-song">
-                    Request a Song
-                  </Link>
+                <div className="details">
+                  Screwballs • Every Friday • 5–7 PM
                 </div>
+
+                <Link className="btn" href="/request-song">
+                  Request a Song
+                </Link>
 
                 <div
                   style={{
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    minWidth: 130,
-                    paddingTop: 4
+                    position: "absolute",
+                    top: 28,
+                    right: 32,
+                    textAlign: "center"
                   }}
                 >
                   <img
                     src="/brian-logo.jpg"
                     alt="Brian Quinn Logo"
                     style={{
-                      width: 90,
-                      height: 90,
+                      width: 100,
+                      height: 100,
                       objectFit: "contain",
-                      marginBottom: 8
+                      display: "block",
+                      margin: "0 auto 8px"
                     }}
                   />
 
@@ -83,7 +79,8 @@ export default function Home() {
                     style={{
                       color: "#ffd84d",
                       fontWeight: 800,
-                      textDecoration: "none"
+                      textDecoration: "none",
+                      fontSize: 16
                     }}
                   >
                     💵 Tip Brian →
