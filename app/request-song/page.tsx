@@ -116,23 +116,8 @@ export default function RequestSongPage() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: 40,
-        background: "#000",
-        color: "#fff",
-        fontFamily: "Arial, sans-serif"
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(320px, 550px) 1fr",
-          gap: 40,
-          alignItems: "start"
-        }}
-      >
+    <main style={{ minHeight: "100vh", padding: 40, background: "#000", color: "#fff", fontFamily: "Arial, sans-serif" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(320px, 550px) 1fr", gap: 40, alignItems: "start" }}>
         <div>
           <h1>Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.</h1>
           <p>Search by song or artist.</p>
@@ -141,14 +126,7 @@ export default function RequestSongPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by song or artist..."
-            style={{
-              width: "100%",
-              maxWidth: 500,
-              padding: 14,
-              fontSize: 18,
-              borderRadius: 8,
-              marginTop: 20
-            }}
+            style={{ width: "100%", maxWidth: 500, padding: 14, fontSize: 18, borderRadius: 8, marginTop: 20 }}
           />
 
           <div style={{ marginTop: 25, maxWidth: 500 }}>
@@ -156,18 +134,7 @@ export default function RequestSongPage() {
               <button
                 key={`${song.title}-${song.artist}`}
                 onClick={() => openTonightRequest(song)}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  textAlign: "left",
-                  padding: 14,
-                  marginBottom: 10,
-                  fontSize: 17,
-                  borderRadius: 8,
-                  background: "#f3f3f3",
-                  color: "#000",
-                  cursor: "pointer"
-                }}
+                style={{ display: "block", width: "100%", textAlign: "left", padding: 14, marginBottom: 10, fontSize: 17, borderRadius: 8, background: "#f3f3f3", color: "#000", cursor: "pointer" }}
               >
                 <strong>{song.title}</strong>
                 <br />
@@ -176,27 +143,13 @@ export default function RequestSongPage() {
             ))}
 
             {showFutureSuggestion && (
-              <div
-                style={{
-                  background: "#181818",
-                  padding: 18,
-                  borderRadius: 12,
-                  border: "1px solid #333"
-                }}
-              >
+              <div style={{ background: "#181818", padding: 18, borderRadius: 12, border: "1px solid #333" }}>
                 <p>No matching songs found.</p>
                 <p>Want Brian to consider this for a future show?</p>
 
                 <button
                   onClick={openFutureSuggestion}
-                  style={{
-                    padding: "14px 20px",
-                    fontSize: 17,
-                    borderRadius: 8,
-                    background: "#ffd84d",
-                    color: "#000",
-                    cursor: "pointer"
-                  }}
+                  style={{ padding: "14px 20px", fontSize: 17, borderRadius: 8, background: "#ffd84d", color: "#000", cursor: "pointer" }}
                 >
                   Suggest for Future Performance
                 </button>
@@ -205,24 +158,11 @@ export default function RequestSongPage() {
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: 500,
-            textAlign: "center"
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, textAlign: "center" }}>
           <img
             src="/brian-logo.jpg"
             alt="Brian Quinn Logo"
-            style={{
-              width: "100%",
-              maxWidth: 320,
-              marginBottom: 30
-            }}
+            style={{ width: "100%", maxWidth: 320, marginBottom: 30 }}
           />
 
           <h2 style={{ marginBottom: 10 }}>Brian Quinn</h2>
@@ -236,43 +176,24 @@ export default function RequestSongPage() {
             <br />
             Influence tomorrow&apos;s setlist.
           </p>
+
+          <a
+            href="https://venmo.com/Brian-Quinn-41"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#ffd84d", fontSize: 20, textDecoration: "none", fontWeight: "bold", marginTop: 18 }}
+          >
+            💵 Tip Brian
+          </a>
         </div>
       </div>
 
       {(selectedSong || mode === "future") && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.82)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 20,
-            zIndex: 9999
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: 520,
-              background: "#181818",
-              color: "#fff",
-              padding: 24,
-              borderRadius: 16,
-              border: "1px solid #333"
-            }}
-          >
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.82)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, zIndex: 9999 }}>
+          <div style={{ width: "100%", maxWidth: 520, background: "#181818", color: "#fff", padding: 24, borderRadius: 16, border: "1px solid #333" }}>
             <button
               onClick={resetToCatalog}
-              style={{
-                float: "right",
-                fontSize: 22,
-                background: "transparent",
-                color: "#fff",
-                border: 0,
-                cursor: "pointer"
-              }}
+              style={{ float: "right", fontSize: 22, background: "transparent", color: "#fff", border: 0, cursor: "pointer" }}
             >
               ×
             </button>
@@ -287,32 +208,9 @@ export default function RequestSongPage() {
                     : "Brian received your future song suggestion."}
                 </p>
 
-                <p>
-                  {successMode === "tonight"
-                    ? "Enjoying the music?"
-                    : "Love supporting live music?"}
-                </p>
-
-                <a
-                  href="https://venmo.com/Brian-Quinn-41"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "#ffd84d", fontSize: 20 }}
-                >
-                  Tip Brian on Venmo
-                </a>
-
-                <br />
-                <br />
-
                 <button
                   onClick={resetToCatalog}
-                  style={{
-                    padding: "12px 18px",
-                    fontSize: 16,
-                    borderRadius: 8,
-                    cursor: "pointer"
-                  }}
+                  style={{ padding: "12px 18px", fontSize: 16, borderRadius: 8, cursor: "pointer" }}
                 >
                   Back to Catalog
                 </button>
@@ -332,26 +230,14 @@ export default function RequestSongPage() {
                       value={futureTitle}
                       onChange={(e) => setFutureTitle(e.target.value)}
                       placeholder="Song title"
-                      style={{
-                        width: "100%",
-                        padding: 14,
-                        fontSize: 18,
-                        borderRadius: 8,
-                        marginBottom: 12
-                      }}
+                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                     />
 
                     <input
                       value={futureArtist}
                       onChange={(e) => setFutureArtist(e.target.value)}
                       placeholder="Artist name optional"
-                      style={{
-                        width: "100%",
-                        padding: 14,
-                        fontSize: 18,
-                        borderRadius: 8,
-                        marginBottom: 12
-                      }}
+                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                     />
                   </>
                 )}
@@ -360,13 +246,7 @@ export default function RequestSongPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your first name optional"
-                  style={{
-                    width: "100%",
-                    padding: 14,
-                    fontSize: 18,
-                    borderRadius: 8,
-                    marginBottom: 12
-                  }}
+                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                 />
 
                 <textarea
@@ -374,24 +254,13 @@ export default function RequestSongPage() {
                   onChange={(e) => setDedication(e.target.value)}
                   placeholder="Dedication or message optional"
                   rows={4}
-                  style={{
-                    width: "100%",
-                    padding: 14,
-                    fontSize: 18,
-                    borderRadius: 8,
-                    marginBottom: 12
-                  }}
+                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                 />
 
                 <button
                   onClick={submitRequest}
                   disabled={loading}
-                  style={{
-                    padding: "14px 22px",
-                    fontSize: 18,
-                    borderRadius: 8,
-                    cursor: loading ? "not-allowed" : "pointer"
-                  }}
+                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
                 >
                   {loading
                     ? "Sending..."
