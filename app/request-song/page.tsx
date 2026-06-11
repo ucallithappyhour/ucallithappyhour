@@ -21,9 +21,17 @@ const songs = [
   { title: "Gasoline", artist: "Octane" }
 ];
 
+type Song = {
+  title: string;
+  artist: string;
+};
+
 export default function RequestSongPage() {
   const [query, setQuery] = useState("");
-  const [selectedSong, setSelectedSong] = useState<(typeof songs)[number] | null>(null);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  const [mode, setMode] = useState<"tonight" | "future">("tonight");
+  const [futureTitle, setFutureTitle] = useState("");
+  const [futureArtist, setFutureArtist] = useState("");
   const [name, setName] = useState("");
   const [dedication, setDedication] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -38,8 +46,25 @@ export default function RequestSongPage() {
     );
   }, [query]);
 
+  function openTonightRequest(song: Song) {
+    setSelectedSong(song);
+    setMode("tonight");
+    setSubmitted(false);
+  }
+
+  function openFutureSuggestion() {
+    setSelectedSong(null);
+    setMode("future");
+    setFutureTitle(query.trim());
+    setFutureArtist("");
+    setSubmitted(false);
+  }
+
   function closePopup() {
     setSelectedSong(null);
+    setMode("tonight");
+    setFutureTitle("");
+    setFutureArtist("");
     setName("");
     setDedication("");
     setSubmitted(false);
@@ -47,16 +72,20 @@ export default function RequestSongPage() {
   }
 
   async function submitRequest() {
-    if (!selectedSong || !name.trim()) return;
+    const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
+    const artist = mode === "tonight" ? selectedSong?.artist : futureArtist.trim();
+
+    if (!title || !artist || !name.trim()) return;
 
     setLoading(true);
 
     const { error } = await supabase.from("song_requests").insert({
-      song: selectedSong.title,
-      artist: selectedSong.artist,
+      song: title,
+      artist,
       requester_name: name.trim(),
       dedication: dedication.trim(),
-      status: "pending"
+      status: "pending",
+      request_type: mode
     });
 
     setLoading(false);
@@ -68,6 +97,8 @@ export default function RequestSongPage() {
 
     setSubmitted(true);
   }
+
+  const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
 
   return (
     <main style={{ minHeight: "100vh", padding: 40, background: "#000", color: "#fff", fontFamily: "Arial, sans-serif" }}>
@@ -85,7 +116,7 @@ export default function RequestSongPage() {
         {matches.map((song) => (
           <button
             key={`${song.title}-${song.artist}`}
-            onClick={() => setSelectedSong(song)}
+            onClick={() => openTonightRequest(song)}
             style={{
               display: "block",
               width: "100%",
@@ -104,9 +135,30 @@ export default function RequestSongPage() {
             <span>{song.artist}</span>
           </button>
         ))}
+
+        {showFutureSuggestion && (
+          <div style={{ background: "#181818", padding: 18, borderRadius: 12, border: "1px solid #333" }}>
+            <p>No matching songs found.</p>
+            <p>Want Brian to consider this for a future show?</p>
+
+            <button
+              onClick={openFutureSuggestion}
+              style={{
+                padding: "14px 20px",
+                fontSize: 17,
+                borderRadius: 8,
+                background: "#ffd84d",
+                color: "#000",
+                cursor: "pointer"
+              }}
+            >
+              Suggest for Future Performance
+            </button>
+          </div>
+        )}
       </div>
 
-      {selectedSong && (
+      {(selectedSong || mode === "future") && (
         <div style={{
           position: "fixed",
           inset: 0,
@@ -136,8 +188,30 @@ export default function RequestSongPage() {
                   ×
                 </button>
 
-                <h2>{selectedSong.title}</h2>
-                <p>{selectedSong.artist}</p>
+                <h2>{mode === "tonight" ? "Request for Tonight" : "Suggest for Future Show"}</h2>
+
+                {mode === "tonight" && selectedSong ? (
+                  <>
+                    <h3>{selectedSong.title}</h3>
+                    <p>{selectedSong.artist}</p>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      value={futureTitle}
+                      onChange={(e) => setFutureTitle(e.target.value)}
+                      placeholder="Song title"
+                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                    />
+
+                    <input
+                      value={futureArtist}
+                      onChange={(e) => setFutureArtist(e.target.value)}
+                      placeholder="Artist name"
+                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                    />
+                  </>
+                )}
 
                 <input
                   value={name}
@@ -173,13 +247,17 @@ export default function RequestSongPage() {
                   disabled={loading || !name.trim()}
                   style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading || !name.trim() ? "not-allowed" : "pointer" }}
                 >
-                  {loading ? "Sending..." : "Submit Request"}
+                  {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight&apos;s Request" : "Suggest for Future Show"}
                 </button>
               </>
             ) : (
               <>
-                <h2>Request sent!</h2>
-                <p>Brian received your request.</p>
+                <h2>{mode === "tonight" ? "Request sent!" : "Suggestion sent!"}</h2>
+                <p>
+                  {mode === "tonight"
+                    ? "Brian received your request."
+                    : "Brian received your future song suggestion."}
+                </p>
                 <p>Tips go directly to the artist.</p>
 
                 <a
