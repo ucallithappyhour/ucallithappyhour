@@ -75,7 +75,7 @@ export default function RequestSongPage() {
     const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
     const artist = mode === "tonight" ? selectedSong?.artist : futureArtist.trim();
 
-    if (!title || !artist || !name.trim()) return;
+    if (!title || !artist) return;
 
     setLoading(true);
 
@@ -244,8 +244,8 @@ export default function RequestSongPage() {
 
                 <button
                   onClick={submitRequest}
-                  disabled={loading || !name.trim()}
-                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading || !name.trim() ? "not-allowed" : "pointer" }}
+                  disabled={loading}
+                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
                 >
                   {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight's Request" : "Suggest for Future Show"}
                 </button>
