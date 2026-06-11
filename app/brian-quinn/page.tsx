@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function BrianQuinnPage() {
+export default function Home() {
   return (
     <main className="page">
       <div className="overlay">
@@ -13,15 +13,14 @@ export default function BrianQuinnPage() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "clamp(120px, 22vw, 340px)",
-                fontWeight: 1000,
-                letterSpacing: "-14px",
-                color: "rgba(255,255,255,0.11)",
-                textTransform: "uppercase",
-                filter: "blur(0.3px)",
+                fontSize: "clamp(180px, 28vw, 420px)",
+                fontWeight: 900,
+                letterSpacing: "-8px",
+                color: "rgba(255,255,255,0.07)",
                 zIndex: 0,
                 pointerEvents: "none",
-                textAlign: "center"
+                textAlign: "center",
+                overflow: "hidden"
               }}
             >
               Brian Quinn
