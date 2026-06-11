@@ -31,7 +31,7 @@ export default function RequestSongPage() {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [mode, setMode] = useState<"tonight" | "future">("tonight");
   const [futureTitle, setFutureTitle] = useState("");
-  const [futureArtist, setFutureArtist] = useState("");
+  const [futureartist: artist || "Unknown Artist", setFutureArtist] = useState("");
   const [name, setName] = useState("");
   const [dedication, setDedication] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -75,13 +75,13 @@ export default function RequestSongPage() {
     const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
     const artist = mode === "tonight" ? selectedSong?.artist : futureArtist.trim();
 
-    if (!title || !artist) return;
+    if (!title) return;
 
     setLoading(true);
 
     const { error } = await supabase.from("song_requests").insert({
       song: title,
-      artist,
+      artist: artist || "Unknown Artist",
       requester_name: name.trim(),
       dedication: dedication.trim(),
       status: "pending",
@@ -228,19 +228,23 @@ export default function RequestSongPage() {
                   style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                 />
 
-                <p>Want to support the artist?</p>
+{mode === "tonight" && (
+  <>
+    <p>Want to support the artist?</p>
 
-                <a
-                  href="https://venmo.com/Brian-Quinn-41"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "#ffd84d", fontSize: 20 }}
-                >
-                  Tip Brian on Venmo
-                </a>
+    <a
+      href="https://venmo.com/Brian-Quinn-41"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ color: "#ffd84d", fontSize: 20 }}
+    >
+      Tip Brian on Venmo
+    </a>
 
-                <br />
-                <br />
+    <br />
+    <br />
+  </>
+)}
 
                 <button
                   onClick={submitRequest}
