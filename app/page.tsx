@@ -6,23 +6,25 @@ export default function Home() {
       <div className="overlay">
         <div className="container">
           <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
-            <div
+<div
   style={{
     position: "absolute",
-    top: -40,
-    left: -140,
-    fontSize: "clamp(260px, 34vw, 520px)",
+    inset: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "clamp(160px, 22vw, 280px)",
     fontWeight: 900,
-    letterSpacing: "-16px",
+    letterSpacing: "-8px",
     color: "rgba(255,255,255,0.06)",
     zIndex: 0,
     pointerEvents: "none",
-    lineHeight: 0.78,
+    textAlign: "center",
+    whiteSpace: "nowrap",
     userSelect: "none"
   }}
 >
-  <div>BRIAN</div>
-  <div>QUINN</div>
+  BRIAN QUINN
 </div>
 
             <div style={{ position: "relative", zIndex: 1 }}>
