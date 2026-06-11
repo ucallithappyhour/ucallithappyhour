@@ -13,13 +13,14 @@ export default function Home() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "clamp(70px, 13vw, 190px)",
+                fontSize: "clamp(120px, 18vw, 260px)",
                 fontWeight: 900,
                 letterSpacing: "-6px",
-                color: "rgba(255,255,255,0.08)",
+                color: "rgba(255,255,255,0.04)",
                 zIndex: 0,
                 pointerEvents: "none",
-                textAlign: "center"
+                textAlign: "center",
+                whiteSpace: "nowrap",
               }}
             >
               Brian Quinn
@@ -28,20 +29,66 @@ export default function Home() {
             <div style={{ position: "relative", zIndex: 1 }}>
               <div className="brand">U Call It Happy Hour</div>
 
-              <h1 className="title">Request tonight&apos;s songs.</h1>
+              <h1 className="title">
+                Request tonight&apos;s songs.
+              </h1>
 
-              <p className="tagline">Influence tomorrow&apos;s setlist.</p>
+              <p className="tagline">
+                Influence tomorrow&apos;s setlist.
+              </p>
 
-              <div className="event-card">
-                <p className="performer">Brian Quinn</p>
+              <div
+                className="event-card"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "30px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div>
+                  <p className="performer">Brian Quinn</p>
 
-                <div className="details">
-                  Screwballs • Every Friday • 5–7 PM
+                  <div className="details">
+                    Screwballs • Every Friday • 5–7 PM
+                  </div>
+
+                  <br />
+
+                  <Link className="btn" href="/request-song">
+                    Request a Song
+                  </Link>
                 </div>
 
-                <Link className="btn" href="/request-song">
-                  Request a Song
-                </Link>
+                <div style={{ textAlign: "center" }}>
+                  <img
+                    src="/brian-logo.png"
+                    alt="Brian Quinn Logo"
+                    style={{
+                      maxWidth: "180px",
+                      maxHeight: "120px",
+                      objectFit: "contain",
+                    }}
+                  />
+
+                  <br />
+                  <br />
+
+                  <a
+                    href="https://venmo.com/Brian-Quinn-41"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="details"
+                    style={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Tip Brian →
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -60,7 +107,9 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">Tip Brian directly on Venmo.</span>
+            <span className="details">
+              Tip Brian directly on Venmo.
+            </span>
 
             <br />
             <br />
