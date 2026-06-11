@@ -38,6 +38,14 @@ export default function RequestSongPage() {
     );
   }, [query]);
 
+  function closePopup() {
+    setSelectedSong(null);
+    setName("");
+    setDedication("");
+    setSubmitted(false);
+    setLoading(false);
+  }
+
   async function submitRequest() {
     if (!selectedSong || !name.trim()) return;
 
@@ -59,41 +67,6 @@ export default function RequestSongPage() {
     }
 
     setSubmitted(true);
-  }
-
-  if (submitted) {
-    return (
-      <main style={{ minHeight: "100vh", padding: 40, background: "#000", color: "#fff", fontFamily: "Arial, sans-serif" }}>
-        <h1>Request sent!</h1>
-        <p>Brian received your request.</p>
-        <p>Tips go directly to the artist.</p>
-
-        <a
-          href="https://venmo.com/Brian-Quinn-41"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#ffd84d", fontSize: 22 }}
-        >
-          Tip Brian on Venmo
-        </a>
-
-        <br />
-        <br />
-
-        <button
-          onClick={() => {
-            setSelectedSong(null);
-            setName("");
-            setDedication("");
-            setQuery("");
-            setSubmitted(false);
-          }}
-          style={{ padding: "12px 18px", fontSize: 16, borderRadius: 8 }}
-        >
-          Request another song
-        </button>
-      </main>
-    );
   }
 
   return (
@@ -121,7 +94,7 @@ export default function RequestSongPage() {
               marginBottom: 10,
               fontSize: 17,
               borderRadius: 8,
-              background: selectedSong?.title === song.title && selectedSong?.artist === song.artist ? "#ffd84d" : "#f3f3f3",
+              background: "#f3f3f3",
               color: "#000",
               cursor: "pointer"
             }}
@@ -134,45 +107,99 @@ export default function RequestSongPage() {
       </div>
 
       {selectedSong && (
-        <div style={{ marginTop: 30, maxWidth: 500, background: "#181818", padding: 20, borderRadius: 12 }}>
-          <h2>{selectedSong.title} — {selectedSong.artist}</h2>
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.82)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+          zIndex: 9999
+        }}>
+          <div style={{
+            width: "100%",
+            maxWidth: 520,
+            background: "#181818",
+            color: "#fff",
+            padding: 24,
+            borderRadius: 16,
+            border: "1px solid #333",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.6)"
+          }}>
+            {!submitted ? (
+              <>
+                <button
+                  onClick={closePopup}
+                  style={{ float: "right", fontSize: 22, background: "transparent", color: "#fff", border: 0, cursor: "pointer" }}
+                >
+                  ×
+                </button>
 
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your first name"
-            style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-          />
+                <h2>{selectedSong.title}</h2>
+                <p>{selectedSong.artist}</p>
 
-          <textarea
-            value={dedication}
-            onChange={(e) => setDedication(e.target.value)}
-            placeholder="Dedication or message optional"
-            rows={4}
-            style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-          />
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your first name"
+                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                />
 
-          <p>Want to support the artist?</p>
+                <textarea
+                  value={dedication}
+                  onChange={(e) => setDedication(e.target.value)}
+                  placeholder="Dedication or message optional"
+                  rows={4}
+                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                />
 
-          <a
-            href="https://venmo.com/Brian-Quinn-41"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#ffd84d", fontSize: 20 }}
-          >
-            Tip Brian on Venmo
-          </a>
+                <p>Want to support the artist?</p>
 
-          <br />
-          <br />
+                <a
+                  href="https://venmo.com/Brian-Quinn-41"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#ffd84d", fontSize: 20 }}
+                >
+                  Tip Brian on Venmo
+                </a>
 
-          <button
-            onClick={submitRequest}
-            disabled={loading || !name.trim()}
-            style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading || !name.trim() ? "not-allowed" : "pointer" }}
-          >
-            {loading ? "Sending..." : "Submit Request"}
-          </button>
+                <br />
+                <br />
+
+                <button
+                  onClick={submitRequest}
+                  disabled={loading || !name.trim()}
+                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading || !name.trim() ? "not-allowed" : "pointer" }}
+                >
+                  {loading ? "Sending..." : "Submit Request"}
+                </button>
+              </>
+            ) : (
+              <>
+                <h2>Request sent!</h2>
+                <p>Brian received your request.</p>
+                <p>Tips go directly to the artist.</p>
+
+                <a
+                  href="https://venmo.com/Brian-Quinn-41"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#ffd84d", fontSize: 20 }}
+                >
+                  Tip Brian on Venmo
+                </a>
+
+                <br />
+                <br />
+
+                <button onClick={closePopup} style={{ padding: "12px 18px", fontSize: 16, borderRadius: 8 }}>
+                  Close
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </main>
