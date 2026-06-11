@@ -40,7 +40,6 @@ export default function RequestSongPage() {
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return songs;
-
     return songs.filter((song) =>
       `${song.title} ${song.artist}`.toLowerCase().includes(q)
     );
@@ -207,6 +206,18 @@ export default function RequestSongPage() {
                     ? "Brian received your request."
                     : "Brian received your future song suggestion."}
                 </p>
+
+                <a
+                  href="https://venmo.com/Brian-Quinn-41"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#ffd84d", fontSize: 20 }}
+                >
+                  Tip Brian on Venmo
+                </a>
+
+                <br />
+                <br />
 
                 <button
                   onClick={resetToCatalog}
