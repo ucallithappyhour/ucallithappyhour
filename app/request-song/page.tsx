@@ -31,25 +31,37 @@ export default function RequestSongPage() {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [mode, setMode] = useState<"tonight" | "future">("tonight");
   const [futureTitle, setFutureTitle] = useState("");
-  const [futureartist: artist || "Unknown Artist", setFutureArtist] = useState("");
+  const [futureArtist, setFutureArtist] = useState("");
   const [name, setName] = useState("");
   const [dedication, setDedication] = useState("");
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return songs;
-
     return songs.filter((song) =>
       `${song.title} ${song.artist}`.toLowerCase().includes(q)
     );
   }, [query]);
 
+  const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
+
+  function resetToCatalog() {
+    setSelectedSong(null);
+    setMode("tonight");
+    setFutureTitle("");
+    setFutureArtist("");
+    setName("");
+    setDedication("");
+    setQuery("");
+    setLoading(false);
+  }
+
   function openTonightRequest(song: Song) {
     setSelectedSong(song);
     setMode("tonight");
-    setSubmitted(false);
+    setName("");
+    setDedication("");
   }
 
   function openFutureSuggestion() {
@@ -57,23 +69,16 @@ export default function RequestSongPage() {
     setMode("future");
     setFutureTitle(query.trim());
     setFutureArtist("");
-    setSubmitted(false);
-  }
-
-  function closePopup() {
-    setSelectedSong(null);
-    setMode("tonight");
-    setFutureTitle("");
-    setFutureArtist("");
     setName("");
     setDedication("");
-    setSubmitted(false);
-    setLoading(false);
   }
 
   async function submitRequest() {
     const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
-    const artist = mode === "tonight" ? selectedSong?.artist : futureArtist.trim();
+    const artist =
+      mode === "tonight"
+        ? selectedSong?.artist
+        : futureArtist.trim() || "Unknown Artist";
 
     if (!title) return;
 
@@ -81,7 +86,7 @@ export default function RequestSongPage() {
 
     const { error } = await supabase.from("song_requests").insert({
       song: title,
-      artist: artist || "Unknown Artist",
+      artist,
       requester_name: name.trim(),
       dedication: dedication.trim(),
       status: "pending",
@@ -95,10 +100,9 @@ export default function RequestSongPage() {
       return;
     }
 
-    if (mode === "future") {
+    alert(mode === "tonight" ? "Request sent!" : "Suggestion sent!");
+    resetToCatalog();
   }
-
-  const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
 
   return (
     <main style={{ minHeight: "100vh", padding: 40, background: "#000", color: "#fff", fontFamily: "Arial, sans-serif" }}>
@@ -176,98 +180,62 @@ export default function RequestSongPage() {
             color: "#fff",
             padding: 24,
             borderRadius: 16,
-            border: "1px solid #333",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.6)"
+            border: "1px solid #333"
           }}>
-            {!submitted ? (
+            <button
+              onClick={resetToCatalog}
+              style={{ float: "right", fontSize: 22, background: "transparent", color: "#fff", border: 0, cursor: "pointer" }}
+            >
+              ×
+            </button>
+
+            <h2>{mode === "tonight" ? "Request for Tonight" : "Suggest for Future Show"}</h2>
+
+            {mode === "tonight" && selectedSong ? (
               <>
-                <button
-                  onClick={closePopup}
-                  style={{ float: "right", fontSize: 22, background: "transparent", color: "#fff", border: 0, cursor: "pointer" }}
-                >
-                  ×
-                </button>
-
-                <h2>{mode === "tonight" ? "Request for Tonight" : "Suggest for Future Show"}</h2>
-
-                {mode === "tonight" && selectedSong ? (
-                  <>
-                    <h3>{selectedSong.title}</h3>
-                    <p>{selectedSong.artist}</p>
-                  </>
-                ) : (
-                  <>
-                    <input
-                      value={futureTitle}
-                      onChange={(e) => setFutureTitle(e.target.value)}
-                      placeholder="Song title"
-                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-                    />
-
-                    <input
-                      value={futureArtist}
-                      onChange={(e) => setFutureArtist(e.target.value)}
-                      placeholder="Artist name"
-                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-                    />
-                  </>
-                )}
-
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your first name"
-                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-                />
-
-                <textarea
-                  value={dedication}
-                  onChange={(e) => setDedication(e.target.value)}
-                  placeholder="Dedication or message optional"
-                  rows={4}
-                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-                />
-
-{mode === "tonight" && (
-  <>
-      </>
-)}
-
-                <button
-                  onClick={submitRequest}
-                  disabled={loading}
-                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
-                >
-                  {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight's Request" : "Suggest for Future Show"}
-                </button>
+                <h3>{selectedSong.title}</h3>
+                <p>{selectedSong.artist}</p>
               </>
             ) : (
               <>
-                <h2>{mode === "tonight" ? "Request sent!" : "Suggestion sent!"}</h2>
-                <p>
-                  {mode === "tonight"
-                    ? "Brian received your request."
-                    : "Brian received your future song suggestion."}
-                </p>
-                <p>Tips go directly to the artist.</p>
+                <input
+                  value={futureTitle}
+                  onChange={(e) => setFutureTitle(e.target.value)}
+                  placeholder="Song title"
+                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                />
 
-                <a
-                  href="https://venmo.com/Brian-Quinn-41"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "#ffd84d", fontSize: 20 }}
-                >
-                  Tip Brian on Venmo
-                </a>
-
-                <br />
-                <br />
-
-                <button onClick={closePopup} style={{ padding: "12px 18px", fontSize: 16, borderRadius: 8 }}>
-                  Close
-                </button>
+                <input
+                  value={futureArtist}
+                  onChange={(e) => setFutureArtist(e.target.value)}
+                  placeholder="Artist name optional"
+                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                />
               </>
             )}
+
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your first name optional"
+              style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+            />
+
+            <textarea
+              value={dedication}
+              onChange={(e) => setDedication(e.target.value)}
+              placeholder="Dedication or message optional"
+              rows={4}
+              style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+            />
+
+            <button
+              onClick={submitRequest}
+              disabled={loading}
+              style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
+            >
+              {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight's Request" : "Suggest for Future Show"}
+            </button>
           </div>
         </div>
       )}
