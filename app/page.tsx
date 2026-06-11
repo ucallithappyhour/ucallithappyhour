@@ -15,13 +15,15 @@ export default function Home() {
         <div
           style={{
             position: "absolute",
-            top: "7vh",
+            top: "9vh",
             left: "50%",
             transform: "translateX(-50%)",
-            fontSize: "clamp(90px, 14vw, 220px)",
+            fontFamily:
+              'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+            fontSize: "clamp(150px, 20vw, 290px)",
             fontWeight: 900,
-            letterSpacing: "-7px",
-            color: "rgba(255,255,255,0.075)",
+            letterSpacing: "-8px",
+            color: "rgba(255,255,255,0.055)",
             whiteSpace: "nowrap",
             lineHeight: 1,
             userSelect: "none"
@@ -35,7 +37,7 @@ export default function Home() {
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.25) 35%, rgba(0,0,0,0.75) 72%, rgba(0,0,0,1) 100%)"
+              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.08) 28%, rgba(0,0,0,0.58) 68%, rgba(0,0,0,1) 100%)"
           }}
         />
       </div>
