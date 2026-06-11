@@ -35,10 +35,12 @@ export default function RequestSongPage() {
   const [name, setName] = useState("");
   const [dedication, setDedication] = useState("");
   const [loading, setLoading] = useState(false);
+  const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(null);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return songs;
+
     return songs.filter((song) =>
       `${song.title} ${song.artist}`.toLowerCase().includes(q)
     );
@@ -55,6 +57,7 @@ export default function RequestSongPage() {
     setDedication("");
     setQuery("");
     setLoading(false);
+    setSuccessMode(null);
   }
 
   function openTonightRequest(song: Song) {
@@ -62,6 +65,7 @@ export default function RequestSongPage() {
     setMode("tonight");
     setName("");
     setDedication("");
+    setSuccessMode(null);
   }
 
   function openFutureSuggestion() {
@@ -71,6 +75,7 @@ export default function RequestSongPage() {
     setFutureArtist("");
     setName("");
     setDedication("");
+    setSuccessMode(null);
   }
 
   async function submitRequest() {
@@ -100,8 +105,7 @@ export default function RequestSongPage() {
       return;
     }
 
-    alert(mode === "tonight" ? "Request sent!" : "Suggestion sent!");
-    resetToCatalog();
+    setSuccessMode(mode);
   }
 
   return (
@@ -163,25 +167,29 @@ export default function RequestSongPage() {
       </div>
 
       {(selectedSong || mode === "future") && (
-        <div style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.82)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 20,
-          zIndex: 9999
-        }}>
-          <div style={{
-            width: "100%",
-            maxWidth: 520,
-            background: "#181818",
-            color: "#fff",
-            padding: 24,
-            borderRadius: 16,
-            border: "1px solid #333"
-          }}>
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.82)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+            zIndex: 9999
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 520,
+              background: "#181818",
+              color: "#fff",
+              padding: 24,
+              borderRadius: 16,
+              border: "1px solid #333"
+            }}
+          >
             <button
               onClick={resetToCatalog}
               style={{ float: "right", fontSize: 22, background: "transparent", color: "#fff", border: 0, cursor: "pointer" }}
@@ -189,53 +197,88 @@ export default function RequestSongPage() {
               ×
             </button>
 
-            <h2>{mode === "tonight" ? "Request for Tonight" : "Suggest for Future Show"}</h2>
-
-            {mode === "tonight" && selectedSong ? (
+            {successMode ? (
               <>
-                <h3>{selectedSong.title}</h3>
-                <p>{selectedSong.artist}</p>
+                <h2>{successMode === "tonight" ? "Request sent!" : "Suggestion sent!"}</h2>
+
+                <p>
+                  {successMode === "tonight"
+                    ? "Brian received your request."
+                    : "Brian received your future song suggestion."}
+                </p>
+
+                <p>{successMode === "tonight" ? "Enjoying the music?" : "Love supporting live music?"}</p>
+
+                <a
+                  href="https://venmo.com/Brian-Quinn-41"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#ffd84d", fontSize: 20 }}
+                >
+                  Tip Brian on Venmo
+                </a>
+
+                <br />
+                <br />
+
+                <button
+                  onClick={resetToCatalog}
+                  style={{ padding: "12px 18px", fontSize: 16, borderRadius: 8, cursor: "pointer" }}
+                >
+                  Back to Catalog
+                </button>
               </>
             ) : (
               <>
+                <h2>{mode === "tonight" ? "Request for Tonight" : "Suggest for Future Show"}</h2>
+
+                {mode === "tonight" && selectedSong ? (
+                  <>
+                    <h3>{selectedSong.title}</h3>
+                    <p>{selectedSong.artist}</p>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      value={futureTitle}
+                      onChange={(e) => setFutureTitle(e.target.value)}
+                      placeholder="Song title"
+                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                    />
+
+                    <input
+                      value={futureArtist}
+                      onChange={(e) => setFutureArtist(e.target.value)}
+                      placeholder="Artist name optional"
+                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                    />
+                  </>
+                )}
+
                 <input
-                  value={futureTitle}
-                  onChange={(e) => setFutureTitle(e.target.value)}
-                  placeholder="Song title"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your first name optional"
                   style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                 />
 
-                <input
-                  value={futureArtist}
-                  onChange={(e) => setFutureArtist(e.target.value)}
-                  placeholder="Artist name optional"
+                <textarea
+                  value={dedication}
+                  onChange={(e) => setDedication(e.target.value)}
+                  placeholder="Dedication or message optional"
+                  rows={4}
                   style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
                 />
+
+                <button
+                  onClick={submitRequest}
+                  disabled={loading}
+                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
+                >
+                  {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight's Request" : "Suggest for Future Show"}
+                </button>
               </>
             )}
-
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your first name optional"
-              style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-            />
-
-            <textarea
-              value={dedication}
-              onChange={(e) => setDedication(e.target.value)}
-              placeholder="Dedication or message optional"
-              rows={4}
-              style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
-            />
-
-            <button
-              onClick={submitRequest}
-              disabled={loading}
-              style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
-            >
-              {loading ? "Sending..." : mode === "tonight" ? "Submit Tonight's Request" : "Suggest for Future Show"}
-            </button>
           </div>
         </div>
       )}
