@@ -25,8 +25,9 @@ export default function Home() {
             </p>
 
             <div className="section">
-              <h2>Available artists</h2>
+              <h2>Available Artists</h2>
 
+              {/* Brian Quinn */}
               <div
                 className="event-card"
                 style={{
@@ -69,14 +70,58 @@ export default function Home() {
                   />
                 </div>
               </div>
+
+              {/* Corey & Friends */}
+              <div
+                className="event-card"
+                style={{
+                  position: "relative",
+                  minHeight: 190,
+                  paddingRight: 230
+                }}
+              >
+                <p className="performer">Corey &amp; Friends</p>
+
+                <div className="details">
+                  Venue TBD • Day/Time TBD
+                </div>
+
+                <Link className="btn" href="/corey-and-friends">
+                  Enter Corey&apos;s Page
+                </Link>
+
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 24,
+                    right: 32,
+                    width: 150,
+                    height: 140,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <img
+                    src="/corey & friends-logo.jpg"
+                    alt="Corey & Friends Logo"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      display: "block"
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="section">
-              <h2>For artists</h2>
+              <h2>For Artists</h2>
 
               <p>
-                Give your crowd a simple way to request songs, influence future
-                setlists, and support you directly.
+                Give your crowd a simple way to request songs,
+                influence future setlists, and support you directly.
               </p>
             </div>
           </div>
