@@ -36,7 +36,7 @@ export default function Home() {
 
               <div className="details">Venue TBD • Day/time TBD</div>
 
-              <Link className="btn" href="/cory-and-friends/request-song">
+              <Link className="btn" href="/corey-and-friends/request-song">
                 Request a Song
               </Link>
 
