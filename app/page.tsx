@@ -6,49 +6,23 @@ export default function Home() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily:
-                  '"League Spartan", "Montserrat", "Arial Black", sans-serif',
-                fontSize: "clamp(150px, 22vw, 340px)",
-                fontWeight: 900,
-                letterSpacing: "-0.06em",
-                lineHeight: 1,
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.055)",
-                filter: "blur(0px)",
-                zIndex: 0,
-                pointerEvents: "none",
-                textAlign: "center",
-                whiteSpace: "nowrap",
-                userSelect: "none"
-              }}
-            >
-              BRIAN QUINN
-            </div>
+            <div className="brand">U Call It Happy Hour</div>
 
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <div className="brand">U Call It Happy Hour</div>
+            <h1 className="title">Welcome to U Call It Happy Hour</h1>
 
-              <h1 className="title">
-                Request tonight&apos;s songs.
-              </h1>
+            <p className="tagline">
+              Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
+            </p>
 
-              <p className="tagline">
-                Influence tomorrow&apos;s setlist.
-              </p>
+            <div className="section">
+              <h2>Choose your artist</h2>
 
               <div
                 className="event-card"
                 style={{
                   position: "relative",
-                  minHeight: 240,
-                  paddingRight: 260
+                  minHeight: 190,
+                  paddingRight: 230
                 }}
               >
                 <p className="performer">Brian Quinn</p>
@@ -57,17 +31,17 @@ export default function Home() {
                   Screwballs • Every Friday • 5–7 PM
                 </div>
 
-                <Link className="btn" href="/request-song">
-                  Request a Song
+                <Link className="btn" href="/brian-quinn">
+                  Enter Brian&apos;s Page
                 </Link>
 
                 <div
                   style={{
                     position: "absolute",
-                    top: 28,
-                    right: 36,
-                    width: 190,
-                    height: 170,
+                    top: 24,
+                    right: 32,
+                    width: 150,
+                    height: 140,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
@@ -86,42 +60,15 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="section">
-            <h2>How it works</h2>
+            <div className="section">
+              <h2>For artists</h2>
 
-            <p>
-              Search Brian&apos;s current catalog. Request a song for
-              tonight. If your song isn&apos;t listed, suggest it for a
-              future show.
-            </p>
-          </div>
-
-          <div className="section">
-            <p>
-              <strong>Enjoying the music?</strong>
-            </p>
-
-            <span className="details">
-              Tip Brian directly on Venmo.
-            </span>
-
-            <br />
-            <br />
-
-            <a
-              className="btn secondary"
-              href="https://venmo.com/Brian-Quinn-41"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Tip Brian
-            </a>
-          </div>
-
-          <div className="footer">
-            Demo catalog: Alice in Chains MTV Unplugged
+              <p>
+                Give your crowd a simple way to request songs, influence future
+                setlists, and support you directly.
+              </p>
+            </div>
           </div>
         </div>
       </div>
