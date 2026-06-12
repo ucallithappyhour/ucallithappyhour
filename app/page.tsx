@@ -6,7 +6,17 @@ export default function Home() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <div className="brand">U Call It Happy Hour</div>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <img
+                src="/ucallit-logo.png.png"
+                alt="U Call It Happy Hour"
+                style={{
+                  width: 150,
+                  height: "auto",
+                  display: "inline-block"
+                }}
+              />
+            </div>
 
             <h1 className="title">Choose Your Artist</h1>
 
