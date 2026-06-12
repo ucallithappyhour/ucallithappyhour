@@ -60,7 +60,7 @@ export default function Home() {
 
               <div className="details">Screwballs • Every Friday • 5–7 PM</div>
 
-              <Link className="btn" href="/request-song">
+              <Link className="btn" href="/brian-quinn/request-song">
                 Request a Song
               </Link>
 
