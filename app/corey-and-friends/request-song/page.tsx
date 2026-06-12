@@ -21,9 +21,9 @@ const songs = [
   { title: "Jane Says", artist: "Jane's Addiction" },
   { title: "Alive", artist: "Pearl Jam" },
   { title: "Santeria", artist: "Sublime" },
-  { title: "Fool Me Twice", artist: "Cory & Friends" },
-  { title: "If I Die", artist: "Cory & Friends" },
-  { title: "We're All The Same", artist: "Cory & Friends" }
+  { title: "Fool Me Twice", artist: "Corey & Friends" },
+  { title: "If I Die", artist: "Corey & Friends" },
+  { title: "We're All The Same", artist: "Corey & Friends" }
 ];
 
 export default function RequestSongPage() {
@@ -60,7 +60,7 @@ export default function RequestSongPage() {
       </h1>
 
       <p>
-        Search the current Cory &amp; Friends catalog.
+        Search the current Corey &amp; Friends catalog.
       </p>
 
       <input
