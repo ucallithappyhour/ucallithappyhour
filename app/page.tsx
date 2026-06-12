@@ -15,20 +15,19 @@ export default function Home() {
         <div
           style={{
             position: "absolute",
-            top: "9vh",
+            top: "12vh",
             left: "50%",
             transform: "translateX(-50%)",
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif",
-            fontSize: "clamp(140px, 18vw, 270px)",
+            fontSize: "clamp(120px, 18vw, 300px)",
             fontWeight: 900,
             letterSpacing: "-8px",
-            color: "rgba(255,255,255,0.065)",
+            color: "rgba(255,255,255,0.07)",
             whiteSpace: "nowrap",
             lineHeight: 1,
             userSelect: "none"
           }}
         >
-          Brian Quinn
+          BRIAN QUINN
         </div>
 
         <div
@@ -36,7 +35,7 @@ export default function Home() {
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.08) 28%, rgba(0,0,0,0.58) 68%, rgba(0,0,0,1) 100%)"
+              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.10) 30%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,1) 100%)"
           }}
         />
       </div>
@@ -55,8 +54,8 @@ export default function Home() {
                 className="event-card"
                 style={{
                   position: "relative",
-                  minHeight: 210,
-                  paddingRight: 190
+                  minHeight: 240,
+                  paddingRight: 260
                 }}
               >
                 <p className="performer">Brian Quinn</p>
@@ -72,20 +71,23 @@ export default function Home() {
                 <div
                   style={{
                     position: "absolute",
-                    top: 26,
-                    right: 32,
-                    textAlign: "center"
+                    top: 28,
+                    right: 36,
+                    width: 190,
+                    height: 170,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
                   }}
                 >
                   <img
                     src="/brian-logo.jpg"
                     alt="Brian Quinn Logo"
                     style={{
-                      width: 95,
-                      height: 95,
+                      width: "100%",
+                      height: "100%",
                       objectFit: "contain",
-                      display: "block",
-                      margin: "0 auto"
+                      display: "block"
                     }}
                   />
                 </div>
