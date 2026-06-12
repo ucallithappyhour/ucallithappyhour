@@ -6,84 +6,52 @@ export default function Home() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
+            <div className="brand">U Call It Happy Hour</div>
+
+            <h1 className="title">Request tonight&apos;s songs.</h1>
+
+            <p className="tagline">Influence tomorrow&apos;s setlist.</p>
+
             <div
+              className="event-card"
               style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily:
-                  '"League Spartan", "Montserrat", "Arial Black", sans-serif',
-                fontSize: "clamp(150px, 22vw, 340px)",
-                fontWeight: 900,
-                letterSpacing: "-0.06em",
-                lineHeight: 1,
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.055)",
-                filter: "blur(0px)",
-                zIndex: 0,
-                pointerEvents: "none",
-                textAlign: "center",
-                whiteSpace: "nowrap",
-                userSelect: "none"
+                position: "relative",
+                minHeight: 240,
+                paddingRight: 260
               }}
             >
-              BRIAN QUINN
-            </div>
+              <p className="performer">Brian Quinn</p>
 
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <div className="brand">U Call It Happy Hour</div>
+              <div className="details">
+                Screwballs • Every Friday • 5–7 PM
+              </div>
 
-              <h1 className="title">
-                Request tonight&apos;s songs.
-              </h1>
-
-              <p className="tagline">
-                Influence tomorrow&apos;s setlist.
-              </p>
+              <Link className="btn" href="/request-song">
+                Request a Song
+              </Link>
 
               <div
-                className="event-card"
                 style={{
-                  position: "relative",
-                  minHeight: 240,
-                  paddingRight: 260
+                  position: "absolute",
+                  top: 28,
+                  right: 36,
+                  width: 190,
+                  height: 170,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
-                <p className="performer">Brian Quinn</p>
-
-                <div className="details">
-                  Screwballs • Every Friday • 5–7 PM
-                </div>
-
-                <Link className="btn" href="/request-song">
-                  Request a Song
-                </Link>
-
-                <div
+                <img
+                  src="/brian-logo.jpg"
+                  alt="Brian Quinn Logo"
                   style={{
-                    position: "absolute",
-                    top: 28,
-                    right: 36,
-                    width: 190,
-                    height: 170,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    display: "block"
                   }}
-                >
-                  <img
-                    src="/brian-logo.jpg"
-                    alt="Brian Quinn Logo"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                      display: "block"
-                    }}
-                  />
-                </div>
+                />
               </div>
             </div>
           </div>
@@ -92,9 +60,8 @@ export default function Home() {
             <h2>How it works</h2>
 
             <p>
-              Search Brian&apos;s current catalog. Request a song for
-              tonight. If your song isn&apos;t listed, suggest it for a
-              future show.
+              Search Brian&apos;s current catalog. Request a song for tonight.
+              If your song isn&apos;t listed, suggest it for a future show.
             </p>
           </div>
 
@@ -103,9 +70,7 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">
-              Tip Brian directly on Venmo.
-            </span>
+            <span className="details">Tip Brian directly on Venmo.</span>
 
             <br />
             <br />
