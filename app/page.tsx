@@ -18,18 +18,17 @@ export default function Home() {
             top: "9vh",
             left: "50%",
             transform: "translateX(-50%)",
-         fontFamily:
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif',
-fontSize: "clamp(150px, 20vw, 290px)",
-fontWeight: 900,
-letterSpacing: "-14px",
-color: "rgba(255,255,255,0.055)",
-whiteSpace: "nowrap",
-lineHeight: 1,
-userSelect: "none"
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif",
+            fontSize: "clamp(140px, 18vw, 270px)",
+            fontWeight: 900,
+            letterSpacing: "-8px",
+            color: "rgba(255,255,255,0.065)",
+            whiteSpace: "nowrap",
+            lineHeight: 1,
+            userSelect: "none"
           }}
         >
-          BRIAN QUINN
+          Brian Quinn
         </div>
 
         <div
@@ -57,7 +56,7 @@ userSelect: "none"
                 style={{
                   position: "relative",
                   minHeight: 210,
-                  paddingRight: 210
+                  paddingRight: 190
                 }}
               >
                 <p className="performer">Brian Quinn</p>
@@ -86,23 +85,9 @@ userSelect: "none"
                       height: 95,
                       objectFit: "contain",
                       display: "block",
-                      margin: "0 auto 8px"
+                      margin: "0 auto"
                     }}
                   />
-
-                  <a
-                    href="https://venmo.com/Brian-Quinn-41"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: "#ffd84d",
-                      fontWeight: 800,
-                      textDecoration: "none",
-                      fontSize: 16
-                    }}
-                  >
-                    💵 Tip Brian →
-                  </a>
                 </div>
               </div>
             </div>
