@@ -15,14 +15,13 @@ export default function Home() {
                 justifyContent: "center",
                 fontFamily:
                   '"League Spartan", "Montserrat", "Arial Black", sans-serif',
-                fontSize: "clamp(150px, 21vw, 330px)",
+                fontSize: "clamp(150px, 22vw, 340px)",
                 fontWeight: 900,
-                letterSpacing: "-0.065em",
-                lineHeight: 0.9,
+                letterSpacing: "-0.06em",
+                lineHeight: 1,
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.075)",
-                filter: "blur(0.2px)",
-                transform: "translateY(24px)",
+                color: "rgba(255,255,255,0.055)",
+                filter: "blur(0px)",
                 zIndex: 0,
                 pointerEvents: "none",
                 textAlign: "center",
@@ -36,9 +35,13 @@ export default function Home() {
             <div style={{ position: "relative", zIndex: 1 }}>
               <div className="brand">U Call It Happy Hour</div>
 
-              <h1 className="title">Request tonight&apos;s songs.</h1>
+              <h1 className="title">
+                Request tonight&apos;s songs.
+              </h1>
 
-              <p className="tagline">Influence tomorrow&apos;s setlist.</p>
+              <p className="tagline">
+                Influence tomorrow&apos;s setlist.
+              </p>
 
               <div
                 className="event-card"
@@ -89,8 +92,9 @@ export default function Home() {
             <h2>How it works</h2>
 
             <p>
-              Search Brian&apos;s current catalog. Request a song for tonight.
-              If your song isn&apos;t listed, suggest it for a future show.
+              Search Brian&apos;s current catalog. Request a song for
+              tonight. If your song isn&apos;t listed, suggest it for a
+              future show.
             </p>
           </div>
 
@@ -99,7 +103,9 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">Tip Brian directly on Venmo.</span>
+            <span className="details">
+              Tip Brian directly on Venmo.
+            </span>
 
             <br />
             <br />
@@ -112,6 +118,10 @@ export default function Home() {
             >
               Tip Brian
             </a>
+          </div>
+
+          <div className="footer">
+            Demo catalog: Alice in Chains MTV Unplugged
           </div>
         </div>
       </div>
