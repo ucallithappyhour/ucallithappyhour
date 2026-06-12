@@ -18,15 +18,15 @@ export default function Home() {
             top: "9vh",
             left: "50%",
             transform: "translateX(-50%)",
-            fontFamily:
-              'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-            fontSize: "clamp(150px, 20vw, 290px)",
-            fontWeight: 900,
-            letterSpacing: "-8px",
-            color: "rgba(255,255,255,0.055)",
-            whiteSpace: "nowrap",
-            lineHeight: 1,
-            userSelect: "none"
+         fontFamily:
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif',
+fontSize: "clamp(150px, 20vw, 290px)",
+fontWeight: 900,
+letterSpacing: "-14px",
+color: "rgba(255,255,255,0.055)",
+whiteSpace: "nowrap",
+lineHeight: 1,
+userSelect: "none"
           }}
         >
           BRIAN QUINN
