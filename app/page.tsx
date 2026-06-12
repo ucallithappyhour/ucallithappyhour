@@ -13,16 +13,23 @@ export default function Home() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "clamp(70px, 13vw, 190px)",
+                fontFamily:
+                  '"League Spartan", "Montserrat", "Arial Black", sans-serif',
+                fontSize: "clamp(140px, 22vw, 340px)",
                 fontWeight: 900,
-                letterSpacing: "-6px",
-                color: "rgba(255,255,255,0.08)",
+                letterSpacing: "-0.07em",
+                lineHeight: 1,
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.09)",
+                filter: "blur(1.2px)",
                 zIndex: 0,
                 pointerEvents: "none",
-                textAlign: "center"
+                textAlign: "center",
+                whiteSpace: "nowrap",
+                userSelect: "none"
               }}
             >
-              Brian Quinn
+              BRIAN QUINN
             </div>
 
             <div style={{ position: "relative", zIndex: 1 }}>
@@ -105,8 +112,6 @@ export default function Home() {
               Tip Brian
             </a>
           </div>
-
-         
         </div>
       </div>
     </main>
