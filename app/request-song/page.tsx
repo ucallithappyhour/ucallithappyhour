@@ -298,13 +298,18 @@ export default function RequestSongPage() {
   const [loading, setLoading] = useState(false);
   const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(null);
 
-  const matches = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return songs;
-    return songs.filter((song) =>
-      `${song.title} ${song.artist}`.toLowerCase().includes(q)
-    );
-  }, [query]);
+const matches = useMemo(() => {
+  const normalize = (text: string) =>
+    text.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  const q = normalize(query.trim());
+
+  if (!q) return songs;
+
+  return songs.filter((song) =>
+    normalize(`${song.title} ${song.artist}`).includes(q)
+  );
+}, [query]);
 
   const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
 
