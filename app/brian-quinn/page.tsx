@@ -34,7 +34,7 @@ export default function Home() {
   }}
 >
   <img
-    src="/ucallit-logo.png"
+    src="/ucallit-logo.png.png"
     alt="U Call It Happy Hour"
     style={{
       width: 150,
