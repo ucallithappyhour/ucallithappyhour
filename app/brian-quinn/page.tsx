@@ -27,7 +27,22 @@ export default function Home() {
       <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
         <div className="container">
           <div className="hero">
-            <div className="brand">U Call It Happy Hour</div>
+            <div
+  style={{
+    textAlign: "center",
+    marginBottom: 20
+  }}
+>
+  <img
+    src="/ucallit-logo.png"
+    alt="U Call It Happy Hour"
+    style={{
+      width: 150,
+      height: "auto",
+      display: "inline-block"
+    }}
+  />
+</div>
 
             <h1 className="title">Request tonight&apos;s songs.</h1>
 
