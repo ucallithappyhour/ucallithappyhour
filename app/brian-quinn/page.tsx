@@ -2,27 +2,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="page" style={{ position: "relative", overflow: "hidden" }}>
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: 260,
-          transform: "translateX(-50%)",
-          fontSize: "clamp(150px, 22vw, 340px)",
-          fontWeight: 900,
-          letterSpacing: "-10px",
-          color: "rgba(255,255,255,0.06)",
-          zIndex: 0,
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-          lineHeight: 0.8
-        }}
-      >
-        BRIAN QUINN
-      </div>
-
-      <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
+    <main className="page">
+      <div className="overlay">
         <div className="container">
           <div className="hero">
             <div className="brand">U Call It Happy Hour</div>
@@ -43,7 +24,9 @@ export default function Home() {
             >
               <p className="performer">Brian Quinn</p>
 
-              <div className="details">Screwballs • Every Friday • 5–7 PM</div>
+              <div className="details">
+                Screwballs • Every Friday • 5–7 PM
+              </div>
 
               <Link className="btn" href="/request-song">
                 Request a Song
@@ -77,6 +60,7 @@ export default function Home() {
 
           <div className="section">
             <h2>How it works</h2>
+
             <p>
               Search Brian&apos;s current catalog. Request a song for tonight.
               If your song isn&apos;t listed, suggest it for a future show.
@@ -87,9 +71,12 @@ export default function Home() {
             <p>
               <strong>Enjoying the music?</strong>
             </p>
+
             <span className="details">Tip Brian directly on Venmo.</span>
+
             <br />
             <br />
+
             <a
               className="btn secondary"
               href="https://venmo.com/Brian-Quinn-41"
