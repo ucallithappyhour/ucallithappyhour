@@ -14,15 +14,15 @@ export default function Home() {
                 alignItems: "center",
                 justifyContent: "center",
                 fontFamily:
-                  '"Montserrat", "League Spartan", "Arial Black", sans-serif',
-                fontSize: "clamp(118px, 18vw, 280px)",
-                fontWeight: 800,
-                letterSpacing: "-0.05em",
-                lineHeight: 1,
+                  '"League Spartan", "Montserrat", "Arial Black", sans-serif',
+                fontSize: "clamp(150px, 21vw, 330px)",
+                fontWeight: 900,
+                letterSpacing: "-0.065em",
+                lineHeight: 0.9,
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.085)",
-                filter: "blur(0.4px)",
-                transform: "translateY(12px)",
+                color: "rgba(255,255,255,0.075)",
+                filter: "blur(0.2px)",
+                transform: "translateY(24px)",
                 zIndex: 0,
                 pointerEvents: "none",
                 textAlign: "center",
@@ -38,9 +38,7 @@ export default function Home() {
 
               <h1 className="title">Request tonight&apos;s songs.</h1>
 
-              <p className="tagline">
-                Influence tomorrow&apos;s setlist.
-              </p>
+              <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
               <div
                 className="event-card"
@@ -101,9 +99,7 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">
-              Tip Brian directly on Venmo.
-            </span>
+            <span className="details">Tip Brian directly on Venmo.</span>
 
             <br />
             <br />
