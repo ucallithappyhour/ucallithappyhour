@@ -5,85 +5,53 @@ export default function Home() {
     <main className="page">
       <div className="overlay">
         <div className="container">
-          <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
+          <div className="hero">
+            <div className="brand">U Call It Happy Hour</div>
+
+            <h1 className="title">Request tonight&apos;s songs.</h1>
+
+            <p className="tagline">Influence tomorrow&apos;s setlist.</p>
+
             <div
+              className="event-card"
               style={{
-                position: "absolute",
-                left: "50%",
-                top: "42%",
-                transform: "translate(-50%, -50%)",
-                fontSize: "clamp(150px, 24vw, 360px)",
-                fontWeight: 900,
-                letterSpacing: "-10px",
-                color: "rgba(255,255,255,0.075)",
-                zIndex: 0,
-                pointerEvents: "none",
-                whiteSpace: "nowrap",
-                lineHeight: 0.8
+                position: "relative",
+                minHeight: 240,
+                paddingRight: 260
               }}
             >
-              BRIAN QUINN
-            </div>
+              <p className="performer">Brian Quinn</p>
 
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <div className="brand">U Call It Happy Hour</div>
+              <div className="details">
+                Screwballs • Every Friday • 5–7 PM
+              </div>
 
-              <h1 className="title">Request tonight&apos;s songs.</h1>
-
-              <p className="tagline">Influence tomorrow&apos;s setlist.</p>
+              <Link className="btn" href="/request-song">
+                Request a Song
+              </Link>
 
               <div
-                className="event-card"
                 style={{
-                  position: "relative",
-                  minHeight: 210,
-                  paddingRight: 210
+                  position: "absolute",
+                  top: 28,
+                  right: 36,
+                  width: 190,
+                  height: 170,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
-                <p className="performer">Brian Quinn</p>
-
-                <div className="details">
-                  Screwballs • Every Friday • 5–7 PM
-                </div>
-
-                <Link className="btn" href="/request-song">
-                  Request a Song
-                </Link>
-
-                <div
+                <img
+                  src="/brian-logo.jpg"
+                  alt="Brian Quinn Logo"
                   style={{
-                    position: "absolute",
-                    top: 26,
-                    right: 32,
-                    textAlign: "center"
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    display: "block"
                   }}
-                >
-                  <img
-                    src="/brian-logo.jpg"
-                    alt="Brian Quinn Logo"
-                    style={{
-                      width: 95,
-                      height: 95,
-                      objectFit: "contain",
-                      display: "block",
-                      margin: "0 auto 8px"
-                    }}
-                  />
-
-                  <a
-                    href="https://venmo.com/Brian-Quinn-41"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: "#ffd84d",
-                      fontWeight: 800,
-                      textDecoration: "none",
-                      fontSize: 16
-                    }}
-                  >
-                    💵 Tip Brian →
-                  </a>
-                </div>
+                />
               </div>
             </div>
           </div>
@@ -115,11 +83,6 @@ export default function Home() {
             >
               Tip Brian
             </a>
-          </div>
-
-          <div className="footer">
-            Demo catalog: Alice in Chains MTV Unplugged, The Brian Quinn Band,
-            and Octane.
           </div>
         </div>
       </div>
