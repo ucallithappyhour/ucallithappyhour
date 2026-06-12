@@ -8,14 +8,14 @@ export default function Home() {
           <div className="hero">
             <div className="brand">U Call It Happy Hour</div>
 
-            <h1 className="title">Welcome to U Call It Happy Hour</h1>
+            <h1 className="title">Choose Your Artist</h1>
 
             <p className="tagline">
               Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
             </p>
 
             <div className="section">
-              <h2>Choose your artist</h2>
+              <h2>Available artists</h2>
 
               <div
                 className="event-card"

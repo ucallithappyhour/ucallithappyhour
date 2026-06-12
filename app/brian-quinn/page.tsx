@@ -8,9 +8,11 @@ export default function Home() {
           <div className="hero">
             <div className="brand">U Call It Happy Hour</div>
 
-            <h1 className="title">Request tonight&apos;s songs.</h1>
+            <h1 className="title">Brian Quinn</h1>
 
-            <p className="tagline">Influence tomorrow&apos;s setlist.</p>
+            <p className="tagline">
+              Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
+            </p>
 
             <div
               className="event-card"
