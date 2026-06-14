@@ -343,7 +343,7 @@ export default function AccountPage() {
 
                 <hr style={{ margin: "22px 0", borderColor: "#333" }} />
 
-                <h3>Add Gig</h3>
+                <h3>Add New Gig</h3>
 
                 <label>Venue Name</label>
                 <input
@@ -351,7 +351,7 @@ export default function AccountPage() {
                   onChange={(e) =>
                     updateGigField("venue_name", e.target.value)
                   }
-                  placeholder="Screwballs Sports Bar"
+                  placeholder="Enter venue name"
                 />
 
                 <label>Venue Address</label>
@@ -360,7 +360,7 @@ export default function AccountPage() {
                   onChange={(e) =>
                     updateGigField("venue_address", e.target.value)
                   }
-                  placeholder="King of Prussia, PA"
+                  placeholder="Enter venue address"
                 />
 
                 <label>Gig Date</label>
