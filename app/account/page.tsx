@@ -8,11 +8,11 @@ export default function AccountPage() {
           <div className="hero">
             <div className="brand">U Call It Happy Hour</div>
 
-            <h1 className="title">Artist Account</h1>
+            <h1 className="title">Set Up Your Artist Profile</h1>
 
             <p className="tagline">
-              Manage your artist profile, gig info, artwork, song library, tip
-              link, and socials.
+              Manage your profile, gig info, artwork, song library, tip link,
+              and socials.
             </p>
 
             <div className="actions">
@@ -24,14 +24,14 @@ export default function AccountPage() {
             <div className="accountGrid">
               <section className="accountCard">
                 <h2>Profile</h2>
-                <label>Artist / Band Name</label>
-                <input placeholder="Brian Quinn" />
+                <label>Your Name</label>
+                <input placeholder="Your Name" />
 
                 <label>Short Bio</label>
-                <textarea placeholder="Acoustic rock, originals, covers, and live-request nights." />
+                <textarea placeholder="Tell fans about yourself..." />
 
                 <label>Genre(s)</label>
-                <input placeholder="Acoustic Rock, Classic Rock, 90s" />
+                <input placeholder="Rock, Country, Acoustic..." />
               </section>
 
               <section className="accountCard">
@@ -49,16 +49,16 @@ export default function AccountPage() {
               <section className="accountCard">
                 <h2>Gig Information</h2>
                 <label>Venue Name</label>
-                <input placeholder="Screwballs Sports Bar" />
+                <input placeholder="Venue Name" />
 
                 <label>Venue Address</label>
-                <input placeholder="King of Prussia, PA" />
+                <input placeholder="Venue Address" />
 
                 <label>Gig Day / Date</label>
-                <input placeholder="Every Friday" />
+                <input placeholder="Friday, June 26 or Every Friday" />
 
                 <label>Start / End Time</label>
-                <input placeholder="5 PM - 7 PM" />
+                <input placeholder="Start and End Time" />
               </section>
 
               <section className="accountCard">
@@ -74,7 +74,11 @@ export default function AccountPage() {
                 </button>
 
                 <label>Bulk Paste Songs</label>
-                <textarea placeholder={"Nutshell - Alice in Chains\nRooster - Alice in Chains"} />
+                <textarea
+                  placeholder={
+                    "Song Title - Original Artist\nAnother Song - Original Artist"
+                  }
+                />
 
                 <button className="btn secondary" type="button">
                   Import List
@@ -96,10 +100,10 @@ export default function AccountPage() {
                 </select>
 
                 <label>Handle or Link</label>
-                <input placeholder="https://venmo.com/Brian-Quinn-41" />
+                <input placeholder="Payment handle or link" />
 
                 <label>Button Text</label>
-                <input placeholder="Tip Brian" />
+                <input placeholder="Tip Me" />
 
                 <label>Thank You Message</label>
                 <textarea placeholder="Thanks for supporting live music!" />
