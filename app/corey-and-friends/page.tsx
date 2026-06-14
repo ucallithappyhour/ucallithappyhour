@@ -14,6 +14,10 @@ type ArtistProfile = {
   genres: string | null;
   tip_type: string | null;
   tip_link: string | null;
+  website: string | null;
+  facebook: string | null;
+  instagram: string | null;
+  youtube: string | null;
   logo_url?: string | null;
 };
 
@@ -35,6 +39,10 @@ export default function Home() {
     bio: fallbackArtist.bio,
     tipLink: fallbackArtist.tipLink,
     tipType: "Venmo",
+    website: fallbackArtist.website,
+    facebook: fallbackArtist.facebook,
+    instagram: fallbackArtist.instagram,
+    youtube: fallbackArtist.youtube,
     logo: fallbackArtist.logo
   });
 
@@ -57,6 +65,10 @@ export default function Home() {
         bio: profile.bio || fallbackArtist.bio,
         tipLink: profile.tip_link || fallbackArtist.tipLink,
         tipType: profile.tip_type || "Venmo",
+        website: profile.website || fallbackArtist.website,
+        facebook: profile.facebook || fallbackArtist.facebook,
+        instagram: profile.instagram || fallbackArtist.instagram,
+        youtube: profile.youtube || fallbackArtist.youtube,
         logo: profile.logo_url || fallbackArtist.logo
       });
     }
@@ -172,6 +184,32 @@ export default function Home() {
           </div>
 
           <div className="section">
+            <p>
+              <strong>Enjoying the music?</strong>
+            </p>
+
+            {artist.tipLink ? (
+              <>
+                <span className="details">
+                  Tip {artist.name} directly on {artist.tipType}.
+                </span>
+                <br />
+                <br />
+                <a
+                  className="btn secondary"
+                  href={artist.tipLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Tip {artist.name}
+                </a>
+              </>
+            ) : (
+              <span className="details">Tip link coming soon.</span>
+            )}
+          </div>
+
+          <div className="section">
             <h2>Upcoming Appearances</h2>
 
             {gigs.length === 0 ? (
@@ -206,39 +244,63 @@ export default function Home() {
 
           <div className="section">
             <h2>About the Artist</h2>
-
-            <p>
-              <strong>Genre:</strong> {artist.genre}
-            </p>
-
             <p>{artist.bio}</p>
           </div>
 
-          <div className="section">
-            <p>
-              <strong>Enjoying the music?</strong>
-            </p>
+          {(artist.website ||
+            artist.facebook ||
+            artist.instagram ||
+            artist.youtube) && (
+            <div className="section">
+              <h2>Connect</h2>
 
-            {artist.tipLink ? (
-              <>
-                <span className="details">
-                  Tip {artist.name} directly on {artist.tipType}.
-                </span>
-                <br />
-                <br />
-                <a
-                  className="btn secondary"
-                  href={artist.tipLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Tip {artist.name}
-                </a>
-              </>
-            ) : (
-              <span className="details">Tip link coming soon.</span>
-            )}
-          </div>
+              <div className="actions">
+                {artist.website && (
+                  <a
+                    className="btn secondary"
+                    href={artist.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Website
+                  </a>
+                )}
+
+                {artist.facebook && (
+                  <a
+                    className="btn secondary"
+                    href={artist.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Facebook
+                  </a>
+                )}
+
+                {artist.instagram && (
+                  <a
+                    className="btn secondary"
+                    href={artist.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Instagram
+                  </a>
+                )}
+
+                {artist.youtube && (
+                  <a
+                    className="btn secondary"
+                    href={artist.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    YouTube
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>

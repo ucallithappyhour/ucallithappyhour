@@ -61,11 +61,11 @@
   },
   {
     "route": "/corey-and-friends",
-    "firstLoadUncompressedJsBytes": 753506,
+    "firstLoadUncompressedJsBytes": 754345,
     "firstLoadChunkPaths": [
       ".next\\static\\chunks\\05-c3ty_6dwfk.js",
       ".next\\static\\chunks\\14mrh2-p_w84d.js",
-      ".next\\static\\chunks\\12kv26zkf23m9.js",
+      ".next\\static\\chunks\\3kk31x8lsbbqa.js",
       ".next\\static\\chunks\\27e6tzxf63wah.js",
       ".next\\static\\chunks\\1jq4o6yq14o4c.js",
       ".next\\static\\chunks\\15orcrkp-_9ct.js",
