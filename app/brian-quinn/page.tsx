@@ -1,6 +1,58 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
+type Gig = {
+  id: number;
+  venue_name: string | null;
+  venue_address: string | null;
+  gig_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  recurring_type: string | null;
+};
 
 export default function Home() {
+  const [gigs, setGigs] = useState<Gig[]>([]);
+
+  async function loadGigs() {
+    const { data, error } = await supabase
+      .from("gigs")
+      .select("*")
+      .eq("artist_slug", "default")
+      .order("gig_date", { ascending: true });
+
+    if (!error) {
+      setGigs(data || []);
+    }
+  }
+
+  function formatGigDate(dateValue: string | null) {
+    if (!dateValue) return "Date TBD";
+
+    const date = new Date(`${dateValue}T12:00:00`);
+
+    return date.toLocaleDateString([], {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function formatGigTime(start: string | null, end: string | null) {
+    if (!start && !end) return "Time TBD";
+    if (start && !end) return start;
+    if (!start && end) return end;
+    return `${start} - ${end}`;
+  }
+
+  useEffect(() => {
+    loadGigs();
+  }, []);
+
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
       <div
@@ -27,7 +79,6 @@ export default function Home() {
       <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
         <div className="container">
           <div className="hero">
-            
             <h1 className="title">Request tonight&apos;s songs.</h1>
 
             <p className="tagline">Influence tomorrow&apos;s setlist.</p>
@@ -42,7 +93,13 @@ export default function Home() {
             >
               <p className="performer">Brian Quinn</p>
 
-              <div className="details">Screwballs • Every Friday • 5–7 PM</div>
+              <div className="details">
+                {gigs.length > 0
+                  ? `${gigs[0].venue_name || "Venue TBD"} • ${formatGigDate(
+                      gigs[0].gig_date
+                    )} • ${formatGigTime(gigs[0].start_time, gigs[0].end_time)}`
+                  : "Upcoming gigs coming soon"}
+              </div>
 
               <Link className="btn" href="/brian-quinn/request-song">
                 Request a Song
@@ -72,6 +129,39 @@ export default function Home() {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="section">
+            <h2>Upcoming Appearances</h2>
+
+            {gigs.length === 0 ? (
+              <p className="empty">No upcoming gigs listed yet.</p>
+            ) : (
+              gigs.map((gig) => (
+                <div
+                  key={gig.id}
+                  style={{
+                    borderTop: "1px solid #333",
+                    paddingTop: 14,
+                    marginTop: 14
+                  }}
+                >
+                  <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+                    {gig.venue_name || "Venue TBD"}
+                  </p>
+
+                  <p className="details" style={{ margin: "0 0 6px" }}>
+                    {formatGigDate(gig.gig_date)} •{" "}
+                    {formatGigTime(gig.start_time, gig.end_time)}
+                  </p>
+
+                  <p className="details" style={{ margin: 0 }}>
+                    {gig.venue_address || "Address TBD"} •{" "}
+                    {gig.recurring_type || "One-Time"}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
 
           <div className="section">
