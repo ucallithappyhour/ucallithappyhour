@@ -42,12 +42,31 @@ export default function Home() {
     });
   }
 
-  function formatGigTime(start: string | null, end: string | null) {
-    if (!start && !end) return "Time TBD";
-    if (start && !end) return start;
-    if (!start && end) return end;
-    return `${start} - ${end}`;
-  }
+function formatTime(time: string | null) {
+  if (!time) return "";
+
+  const [hours, minutes] = time.split(":");
+  const hour = Number(hours);
+
+  return new Date(
+    2000,
+    0,
+    1,
+    hour,
+    Number(minutes)
+  ).toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function formatGigTime(start: string | null, end: string | null) {
+  if (!start && !end) return "Time TBD";
+  if (start && !end) return formatTime(start);
+  if (!start && end) return formatTime(end);
+
+  return `${formatTime(start)} - ${formatTime(end)}`;
+}
 
   useEffect(() => {
     loadGigs();
