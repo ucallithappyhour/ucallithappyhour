@@ -130,7 +130,7 @@ export default function AccountPage() {
       .from("artists")
       .upsert(
         {
-          artist_slug: "default",
+          artist_slug: "brian-quinn",
           ...profile,
           updated_at: new Date().toISOString()
         },
@@ -154,7 +154,7 @@ export default function AccountPage() {
     setMessage("Saving gig...");
 
     const { error } = await supabase.from("gigs").insert({
-      artist_slug: "default",
+      artist_slug: "brian-quinn",
       venue_name: newGig.venue_name,
       venue_address: newGig.venue_address,
       gig_date: newGig.gig_date || null,
