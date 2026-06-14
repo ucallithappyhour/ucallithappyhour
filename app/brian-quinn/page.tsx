@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { artists } from "../../lib/artists";
 import { supabase } from "../../lib/supabase";
+
+const artist = artists.brianQuinn;
 
 type Gig = {
   id: number;
@@ -21,7 +24,7 @@ export default function Home() {
     const { data, error } = await supabase
       .from("gigs")
       .select("*")
-      .eq("artist_slug", "brian-quinn")
+      .eq("artist_slug", artist.slug)
       .order("gig_date", { ascending: true });
 
     if (!error) {
@@ -42,31 +45,25 @@ export default function Home() {
     });
   }
 
-function formatTime(time: string | null) {
-  if (!time) return "";
+  function formatTime(time: string | null) {
+    if (!time) return "";
 
-  const [hours, minutes] = time.split(":");
-  const hour = Number(hours);
+    const [hours, minutes] = time.split(":");
+    const hour = Number(hours);
 
-  return new Date(
-    2000,
-    0,
-    1,
-    hour,
-    Number(minutes)
-  ).toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
+    return new Date(2000, 0, 1, hour, Number(minutes)).toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
 
-function formatGigTime(start: string | null, end: string | null) {
-  if (!start && !end) return "Time TBD";
-  if (start && !end) return formatTime(start);
-  if (!start && end) return formatTime(end);
+  function formatGigTime(start: string | null, end: string | null) {
+    if (!start && !end) return "Time TBD";
+    if (start && !end) return formatTime(start);
+    if (!start && end) return formatTime(end);
 
-  return `${formatTime(start)} - ${formatTime(end)}`;
-}
+    return `${formatTime(start)} - ${formatTime(end)}`;
+  }
 
   useEffect(() => {
     loadGigs();
@@ -92,13 +89,15 @@ function formatGigTime(start: string | null, end: string | null) {
           lineHeight: 0.8
         }}
       >
-        BRIAN QUINN
+        {artist.name.toUpperCase()}
       </div>
 
       <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
         <div className="container">
           <div className="hero">
             <h1 className="title">Request tonight&apos;s songs.</h1>
+
+            <p className="details">{artist.genre}</p>
 
             <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
@@ -110,7 +109,7 @@ function formatGigTime(start: string | null, end: string | null) {
                 paddingRight: 260
               }}
             >
-              <p className="performer">Brian Quinn</p>
+              <p className="performer">{artist.name}</p>
 
               <div className="details">
                 {gigs.length > 0
@@ -120,7 +119,7 @@ function formatGigTime(start: string | null, end: string | null) {
                   : "Upcoming gigs coming soon"}
               </div>
 
-              <Link className="btn" href="/brian-quinn/request-song">
+              <Link className="btn" href={`/${artist.slug}/request-song`}>
                 Request a Song
               </Link>
 
@@ -137,8 +136,8 @@ function formatGigTime(start: string | null, end: string | null) {
                 }}
               >
                 <img
-                  src="/brian-logo.jpg"
-                  alt="Brian Quinn Logo"
+                  src={artist.logo}
+                  alt={`${artist.name} Logo`}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -184,27 +183,29 @@ function formatGigTime(start: string | null, end: string | null) {
           </div>
 
           <div className="section">
-            <h2>How it works</h2>
+            <h2>About the Artist</h2>
+
             <p>
-              Search Brian&apos;s current catalog. Request a song for tonight.
-              If your song isn&apos;t listed, suggest it for a future show.
+              <strong>Genre:</strong> {artist.genre}
             </p>
+
+            <p>{artist.bio}</p>
           </div>
 
           <div className="section">
             <p>
               <strong>Enjoying the music?</strong>
             </p>
-            <span className="details">Tip Brian directly on Venmo.</span>
+            <span className="details">Tip {artist.name} directly on Venmo.</span>
             <br />
             <br />
             <a
               className="btn secondary"
-              href="https://venmo.com/Brian-Quinn-41"
+              href={artist.tipLink}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Tip Brian
+              Tip {artist.name}
             </a>
           </div>
         </div>
