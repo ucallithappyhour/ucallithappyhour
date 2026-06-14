@@ -1,6 +1,7 @@
 {
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/account/page": "app/account/page.js",
   "/brian-quinn/page": "app/brian-quinn/page.js",
   "/brian-quinn/request-song/page": "app/brian-quinn/request-song/page.js",
   "/corey-and-friends/page": "app/corey-and-friends/page.js",

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
@@ -157,8 +158,16 @@ export default function DashboardPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: 30, background: "#000", color: "#fff", fontFamily: "Arial, sans-serif" }}>
-      <h1>Live Song Requests</h1>
-      <p>Tonight's requests are separated from future song suggestions.</p>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+        <div>
+          <h1>Live Song Requests</h1>
+          <p>Tonight's requests are separated from future song suggestions.</p>
+        </div>
+
+        <Link className="btn secondary" href="/account">
+          Artist Account
+        </Link>
+      </div>
 
       <section style={{ marginTop: 30 }}>
         <h2>🎤 Tonight's Requests</h2>
