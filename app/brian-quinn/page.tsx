@@ -203,6 +203,25 @@ export default function Home() {
           </div>
 
           <div className="section">
+            <p>
+              <strong>Enjoying the music?</strong>
+            </p>
+            <span className="details">
+              Tip {artist.name} directly on {artist.tipType}.
+            </span>
+            <br />
+            <br />
+            <a
+              className="btn secondary"
+              href={artist.tipLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Tip {artist.name}
+            </a>
+          </div>
+
+          <div className="section">
             <h2>Upcoming Appearances</h2>
 
             {gigs.length === 0 ? (
@@ -294,25 +313,6 @@ export default function Home() {
               </div>
             </div>
           )}
-
-          <div className="section">
-            <p>
-              <strong>Enjoying the music?</strong>
-            </p>
-            <span className="details">
-              Tip {artist.name} directly on {artist.tipType}.
-            </span>
-            <br />
-            <br />
-            <a
-              className="btn secondary"
-              href={artist.tipLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Tip {artist.name}
-            </a>
-          </div>
         </div>
       </div>
     </main>
