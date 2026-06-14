@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/corey-and-friends/layout,_N_T_/corey-and-friends/request-song/layout,_N_T_/corey-and-friends/request-song/page,_N_T_/corey-and-friends/request-song"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/corey-and-friends/request-song/__PAGE__",
+    "/corey-and-friends/request-song",
+    "/corey-and-friends",
+    "/_index",
+    "/_head"
+  ]
+}
