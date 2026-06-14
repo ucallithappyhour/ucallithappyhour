@@ -1,13 +1,125 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { artists } from "../../lib/artists";
+import { supabase } from "../../lib/supabase";
+
+const fallbackArtist = artists.coryFriends;
+
+type ArtistProfile = {
+  artist_slug: string;
+  artist_name: string | null;
+  bio: string | null;
+  genres: string | null;
+  tip_type: string | null;
+  tip_link: string | null;
+  logo_url?: string | null;
+};
+
+type Gig = {
+  id: number;
+  venue_name: string | null;
+  venue_address: string | null;
+  gig_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  recurring_type: string | null;
+};
 
 export default function Home() {
+  const [artist, setArtist] = useState({
+    slug: fallbackArtist.slug,
+    name: fallbackArtist.name,
+    genre: fallbackArtist.genre,
+    bio: fallbackArtist.bio,
+    tipLink: fallbackArtist.tipLink,
+    tipType: "Venmo",
+    logo: fallbackArtist.logo
+  });
+
+  const [gigs, setGigs] = useState<Gig[]>([]);
+
+  async function loadArtist() {
+    const { data, error } = await supabase
+      .from("artists")
+      .select("*")
+      .eq("artist_slug", fallbackArtist.slug)
+      .single();
+
+    if (!error && data) {
+      const profile = data as ArtistProfile;
+
+      setArtist({
+        slug: profile.artist_slug || fallbackArtist.slug,
+        name: profile.artist_name || fallbackArtist.name,
+        genre: profile.genres || fallbackArtist.genre,
+        bio: profile.bio || fallbackArtist.bio,
+        tipLink: profile.tip_link || fallbackArtist.tipLink,
+        tipType: profile.tip_type || "Venmo",
+        logo: profile.logo_url || fallbackArtist.logo
+      });
+    }
+  }
+
+  async function loadGigs() {
+    const { data, error } = await supabase
+      .from("gigs")
+      .select("*")
+      .eq("artist_slug", fallbackArtist.slug)
+      .order("gig_date", { ascending: true });
+
+    if (!error) {
+      setGigs(data || []);
+    }
+  }
+
+  function formatGigDate(dateValue: string | null) {
+    if (!dateValue) return "Date TBD";
+
+    const date = new Date(`${dateValue}T12:00:00`);
+
+    return date.toLocaleDateString([], {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function formatTime(time: string | null) {
+    if (!time) return "";
+
+    const [hours, minutes] = time.split(":");
+    const hour = Number(hours);
+
+    return new Date(2000, 0, 1, hour, Number(minutes)).toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
+
+  function formatGigTime(start: string | null, end: string | null) {
+    if (!start && !end) return "Time TBD";
+    if (start && !end) return formatTime(start);
+    if (!start && end) return formatTime(end);
+
+    return `${formatTime(start)} - ${formatTime(end)}`;
+  }
+
+  useEffect(() => {
+    loadArtist();
+    loadGigs();
+  }, []);
+
   return (
     <main className="page">
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            
-            <h1 className="title">Corey &amp; Friends</h1>
+            <h1 className="title">{artist.name}</h1>
+
+            <p className="details">{artist.genre}</p>
 
             <p className="tagline">
               Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
@@ -21,11 +133,17 @@ export default function Home() {
                 paddingRight: 260
               }}
             >
-              <p className="performer">Corey &amp; Friends</p>
+              <p className="performer">{artist.name}</p>
 
-              <div className="details">Venue TBD • Day/time TBD</div>
+              <div className="details">
+                {gigs.length > 0
+                  ? `${gigs[0].venue_name || "Venue TBD"} • ${formatGigDate(
+                      gigs[0].gig_date
+                    )} • ${formatGigTime(gigs[0].start_time, gigs[0].end_time)}`
+                  : "Venue TBD • Day/time TBD"}
+              </div>
 
-              <Link className="btn" href="/corey-and-friends/request-song">
+              <Link className="btn" href={`/${artist.slug}/request-song`}>
                 Request a Song
               </Link>
 
@@ -42,8 +160,8 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/corey & friends-logo.jpg"
-                  alt="Corey & Friends Logo"
+                  src={artist.logo}
+                  alt={`${artist.name} Logo`}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -56,13 +174,46 @@ export default function Home() {
           </div>
 
           <div className="section">
-            <h2>How it works</h2>
+            <h2>Upcoming Appearances</h2>
+
+            {gigs.length === 0 ? (
+              <p className="empty">No upcoming gigs listed yet.</p>
+            ) : (
+              gigs.map((gig) => (
+                <div
+                  key={gig.id}
+                  style={{
+                    borderTop: "1px solid #333",
+                    paddingTop: 14,
+                    marginTop: 14
+                  }}
+                >
+                  <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+                    {gig.venue_name || "Venue TBD"}
+                  </p>
+
+                  <p className="details" style={{ margin: "0 0 6px" }}>
+                    {formatGigDate(gig.gig_date)} •{" "}
+                    {formatGigTime(gig.start_time, gig.end_time)}
+                  </p>
+
+                  <p className="details" style={{ margin: 0 }}>
+                    {gig.venue_address || "Address TBD"} •{" "}
+                    {gig.recurring_type || "One-Time"}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="section">
+            <h2>About the Artist</h2>
 
             <p>
-              Search Corey &amp; Friends&apos; current catalog. Request a song
-              for tonight. If your song isn&apos;t listed, suggest it for a
-              future show.
+              <strong>Genre:</strong> {artist.genre}
             </p>
+
+            <p>{artist.bio}</p>
           </div>
 
           <div className="section">
@@ -70,7 +221,25 @@ export default function Home() {
               <strong>Enjoying the music?</strong>
             </p>
 
-            <span className="details">Tip link coming soon.</span>
+            {artist.tipLink ? (
+              <>
+                <span className="details">
+                  Tip {artist.name} directly on {artist.tipType}.
+                </span>
+                <br />
+                <br />
+                <a
+                  className="btn secondary"
+                  href={artist.tipLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Tip {artist.name}
+                </a>
+              </>
+            ) : (
+              <span className="details">Tip link coming soon.</span>
+            )}
           </div>
         </div>
       </div>
