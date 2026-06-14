@@ -8,7 +8,17 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="siteLogoWrap">
+          <img
+            className="siteLogo"
+            src="/ucallit-logo.png"
+            alt="U Call It Happy Hour"
+          />
+        </div>
+
+        {children}
+      </body>
     </html>
   );
 }

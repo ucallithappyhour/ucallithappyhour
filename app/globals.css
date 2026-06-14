@@ -61,3 +61,26 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.siteLogoWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 22px 18px 0;
+  background: #000;
+}
+
+.siteLogo {
+  width: 150px;
+  max-width: 45vw;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .siteLogo {
+    width: 120px;
+  }
+}
+
