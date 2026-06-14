@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
+type ArtistOption = {
+  artist_slug: string;
+  artist_name: string;
+};
+
 type ArtistProfile = {
   artist_name: string;
   bio: string;
@@ -62,6 +67,7 @@ const emptyGig: NewGig = {
 };
 
 export default function AccountPage() {
+  const [artistOptions, setArtistOptions] = useState<ArtistOption[]>([]);
   const [selectedArtist, setSelectedArtist] = useState("brian-quinn");
   const [profile, setProfile] = useState<ArtistProfile>(emptyProfile);
   const [gigs, setGigs] = useState<Gig[]>([]);
@@ -80,6 +86,24 @@ export default function AccountPage() {
       ...current,
       [field]: value
     }));
+  }
+
+  async function loadArtists() {
+    const { data, error } = await supabase
+      .from("artists")
+      .select("artist_slug, artist_name")
+      .order("artist_name", { ascending: true });
+
+    if (error) {
+      setMessage("Could not load artist list yet.");
+      return;
+    }
+
+    setArtistOptions(data || []);
+
+    if (data && data.length > 0 && !data.some((a) => a.artist_slug === selectedArtist)) {
+      setSelectedArtist(data[0].artist_slug);
+    }
   }
 
   async function loadProfile() {
@@ -151,6 +175,7 @@ export default function AccountPage() {
     }
 
     setMessage("Saved successfully.");
+    loadArtists();
   }
 
   async function addGig() {
@@ -209,30 +234,28 @@ export default function AccountPage() {
   }
 
   function formatTime(time: string | null) {
-  if (!time) return "";
+    if (!time) return "";
 
-  const [hours, minutes] = time.split(":");
-  const hour = Number(hours);
+    const [hours, minutes] = time.split(":");
+    const hour = Number(hours);
 
-  return new Date(
-    2000,
-    0,
-    1,
-    hour,
-    Number(minutes)
-  ).toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
+    return new Date(2000, 0, 1, hour, Number(minutes)).toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
 
-function formatGigTime(start: string | null, end: string | null) {
-  if (!start && !end) return "Time TBD";
-  if (start && !end) return formatTime(start);
-  if (!start && end) return formatTime(end);
+  function formatGigTime(start: string | null, end: string | null) {
+    if (!start && !end) return "Time TBD";
+    if (start && !end) return formatTime(start);
+    if (!start && end) return formatTime(end);
 
-  return `${formatTime(start)} - ${formatTime(end)}`;
-}
+    return `${formatTime(start)} - ${formatTime(end)}`;
+  }
+
+  useEffect(() => {
+    loadArtists();
+  }, []);
 
   useEffect(() => {
     loadProfile();
@@ -267,8 +290,11 @@ function formatGigTime(start: string | null, end: string | null) {
                 value={selectedArtist}
                 onChange={(e) => setSelectedArtist(e.target.value)}
               >
-                <option value="brian-quinn">Brian Quinn</option>
-                <option value="corey-and-friends">Corey &amp; Friends</option>
+                {artistOptions.map((artist) => (
+                  <option key={artist.artist_slug} value={artist.artist_slug}>
+                    {artist.artist_name}
+                  </option>
+                ))}
               </select>
             </section>
 
