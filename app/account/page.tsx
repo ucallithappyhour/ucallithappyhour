@@ -18,6 +18,26 @@ type ArtistProfile = {
   website: string;
 };
 
+type Gig = {
+  id: number;
+  artist_slug: string;
+  venue_name: string | null;
+  venue_address: string | null;
+  gig_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  recurring_type: string | null;
+};
+
+type NewGig = {
+  venue_name: string;
+  venue_address: string;
+  gig_date: string;
+  start_time: string;
+  end_time: string;
+  recurring_type: string;
+};
+
 const emptyProfile: ArtistProfile = {
   artist_name: "",
   bio: "",
@@ -32,12 +52,30 @@ const emptyProfile: ArtistProfile = {
   website: ""
 };
 
+const emptyGig: NewGig = {
+  venue_name: "",
+  venue_address: "",
+  gig_date: "",
+  start_time: "",
+  end_time: "",
+  recurring_type: "One-Time"
+};
+
 export default function AccountPage() {
   const [profile, setProfile] = useState<ArtistProfile>(emptyProfile);
+  const [gigs, setGigs] = useState<Gig[]>([]);
+  const [newGig, setNewGig] = useState<NewGig>(emptyGig);
   const [message, setMessage] = useState("");
 
   function updateField(field: keyof ArtistProfile, value: string) {
     setProfile((current) => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
+  function updateGigField(field: keyof NewGig, value: string) {
+    setNewGig((current) => ({
       ...current,
       [field]: value
     }));
@@ -70,6 +108,21 @@ export default function AccountPage() {
     });
   }
 
+  async function loadGigs() {
+    const { data, error } = await supabase
+      .from("gigs")
+      .select("*")
+      .eq("artist_slug", "default")
+      .order("gig_date", { ascending: true });
+
+    if (error) {
+      setMessage("Could not load gigs yet.");
+      return;
+    }
+
+    setGigs(data || []);
+  }
+
   async function saveProfile() {
     setMessage("Saving...");
 
@@ -92,8 +145,71 @@ export default function AccountPage() {
     setMessage("Saved successfully.");
   }
 
+  async function addGig() {
+    if (!newGig.venue_name.trim()) {
+      setMessage("Add a venue name before saving the gig.");
+      return;
+    }
+
+    setMessage("Saving gig...");
+
+    const { error } = await supabase.from("gigs").insert({
+      artist_slug: "default",
+      venue_name: newGig.venue_name,
+      venue_address: newGig.venue_address,
+      gig_date: newGig.gig_date || null,
+      start_time: newGig.start_time,
+      end_time: newGig.end_time,
+      recurring_type: newGig.recurring_type
+    });
+
+    if (error) {
+      setMessage("Could not save gig. Check Supabase table permissions.");
+      return;
+    }
+
+    setNewGig(emptyGig);
+    setMessage("Gig saved successfully.");
+    loadGigs();
+  }
+
+  async function deleteGig(id: number) {
+    setMessage("Deleting gig...");
+
+    const { error } = await supabase.from("gigs").delete().eq("id", id);
+
+    if (error) {
+      setMessage("Could not delete gig.");
+      return;
+    }
+
+    setMessage("Gig deleted.");
+    loadGigs();
+  }
+
+  function formatGigDate(dateValue: string | null) {
+    if (!dateValue) return "Date TBD";
+
+    const date = new Date(`${dateValue}T12:00:00`);
+
+    return date.toLocaleDateString([], {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function formatGigTime(start: string | null, end: string | null) {
+    if (!start && !end) return "Time TBD";
+    if (start && !end) return start;
+    if (!start && end) return end;
+    return `${start} - ${end}`;
+  }
+
   useEffect(() => {
     loadProfile();
+    loadGigs();
   }, []);
 
   return (
@@ -106,7 +222,7 @@ export default function AccountPage() {
             <h1 className="title">Set Up Your Artist Profile</h1>
 
             <p className="tagline">
-              Manage your profile, tip link, and social links.
+              Manage your profile, gigs, tip link, and social links.
             </p>
 
             <div className="actions">
@@ -169,16 +285,120 @@ export default function AccountPage() {
                 <label>Button Text</label>
                 <input
                   value={profile.tip_button_text}
-                  onChange={(e) => updateField("tip_button_text", e.target.value)}
+                  onChange={(e) =>
+                    updateField("tip_button_text", e.target.value)
+                  }
                   placeholder="Tip Me"
                 />
 
                 <label>Thank You Message</label>
                 <textarea
                   value={profile.tip_thank_you}
-                  onChange={(e) => updateField("tip_thank_you", e.target.value)}
+                  onChange={(e) =>
+                    updateField("tip_thank_you", e.target.value)
+                  }
                   placeholder="Thanks for supporting live music!"
                 />
+              </section>
+
+              <section className="accountCard">
+                <h2>Upcoming Gigs</h2>
+
+                {gigs.length === 0 ? (
+                  <p className="empty">No gigs added yet.</p>
+                ) : (
+                  gigs.map((gig) => (
+                    <div
+                      key={gig.id}
+                      style={{
+                        borderTop: "1px solid rgba(255,255,255,0.18)",
+                        paddingTop: 14,
+                        marginTop: 14
+                      }}
+                    >
+                      <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+                        {gig.venue_name || "Venue TBD"}
+                      </p>
+
+                      <p style={{ margin: "0 0 6px", color: "#ddd" }}>
+                        {formatGigDate(gig.gig_date)} •{" "}
+                        {formatGigTime(gig.start_time, gig.end_time)}
+                      </p>
+
+                      <p style={{ margin: "0 0 10px", color: "#bbb" }}>
+                        {gig.venue_address || "Address TBD"} •{" "}
+                        {gig.recurring_type || "One-Time"}
+                      </p>
+
+                      <button
+                        className="smallbtn"
+                        type="button"
+                        onClick={() => deleteGig(gig.id)}
+                      >
+                        Delete Gig
+                      </button>
+                    </div>
+                  ))
+                )}
+
+                <hr style={{ margin: "22px 0", borderColor: "#333" }} />
+
+                <h3>Add Gig</h3>
+
+                <label>Venue Name</label>
+                <input
+                  value={newGig.venue_name}
+                  onChange={(e) =>
+                    updateGigField("venue_name", e.target.value)
+                  }
+                  placeholder="Screwballs Sports Bar"
+                />
+
+                <label>Venue Address</label>
+                <input
+                  value={newGig.venue_address}
+                  onChange={(e) =>
+                    updateGigField("venue_address", e.target.value)
+                  }
+                  placeholder="King of Prussia, PA"
+                />
+
+                <label>Gig Date</label>
+                <input
+                  type="date"
+                  value={newGig.gig_date}
+                  onChange={(e) => updateGigField("gig_date", e.target.value)}
+                />
+
+                <label>Start Time</label>
+                <input
+                  type="time"
+                  value={newGig.start_time}
+                  onChange={(e) => updateGigField("start_time", e.target.value)}
+                />
+
+                <label>End Time</label>
+                <input
+                  type="time"
+                  value={newGig.end_time}
+                  onChange={(e) => updateGigField("end_time", e.target.value)}
+                />
+
+                <label>Recurring Type</label>
+                <select
+                  value={newGig.recurring_type}
+                  onChange={(e) =>
+                    updateGigField("recurring_type", e.target.value)
+                  }
+                >
+                  <option value="One-Time">One-Time</option>
+                  <option value="Weekly">Weekly</option>
+                  <option value="Monthly">Monthly</option>
+                </select>
+
+                <button className="btn" type="button" onClick={addGig}>
+                  Save Gig
+                </button>
               </section>
 
               <section className="accountCard">
@@ -214,14 +434,17 @@ export default function AccountPage() {
               </section>
 
               <section className="accountCard">
-                <h2>Coming Next</h2>
-                <p>
-                  Phase 1B will add multiple gig dates and venues.
-                </p>
-                <p>
+                <h2>Song Library</h2>
+
+                <p className="empty">
                   Phase 1C will add full song library management.
                 </p>
-                <p>
+              </section>
+
+              <section className="accountCard">
+                <h2>Artwork</h2>
+
+                <p className="empty">
                   Artwork uploads will come after we connect Supabase storage.
                 </p>
               </section>
