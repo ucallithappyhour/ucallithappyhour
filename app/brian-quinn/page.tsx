@@ -140,8 +140,6 @@ export default function Home() {
           <div className="hero">
             <h1 className="title">Request tonight&apos;s songs.</h1>
 
-            <p className="details">{artist.genre}</p>
-
             <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
             <div
