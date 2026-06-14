@@ -5,7 +5,17 @@ import { useEffect, useState } from "react";
 import { artists } from "../../lib/artists";
 import { supabase } from "../../lib/supabase";
 
-const artist = artists.brianQuinn;
+const fallbackArtist = artists.brianQuinn;
+
+type ArtistProfile = {
+  artist_slug: string;
+  artist_name: string | null;
+  bio: string | null;
+  genres: string | null;
+  tip_type: string | null;
+  tip_link: string | null;
+  logo_url?: string | null;
+};
 
 type Gig = {
   id: number;
@@ -18,13 +28,45 @@ type Gig = {
 };
 
 export default function Home() {
+  const [artist, setArtist] = useState({
+    slug: fallbackArtist.slug,
+    name: fallbackArtist.name,
+    genre: fallbackArtist.genre,
+    bio: fallbackArtist.bio,
+    tipLink: fallbackArtist.tipLink,
+    tipType: "Venmo",
+    logo: fallbackArtist.logo
+  });
+
   const [gigs, setGigs] = useState<Gig[]>([]);
+
+  async function loadArtist() {
+    const { data, error } = await supabase
+      .from("artists")
+      .select("*")
+      .eq("artist_slug", fallbackArtist.slug)
+      .single();
+
+    if (!error && data) {
+      const profile = data as ArtistProfile;
+
+      setArtist({
+        slug: profile.artist_slug || fallbackArtist.slug,
+        name: profile.artist_name || fallbackArtist.name,
+        genre: profile.genres || fallbackArtist.genre,
+        bio: profile.bio || fallbackArtist.bio,
+        tipLink: profile.tip_link || fallbackArtist.tipLink,
+        tipType: profile.tip_type || "Venmo",
+        logo: profile.logo_url || fallbackArtist.logo
+      });
+    }
+  }
 
   async function loadGigs() {
     const { data, error } = await supabase
       .from("gigs")
       .select("*")
-      .eq("artist_slug", artist.slug)
+      .eq("artist_slug", fallbackArtist.slug)
       .order("gig_date", { ascending: true });
 
     if (!error) {
@@ -66,6 +108,7 @@ export default function Home() {
   }
 
   useEffect(() => {
+    loadArtist();
     loadGigs();
   }, []);
 
@@ -196,7 +239,9 @@ export default function Home() {
             <p>
               <strong>Enjoying the music?</strong>
             </p>
-            <span className="details">Tip {artist.name} directly on Venmo.</span>
+            <span className="details">
+              Tip {artist.name} directly on {artist.tipType}.
+            </span>
             <br />
             <br />
             <a
