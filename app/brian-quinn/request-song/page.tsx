@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-
+import { supabase } from "../../../lib/supabase";
 const songs = [
   { title: "Rotten Apple", artist: "Alice In Chains" },
   { title: "Nutshell", artist: "Alice In Chains" },

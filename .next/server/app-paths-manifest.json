@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/brian-quinn/page": "app/brian-quinn/page.js",
+  "/brian-quinn/request-song/page": "app/brian-quinn/request-song/page.js",
+  "/corey-and-friends/page": "app/corey-and-friends/page.js",
+  "/corey-and-friends/request-song/page": "app/corey-and-friends/request-song/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/request-song/page": "app/request-song/page.js"
+}
