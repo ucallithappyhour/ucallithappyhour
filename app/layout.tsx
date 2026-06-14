@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="siteLogoWrap">
           <img
             className="siteLogo"
-            src="/ucallit-logo.png"
+            src="/ucallit-logo.png.png"
             alt="U Call It Happy Hour"
           />
         </div>
