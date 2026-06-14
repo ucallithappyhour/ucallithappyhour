@@ -62,6 +62,7 @@ const emptyGig: NewGig = {
 };
 
 export default function AccountPage() {
+  const [selectedArtist, setSelectedArtist] = useState("brian-quinn");
   const [profile, setProfile] = useState<ArtistProfile>(emptyProfile);
   const [gigs, setGigs] = useState<Gig[]>([]);
   const [newGig, setNewGig] = useState<NewGig>(emptyGig);
@@ -82,14 +83,21 @@ export default function AccountPage() {
   }
 
   async function loadProfile() {
+    setMessage("");
+
     const { data, error } = await supabase
       .from("artists")
       .select("*")
-      .eq("artist_slug", "default")
-      .single();
+      .eq("artist_slug", selectedArtist)
+      .maybeSingle();
 
     if (error) {
       setMessage("Could not load artist profile yet.");
+      return;
+    }
+
+    if (!data) {
+      setProfile(emptyProfile);
       return;
     }
 
@@ -112,7 +120,7 @@ export default function AccountPage() {
     const { data, error } = await supabase
       .from("gigs")
       .select("*")
-      .eq("artist_slug", "default")
+      .eq("artist_slug", selectedArtist)
       .order("gig_date", { ascending: true });
 
     if (error) {
@@ -130,7 +138,7 @@ export default function AccountPage() {
       .from("artists")
       .upsert(
         {
-          artist_slug: "brian-quinn",
+          artist_slug: selectedArtist,
           ...profile,
           updated_at: new Date().toISOString()
         },
@@ -154,7 +162,7 @@ export default function AccountPage() {
     setMessage("Saving gig...");
 
     const { error } = await supabase.from("gigs").insert({
-      artist_slug: "brian-quinn",
+      artist_slug: selectedArtist,
       venue_name: newGig.venue_name,
       venue_address: newGig.venue_address,
       gig_date: newGig.gig_date || null,
@@ -210,7 +218,8 @@ export default function AccountPage() {
   useEffect(() => {
     loadProfile();
     loadGigs();
-  }, []);
+    setNewGig(emptyGig);
+  }, [selectedArtist]);
 
   return (
     <main className="page">
@@ -230,6 +239,19 @@ export default function AccountPage() {
                 Back to Dashboard
               </Link>
             </div>
+
+            <section className="accountCard" style={{ marginBottom: 20 }}>
+              <h2>Editing Artist</h2>
+
+              <label>Select Artist</label>
+              <select
+                value={selectedArtist}
+                onChange={(e) => setSelectedArtist(e.target.value)}
+              >
+                <option value="brian-quinn">Brian Quinn</option>
+                <option value="corey-and-friends">Corey &amp; Friends</option>
+              </select>
+            </section>
 
             {message && <div className="message">{message}</div>}
 
