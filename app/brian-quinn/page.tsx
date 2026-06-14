@@ -21,7 +21,7 @@ export default function Home() {
     const { data, error } = await supabase
       .from("gigs")
       .select("*")
-      .eq("artist_slug", "default")
+      .eq("artist_slug", "brian-quinn")
       .order("gig_date", { ascending: true });
 
     if (!error) {
