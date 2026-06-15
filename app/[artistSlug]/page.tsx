@@ -17,8 +17,6 @@ type ArtistProfile = {
   instagram: string | null;
   youtube: string | null;
   logo_url?: string | null;
-  hero_image_url?: string | null;
-  hero_style?: string | null;
 };
 
 type Gig = {
@@ -139,99 +137,29 @@ export default function DynamicArtistPage() {
 
   const artistName = artist.artist_name || "Artist";
   const logo = artist.logo_url || "";
-  const heroImage = artist.hero_image_url || "";
-  const heroStyle = artist.hero_style || "text";
-  const showTextHero = heroStyle === "text" || !heroImage;
-  const showBackgroundHero = heroStyle === "background" && heroImage;
-  const showSpotlightHero = heroStyle === "spotlight" && heroImage;
 
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
-      {showBackgroundHero && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `url(${heroImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            opacity: 0.22,
-            zIndex: 0,
-            pointerEvents: "none"
-          }}
-        />
-      )}
-
-      {showSpotlightHero && (
-        <>
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `url(${heroImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "blur(18px)",
-              transform: "scale(1.08)",
-              opacity: 0.18,
-              zIndex: 0,
-              pointerEvents: "none"
-            }}
-          />
-
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: 250,
-              transform: "translateX(-50%)",
-              width: "min(330px, 72vw)",
-              height: "min(500px, 70vh)"
-              borderRadius: 24,
-              overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.18)",
-              boxShadow: "0 25px 80px rgba(0,0,0,0.55)",
-              zIndex: 0,
-              pointerEvents: "none",
-              opacity: 0.9
-            }}
-          >
-            <img
-              src={heroImage}
-              alt={`${artistName} hero`}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block"
-              }}
-            />
-          </div>
-        </>
-      )}
-
-      {showTextHero && (
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: 245,
-            transform: "translateX(-50%)",
-            width: "100vw",
-            textAlign: "center",
-            fontSize: "clamp(70px, 13vw, 200px)",
-            fontWeight: 900,
-            letterSpacing: "-7px",
-            color: "rgba(255,255,255,0.07)",
-            zIndex: 0,
-            pointerEvents: "none",
-            whiteSpace: "nowrap",
-            lineHeight: 0.8
-          }}
-        >
-          {artistName.toUpperCase()}
-        </div>
-      )}
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: 245,
+          transform: "translateX(-50%)",
+          width: "100vw",
+          textAlign: "center",
+          fontSize: "clamp(70px, 13vw, 200px)",
+          fontWeight: 900,
+          letterSpacing: "-7px",
+          color: "rgba(255,255,255,0.07)",
+          zIndex: 0,
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
+          lineHeight: 0.8
+        }}
+      >
+        {artistName.toUpperCase()}
+      </div>
 
       <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
         <div className="container">
@@ -295,11 +223,14 @@ export default function DynamicArtistPage() {
               <p>
                 <strong>Enjoying the music?</strong>
               </p>
+
               <span className="details">
                 Tip {artistName} directly on {artist.tip_type || "their tip link"}.
               </span>
+
               <br />
               <br />
+
               <a
                 className="btn secondary"
                 href={artist.tip_link}
@@ -358,25 +289,45 @@ export default function DynamicArtistPage() {
 
               <div className="actions">
                 {artist.website && (
-                  <a className="btn secondary" href={artist.website} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn secondary"
+                    href={artist.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Website
                   </a>
                 )}
 
                 {artist.facebook && (
-                  <a className="btn secondary" href={artist.facebook} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn secondary"
+                    href={artist.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Facebook
                   </a>
                 )}
 
                 {artist.instagram && (
-                  <a className="btn secondary" href={artist.instagram} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn secondary"
+                    href={artist.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Instagram
                   </a>
                 )}
 
                 {artist.youtube && (
-                  <a className="btn secondary" href={artist.youtube} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn secondary"
+                    href={artist.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     YouTube
                   </a>
                 )}
