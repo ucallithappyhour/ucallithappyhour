@@ -897,20 +897,46 @@ export default function AccountPage() {
                   </section>
 
                   <section className="accountCard">
-                    <h2>Song Library</h2>
+  <h2>Song Library</h2>
 
-                    <p className="empty">
-                      Phase 1C will add full song library management.
-                    </p>
-                  </section>
+  <p className="empty">
+    Manage the songs your audience can request. Add, remove,
+    organize, and feature songs from your catalog.
+  </p>
 
-                  <section className="accountCard">
-                    <h2>Artwork</h2>
+  <button
+    className="btn secondary"
+    disabled
+    style={{
+      marginTop: 12,
+      opacity: 0.7,
+      cursor: "not-allowed"
+    }}
+  >
+    Manage Library (Coming Soon)
+  </button>
+</section>
 
-                    <p className="empty">
-                      Artwork uploads will come after we connect Supabase storage.
-                    </p>
-                  </section>
+<section className="accountCard">
+  <h2>Audience Insights</h2>
+
+  <p className="empty">
+    Track requests, future song interest, tips, and fan engagement
+    trends from your performances.
+  </p>
+
+  <button
+    className="btn secondary"
+    disabled
+    style={{
+      marginTop: 12,
+      opacity: 0.7,
+      cursor: "not-allowed"
+    }}
+  >
+    Insights Dashboard (Coming Soon)
+  </button>
+</section>
                 </div>
 
                 <div className="actions" style={{ marginTop: 28 }}>
