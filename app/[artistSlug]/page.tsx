@@ -17,6 +17,7 @@ type ArtistProfile = {
   instagram: string | null;
   youtube: string | null;
   logo_url?: string | null;
+  hero_image_url?: string | null;
 };
 
 type Gig = {
@@ -137,29 +138,45 @@ export default function DynamicArtistPage() {
 
   const artistName = artist.artist_name || "Artist";
   const logo = artist.logo_url || "";
+  const heroImage = artist.hero_image_url || "";
 
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: 245,
-          transform: "translateX(-50%)",
-          width: "100vw",
-          textAlign: "center",
-          fontSize: "clamp(70px, 13vw, 200px)",
-          fontWeight: 900,
-          letterSpacing: "-7px",
-          color: "rgba(255,255,255,0.07)",
-          zIndex: 0,
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-          lineHeight: 0.8
-        }}
-      >
-        {artistName.toUpperCase()}
-      </div>
+      {heroImage ? (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${heroImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.22,
+            zIndex: 0,
+            pointerEvents: "none"
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: 245,
+            transform: "translateX(-50%)",
+            width: "100vw",
+            textAlign: "center",
+            fontSize: "clamp(70px, 13vw, 200px)",
+            fontWeight: 900,
+            letterSpacing: "-7px",
+            color: "rgba(255,255,255,0.07)",
+            zIndex: 0,
+            pointerEvents: "none",
+            whiteSpace: "nowrap",
+            lineHeight: 0.8
+          }}
+        >
+          {artistName.toUpperCase()}
+        </div>
+      )}
 
       <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
         <div className="container">
