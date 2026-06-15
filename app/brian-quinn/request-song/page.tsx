@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 
 type Song = {
@@ -8,226 +8,10 @@ type Song = {
   artist: string;
 };
 
-const songs: Song[] = [
-  { title: "Rotten Apple", artist: "Alice In Chains" },
-  { title: "Nutshell", artist: "Alice In Chains" },
-  { title: "Got Me Wrong", artist: "Alice In Chains" },
-  { title: "Rain When I Die", artist: "Alice In Chains" },
-  { title: "Down In A Hole", artist: "Alice In Chains" },
-  { title: "Would?", artist: "Alice In Chains" },
-  { title: "Man In The Box", artist: "Alice In Chains" },
-  { title: "What The Hell Have I", artist: "Alice In Chains" },
-  { title: "Your Decision", artist: "Alice In Chains" },
-  { title: "Midnight Rider", artist: "Allman Bros. Band" },
-  { title: "Soulshine", artist: "Allman Bros. Band" },
-  { title: "No One To Run With", artist: "Allman Bros. Band" },
-  { title: "Statesboro Blues", artist: "Allman Bros. Band" },
-  { title: "Blue Sky", artist: "Allman Bros. Band" },
-  { title: "Ramblin' Man", artist: "Allman Bros. Band" },
-  { title: "Ain't Wastin' Time No More", artist: "Allman Bros. Band" },
-  { title: "One Way Out", artist: "Allman Bros. Band" },
-  { title: "Sister Golden Hair", artist: "America" },
-  { title: "The Dreamer", artist: "Amigo The Devil" },
-  { title: "House of the Rising Sun", artist: "The Animals" },
-  { title: "Silver, Blue & Gold", artist: "Bad Company" },
-  { title: "Seagull", artist: "Bad Company" },
-  { title: "Feel Like Makin' Love", artist: "Bad Company" },
-  { title: "Shooting Star", artist: "Bad Company" },
-  { title: "Up On Cripple Creek", artist: "The Band" },
-  { title: "The Weight", artist: "The Band" },
-  { title: "Ophelia", artist: "The Band" },
-  { title: "The Night They Drove Old Dixie Down", artist: "The Band" },
-  { title: "Atlantic City", artist: "The Band" },
-  { title: "When I Paint My Masterpiece", artist: "The Band/Dylan" },
-  { title: "A Little Help From My Friends", artist: "The Beatles" },
-  { title: "Something", artist: "The Beatles" },
-  { title: "Here Comes The Sun", artist: "The Beatles" },
-  { title: "Eleanor Rigby", artist: "The Beatles" },
-  { title: "Rocky Raccoon", artist: "The Beatles" },
-  { title: "Don't Let Me Down", artist: "The Beatles" },
-  { title: "Let It Be", artist: "The Beatles" },
-  { title: "Come Together", artist: "The Beatles" },
-  { title: "While My Guitar Gently Weeps", artist: "The Beatles" },
-  { title: "She Talks To Angels", artist: "Black Crowes" },
-  { title: "Seein' Things", artist: "Black Crowes" },
-  { title: "Sometimes Salvation", artist: "Black Crowes" },
-  { title: "Hard To Handle", artist: "Black Crowes" },
-  { title: "Remedy", artist: "Black Crowes" },
-  { title: "In This River", artist: "Black Label Society" },
-  { title: "Spoke In The Wheel", artist: "Black Label Society" },
-  { title: "War Pigs", artist: "Black Sabbath" },
-  { title: "Planet Caravan", artist: "Black Sabbath" },
-  { title: "Can't Find My Way Home", artist: "Blind Faith" },
-  { title: "Wanted Dead or Alive", artist: "Bon Jovi" },
-  { title: "One Toke Over The Line", artist: "Brewer & Shipley" },
-  { title: "Key To The Highway", artist: "Big Bill Broonzy" },
-  { title: "Doctor, My Eyes", artist: "Jackson Browne" },
-  { title: "For What It's Worth", artist: "Buffalo Springfield" },
-  { title: "I'll Feel A Whole Lot Better", artist: "Byrds" },
-  { title: "Turn, Turn, Turn", artist: "Byrds" },
-  { title: "It's All Over Now, Baby Blue", artist: "Byrds" },
-  { title: "After Midnight", artist: "J.J. Cale" },
-  { title: "Cocaine", artist: "J.J. Cale / Eric Clapton" },
-  { title: "Call Me The Breeze", artist: "J.J. Cale / Lynyrd Skynyrd" },
-  { title: "Folsom Prison Blues", artist: "Johnny Cash" },
-  { title: "Ring Of Fire", artist: "Johnny Cash" },
-  { title: "That Spirit Of Christmas", artist: "Ray Charles" },
-  { title: "I Got A Woman", artist: "Ray Charles" },
-  { title: "Badge", artist: "Eric Clapton" },
-  { title: "Let It Rain", artist: "Eric Clapton" },
-  { title: "Lay Down Sally", artist: "Eric Clapton" },
-  { title: "It's In The Way That You Use It", artist: "Eric Clapton" },
-  { title: "Should I Stay Or Should I Go", artist: "The Clash" },
-  { title: "The Scientist", artist: "Coldplay" },
-  { title: "Seasons", artist: "Chris Cornell" },
-  { title: "My Own Prison", artist: "Creed" },
-  { title: "Higher", artist: "Creed" },
-  { title: "Have You Ever Seen The Rain", artist: "Creedence" },
-  { title: "Bad Moon Rising", artist: "Creedence" },
-  { title: "Proud Mary", artist: "Creedence" },
-  { title: "Born On The Bayou", artist: "Creedence" },
-  { title: "Lodi", artist: "Creedence" },
-  { title: "Who'll Stop The Rain", artist: "Creedence" },
-  { title: "Bad Leroy Brown", artist: "Jim Croce" },
-  { title: "Ohio", artist: "CSN&Y" },
-  { title: "Edie", artist: "The Cult" },
-  { title: "Sweet Soul Sister", artist: "The Cult" },
-  { title: "Fire Woman", artist: "The Cult" },
-  { title: "Country Roads", artist: "John Denver" },
-  { title: "Enjoy The Silence", artist: "Depeche Mode" },
-  { title: "Layla", artist: "Derek & The Dominos" },
-  { title: "Sultans Of Swing", artist: "Dire Straits" },
-  { title: "Jolene", artist: "Dolly Parton" },
-  { title: "China Grove", artist: "Doobie Bros." },
-  { title: "Blackwater", artist: "Doobie Bros." },
-  { title: "Listen To The Music", artist: "Doobie Bros." },
-  { title: "Long Train Runnin'", artist: "Doobie Bros." },
-  { title: "Tell All The People", artist: "The Doors" },
-  { title: "L.A. Woman", artist: "The Doors" },
-  { title: "Roadhouse Blues", artist: "The Doors" },
-  { title: "Peace Frog", artist: "The Doors" },
-  { title: "Hungry Like The Wolf", artist: "Duran Duran" },
-  { title: "Like A Rolling Stone", artist: "Bob Dylan" },
-  { title: "Shelter From The Storm", artist: "Bob Dylan" },
-  { title: "Girl From The North Country", artist: "Bob Dylan" },
-  { title: "All Along The Watchtower", artist: "Bob Dylan" },
-  { title: "The Times They Are A-Changin'", artist: "Bob Dylan" },
-  { title: "Forever Young", artist: "Bob Dylan" },
-  { title: "Blowin' In The Wind", artist: "Bob Dylan" },
-  { title: "I Shall Be Released", artist: "Bob Dylan" },
-  { title: "It Ain't Me Babe", artist: "Bob Dylan" },
-  { title: "Tangled Up In Blue", artist: "Bob Dylan" },
-  { title: "Knockin' On Heaven's Door", artist: "Bob Dylan" },
-  { title: "Take It Easy", artist: "Eagles" },
-  { title: "Hotel California", artist: "Eagles" },
-  { title: "Take It To The Limit", artist: "Eagles" },
-  { title: "Gold Dust Woman", artist: "Fleetwood Mac" },
-  { title: "Dreams", artist: "Fleetwood Mac" },
-  { title: "Six Days On The Road", artist: "Flying Burrito Bros." },
-  { title: "All Right Now", artist: "Free" },
-  { title: "Ride On A Pony", artist: "Free" },
-  { title: "Let's Get It On", artist: "Marvin Gaye" },
-  { title: "32-20 Blues", artist: "Gov't Mule" },
-  { title: "Ripple", artist: "Grateful Dead" },
-  { title: "Touch Of Grey", artist: "Grateful Dead" },
-  { title: "Patience", artist: "Guns N' Roses" },
-  { title: "Sweet Child O' Mine", artist: "Guns N' Roses" },
-  { title: "Used To Love Her", artist: "Guns N' Roses" },
-  { title: "Little Wing", artist: "Jimi Hendrix" },
-  { title: "Angel", artist: "Jimi Hendrix" },
-  { title: "The Wind Cries Mary", artist: "Jimi Hendrix" },
-  { title: "Boys Of Summer", artist: "Don Henley" },
-  { title: "That'll Be The Day", artist: "Buddy Holly" },
-  { title: "30 Days In The Hole", artist: "Humble Pie" },
-  { title: "Radioactive", artist: "Imagine Dragons" },
-  { title: "Dust My Blues", artist: "Elmore James" },
-  { title: "Good Hearted Woman", artist: "Waylon Jennings" },
-  { title: "Dukes Of Hazzard", artist: "Waylon Jennings" },
-  { title: "Locomotive Breath", artist: "Jethro Tull" },
-  { title: "Tiny Dancer", artist: "Elton John" },
-  { title: "Goin' Down", artist: "Freddie King" },
-  { title: "Hard Luck Woman", artist: "KISS" },
-  { title: "Cold Gin", artist: "KISS" },
-  { title: "Kashmir", artist: "Led Zeppelin" },
-  { title: "Tangerine", artist: "Led Zeppelin" },
-  { title: "You Shook Me", artist: "Led Zeppelin" },
-  { title: "Immigrant Song", artist: "Led Zeppelin" },
-  { title: "Thank You", artist: "Led Zeppelin" },
-  { title: "Hey, Hey What Can I Do", artist: "Led Zeppelin" },
-  { title: "Good Times, Bad Times", artist: "Led Zeppelin" },
-  { title: "Ramble On", artist: "Led Zeppelin" },
-  { title: "What Is And What Should Never Be", artist: "Led Zeppelin" },
-  { title: "Stand By Me", artist: "John Lennon" },
-  { title: "Imagine", artist: "John Lennon" },
-  { title: "Jealous Guy", artist: "John Lennon" },
-  { title: "Cold Turkey", artist: "John Lennon" },
-  { title: "Long Tall Sally", artist: "Little Richard" },
-  { title: "All I Can Do Is Write About It", artist: "Lynyrd Skynyrd" },
-  { title: "Tuesday's Gone", artist: "Lynyrd Skynyrd" },
-  { title: "Sweet Home Alabama", artist: "Lynyrd Skynyrd" },
-  { title: "Simple Man", artist: "Lynyrd Skynyrd" },
-  { title: "Ballad Of Curtis Lowe", artist: "Lynyrd Skynyrd" },
-  { title: "River Of Deceit", artist: "Mad Season" },
-  { title: "Can't You See", artist: "Marshall Tucker Band" },
-  { title: "Jet Airliner", artist: "Steve Miller Band" },
-  { title: "The Joker", artist: "Steve Miller" },
-  { title: "Take The Money and Run", artist: "Steve Miller Band" },
-  { title: "Chloe Dancer / Crown of Thorns", artist: "Mother Love Bone" },
-  { title: "Bone China", artist: "Mother Love Bone" },
-  { title: "Stargazer", artist: "Mother Love Bone" },
-  { title: "Mississippi Queen", artist: "Mountain" },
-  { title: "On The Road Again", artist: "Willie Nelson" },
-  { title: "Come As You Are", artist: "Nirvana" },
-  { title: "Wonderwall", artist: "Oasis" },
-  { title: "Don't Look Back In Anger", artist: "Oasis" },
-  { title: "Elderly Woman", artist: "Pearl Jam" },
-  { title: "Black", artist: "Pearl Jam" },
-  { title: "Garden", artist: "Pearl Jam" },
-  { title: "Alive", artist: "Pearl Jam" },
-  { title: "Learning To Fly", artist: "Tom Petty" },
-  { title: "I Won't Back Down", artist: "Tom Petty" },
-  { title: "Mary Jane's Last Dance", artist: "Tom Petty" },
-  { title: "Breakdown", artist: "Tom Petty" },
-  { title: "Yer So Bad", artist: "Tom Petty" },
-  { title: "Into The Great Wide Open", artist: "Tom Petty" },
-  { title: "You Got Lucky", artist: "Tom Petty" },
-  { title: "In The Midnight Hour", artist: "Wilson Pickett" },
-  { title: "Pigs On The Wing 1 & 2", artist: "Pink Floyd" },
-  { title: "Time", artist: "Pink Floyd" },
-  { title: "Fearless", artist: "Pink Floyd" },
-  { title: "Wish You Were Here", artist: "Pink Floyd" },
-  { title: "Learning To Fly", artist: "Pink Floyd" },
-  { title: "Mother", artist: "Pink Floyd" },
-  { title: "Comfortably Numb", artist: "Pink Floyd" },
-  { title: "Brain Damage / Eclipse", artist: "Pink Floyd" },
-  { title: "Ship Of Fools", artist: "Robert Plant" },
-  { title: "Never Been To Spain", artist: "Elvis Presley" },
-  { title: "That's Alright Mama", artist: "Elvis Presley" },
-  { title: "Whiter Shade Of Pale", artist: "Procol Harum" },
-  { title: "Amie", artist: "Pure Prairie League" },
-  { title: "Fat Bottomed Girls", artist: "Queen" },
-  { title: "It's Late", artist: "Queen" },
-  { title: "Crazy Little Thing Called Love", artist: "Queen" },
-  { title: "In The Fade", artist: "Queens Of The Stone Age" },
-  { title: "Creep", artist: "Radiohead" },
-  { title: "Karma Police", artist: "Radiohead" },
-  { title: "Hard To Handle", artist: "Otis Redding" },
-  { title: "East Bound & Down", artist: "Jerry Reed" },
-  { title: "Who's Loving You", artist: "Smokey Robinson" },
-  { title: "Angie", artist: "Rolling Stones" },
-  { title: "Jumpin' Jack Flash", artist: "Rolling Stones" },
-  { title: "Street Fighting Man", artist: "Rolling Stones" },
-  { title: "Gimme Shelter", artist: "Rolling Stones" },
-  { title: "Get Off My Cloud", artist: "Rolling Stones" },
-  { title: "Dead Flowers", artist: "Rolling Stones" },
-  { title: "Miss You", artist: "Rolling Stones" },
-  { title: "Honky Tonk Women", artist: "Rolling Stones" },
-  { title: "Emotional Rescue", artist: "Rolling Stones" },
-  { title: "Monkey Man", artist: "Rolling Stones" },
-];
-
 export default function RequestSongPage() {
   const [query, setQuery] = useState("");
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [songsLoading, setSongsLoading] = useState(true);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [mode, setMode] = useState<"tonight" | "future">("tonight");
   const [futureTitle, setFutureTitle] = useState("");
@@ -235,7 +19,35 @@ export default function RequestSongPage() {
   const [name, setName] = useState("");
   const [dedication, setDedication] = useState("");
   const [loading, setLoading] = useState(false);
-  const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(null);
+  const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(
+    null
+  );
+
+  useEffect(() => {
+    async function loadSongs() {
+      setSongsLoading(true);
+
+      const { data, error } = await supabase
+        .from("songs")
+        .select("title, artist")
+        .eq("artist_slug", "brian-quinn")
+        .eq("is_active", true)
+        .order("artist", { ascending: true })
+        .order("title", { ascending: true });
+
+      if (error) {
+        alert("Could not load songs: " + error.message);
+        setSongs([]);
+        setSongsLoading(false);
+        return;
+      }
+
+      setSongs(data || []);
+      setSongsLoading(false);
+    }
+
+    loadSongs();
+  }, []);
 
   const matches = useMemo(() => {
     const normalize = (text: string) =>
@@ -248,9 +60,10 @@ export default function RequestSongPage() {
     return songs.filter((song) =>
       normalize(`${song.title} ${song.artist}`).includes(q)
     );
-  }, [query]);
+  }, [query, songs]);
 
-  const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
+  const showFutureSuggestion =
+    query.trim().length > 0 && !songsLoading && matches.length === 0;
 
   function resetToCatalog() {
     setSelectedSong(null);
@@ -374,29 +187,44 @@ export default function RequestSongPage() {
         />
 
         <div>
-          {matches.map((song) => (
-            <button
-              key={`${song.title}-${song.artist}`}
-              onClick={() => openTonightRequest(song)}
+          {songsLoading ? (
+            <p>Loading songs...</p>
+          ) : matches.length === 0 && query.trim().length === 0 ? (
+            <div
               style={{
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                padding: 16,
-                marginBottom: 10,
-                fontSize: 17,
-                borderRadius: 10,
-                border: "1px solid #ddd",
-                background: "#f3f3f3",
-                color: "#000",
-                cursor: "pointer"
+                background: "#181818",
+                padding: 18,
+                borderRadius: 12,
+                border: "1px solid #333"
               }}
             >
-              <strong>{song.title}</strong>
-              <br />
-              <span>{song.artist}</span>
-            </button>
-          ))}
+              <p>No songs are currently loaded for this artist.</p>
+            </div>
+          ) : (
+            matches.map((song) => (
+              <button
+                key={`${song.title}-${song.artist}`}
+                onClick={() => openTonightRequest(song)}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  textAlign: "left",
+                  padding: 16,
+                  marginBottom: 10,
+                  fontSize: 17,
+                  borderRadius: 10,
+                  border: "1px solid #ddd",
+                  background: "#f3f3f3",
+                  color: "#000",
+                  cursor: "pointer"
+                }}
+              >
+                <strong>{song.title}</strong>
+                <br />
+                <span>{song.artist}</span>
+              </button>
+            ))
+          )}
 
           {showFutureSuggestion && (
             <div
