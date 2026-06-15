@@ -1,29 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "../lib/supabase";
 
-const artists = [
-  {
-    name: "Brian Quinn",
-    details: "Screwballs • Every Friday • 5–7 PM",
-    href: "/brian-quinn",
-    button: "Enter Brian's Page",
-    logo: "/brian-logo.jpg",
-    alt: "Brian Quinn Logo"
-  },
-  {
-    name: "Corey & Friends",
-    details: "Venue TBD • Day/Time TBD",
-    href: "/corey-and-friends",
-    button: "Enter Corey's Page",
-    logo: "/corey & friends-logo.jpg",
-    alt: "Corey & Friends Logo"
-  }
-];
+type Artist = {
+  artist_slug: string;
+  artist_name: string | null;
+  genres: string | null;
+  logo_url: string | null;
+};
+
+function fallbackLogo(slug: string) {
+  if (slug === "brian-quinn") return "/brian-logo.jpg";
+  if (slug === "corey-and-friends") return "/corey & friends-logo.jpg";
+  return "";
+}
+
+function artistButtonName(name: string) {
+  const firstName = name.split(" ")[0];
+  return `Enter ${firstName}'s Page`;
+}
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
+  async function loadArtists() {
+    setLoading(true);
+    setMessage("");
+
+    const { data, error } = await supabase
+      .from("artists")
+      .select("artist_slug, artist_name, genres, logo_url")
+      .order("artist_name", { ascending: true });
+
+    if (error) {
+      setMessage("Could not load artists right now.");
+      setArtists([]);
+      setLoading(false);
+      return;
+    }
+
+    setArtists(data || []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    loadArtists();
+  }, []);
 
   const filteredArtists = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -31,9 +58,11 @@ export default function Home() {
     if (!q) return artists;
 
     return artists.filter((artist) =>
-      artist.name.toLowerCase().includes(q)
+      `${artist.artist_name || ""} ${artist.genres || ""}`
+        .toLowerCase()
+        .includes(q)
     );
-  }, [query]);
+  }, [query, artists]);
 
   return (
     <main className="page">
@@ -63,7 +92,13 @@ export default function Home() {
                 }}
               />
 
-              {filteredArtists.length === 0 ? (
+              {message && <div className="message">{message}</div>}
+
+              {loading ? (
+                <div className="event-card">
+                  <p className="performer">Loading artists...</p>
+                </div>
+              ) : filteredArtists.length === 0 ? (
                 <div className="event-card">
                   <p className="performer">No artists found</p>
                   <div className="details">
@@ -71,49 +106,58 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                filteredArtists.map((artist) => (
-                  <div
-                    key={artist.name}
-                    className="event-card"
-                    style={{
-                      position: "relative",
-                      minHeight: 190,
-                      paddingRight: 230
-                    }}
-                  >
-                    <p className="performer">{artist.name}</p>
+                filteredArtists.map((artist) => {
+                  const name = artist.artist_name || "Unnamed Artist";
+                  const logo = artist.logo_url || fallbackLogo(artist.artist_slug);
 
-                    <div className="details">{artist.details}</div>
-
-                    <Link className="btn" href={artist.href}>
-                      {artist.button}
-                    </Link>
-
+                  return (
                     <div
+                      key={artist.artist_slug}
+                      className="event-card"
                       style={{
-                        position: "absolute",
-                        top: 24,
-                        right: 32,
-                        width: 150,
-                        height: 140,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
+                        position: "relative",
+                        minHeight: 190,
+                        paddingRight: 230
                       }}
                     >
-                      <img
-                        src={artist.logo}
-                        alt={artist.alt}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain",
-                          display: "block"
-                        }}
-                      />
+                      <p className="performer">{name}</p>
+
+                      <div className="details">
+                        {artist.genres || "Live music artist"}
+                      </div>
+
+                      <Link className="btn" href={`/${artist.artist_slug}`}>
+                        {artistButtonName(name)}
+                      </Link>
+
+                      {logo && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 24,
+                            right: 32,
+                            width: 150,
+                            height: 140,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}
+                        >
+                          <img
+                            src={logo}
+                            alt={`${name} Logo`}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                              display: "block"
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
@@ -143,6 +187,10 @@ export default function Home() {
               <div className="actions" style={{ marginTop: 18 }}>
                 <Link className="btn secondary" href="/account">
                   Artist Login
+                </Link>
+
+                <Link className="btn secondary" href="/registrations">
+                  Admin Registrations
                 </Link>
               </div>
             </div>
