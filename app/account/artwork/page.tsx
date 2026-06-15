@@ -7,26 +7,20 @@ type Artist = {
   artist_slug: string;
   artist_name: string | null;
   logo_url: string | null;
-  hero_image_url: string | null;
-  hero_style: string | null;
 };
-
-type UploadKind = "logo" | "hero";
 
 export default function ArtworkPage() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [artistSlug, setArtistSlug] = useState("brian-quinn");
   const [logoUrl, setLogoUrl] = useState("");
-  const [heroImageUrl, setHeroImageUrl] = useState("");
-  const [heroStyle, setHeroStyle] = useState("text");
   const [message, setMessage] = useState("");
-  const [uploading, setUploading] = useState<UploadKind | "">("");
-  const [dragging, setDragging] = useState<UploadKind | "">("");
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   async function loadArtists() {
     const { data, error } = await supabase
       .from("artists")
-      .select("artist_slug, artist_name, logo_url, hero_image_url, hero_style")
+      .select("artist_slug, artist_name, logo_url")
       .eq("is_active", true)
       .order("artist_name", { ascending: true });
 
@@ -45,8 +39,6 @@ export default function ArtworkPage() {
     if (selected) {
       setArtistSlug(selected.artist_slug);
       setLogoUrl(selected.logo_url || "");
-      setHeroImageUrl(selected.hero_image_url || "");
-      setHeroStyle(selected.hero_style || "text");
     }
   }
 
@@ -59,8 +51,6 @@ export default function ArtworkPage() {
 
     const selected = artists.find((artist) => artist.artist_slug === slug);
     setLogoUrl(selected?.logo_url || "");
-    setHeroImageUrl(selected?.hero_image_url || "");
-    setHeroStyle(selected?.hero_style || "text");
     setMessage("");
   }
 
@@ -68,9 +58,7 @@ export default function ArtworkPage() {
     const { error } = await supabase
       .from("artists")
       .update({
-        logo_url: logoUrl.trim() || null,
-        hero_image_url: heroImageUrl.trim() || null,
-        hero_style: heroStyle || "text"
+        logo_url: logoUrl.trim() || null
       })
       .eq("artist_slug", artistSlug);
 
@@ -83,7 +71,7 @@ export default function ArtworkPage() {
     loadArtists();
   }
 
-  async function uploadImage(file: File, kind: UploadKind) {
+  async function uploadLogo(file: File) {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -91,12 +79,11 @@ export default function ArtworkPage() {
       return;
     }
 
-    setUploading(kind);
+    setUploading(true);
     setMessage("");
 
     const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const fileName = kind === "logo" ? "logo" : "hero";
-    const filePath = `${artistSlug}/${fileName}.${fileExt}`;
+    const filePath = `${artistSlug}/logo.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from("artist-artwork")
@@ -106,8 +93,8 @@ export default function ArtworkPage() {
       });
 
     if (uploadError) {
-      setUploading("");
-      setMessage("Could not upload image: " + uploadError.message);
+      setUploading(false);
+      setMessage("Could not upload logo: " + uploadError.message);
       return;
     }
 
@@ -117,52 +104,37 @@ export default function ArtworkPage() {
 
     const publicUrl = data.publicUrl;
 
-    const updateData =
-      kind === "logo"
-        ? { logo_url: publicUrl }
-        : { hero_image_url: publicUrl };
-
-    if (kind === "logo") {
-      setLogoUrl(publicUrl);
-    } else {
-      setHeroImageUrl(publicUrl);
-    }
+    setLogoUrl(publicUrl);
 
     const { error: saveError } = await supabase
       .from("artists")
-      .update(updateData)
+      .update({
+        logo_url: publicUrl
+      })
       .eq("artist_slug", artistSlug);
 
-    setUploading("");
+    setUploading(false);
 
     if (saveError) {
-      setMessage("Image uploaded, but could not save URL: " + saveError.message);
+      setMessage("Logo uploaded, but could not save URL: " + saveError.message);
       return;
     }
 
-    setMessage(
-      kind === "logo"
-        ? "Logo uploaded and saved."
-        : "Hero image uploaded and saved."
-    );
-
+    setMessage("Logo uploaded and saved.");
     loadArtists();
   }
 
-  function handleFileSelect(
-    e: React.ChangeEvent<HTMLInputElement>,
-    kind: UploadKind
-  ) {
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) uploadImage(file, kind);
+    if (file) uploadLogo(file);
   }
 
-  function handleDrop(e: React.DragEvent<HTMLDivElement>, kind: UploadKind) {
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    setDragging("");
+    setDragging(false);
 
     const file = e.dataTransfer.files?.[0];
-    if (file) uploadImage(file, kind);
+    if (file) uploadLogo(file);
   }
 
   return (
@@ -173,7 +145,7 @@ export default function ArtworkPage() {
             <h1 className="title">Artwork</h1>
 
             <p className="tagline">
-              Manage the logo and hero image shown on artist pages.
+              Manage the logo shown on artist pages.
             </p>
 
             {message && <div className="message">{message}</div>}
@@ -203,43 +175,35 @@ export default function ArtworkPage() {
               <h2>Upload Logo</h2>
 
               <p className="details">
-                Drop an image here or choose a file. This updates the smaller
-                artist logo.
+                Drop an image here or choose a file. This updates the artist
+                logo automatically.
               </p>
 
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
-                  setDragging("logo");
+                  setDragging(true);
                 }}
-                onDragLeave={() => setDragging("")}
-                onDrop={(e) => handleDrop(e, "logo")}
+                onDragLeave={() => setDragging(false)}
+                onDrop={handleDrop}
                 style={{
-                  border:
-                    dragging === "logo"
-                      ? "2px solid #ffd166"
-                      : "2px dashed #555",
+                  border: dragging ? "2px solid #ffd166" : "2px dashed #555",
                   borderRadius: 14,
                   padding: 28,
                   textAlign: "center",
                   marginBottom: 18,
-                  background:
-                    dragging === "logo"
-                      ? "rgba(255, 209, 102, 0.12)"
-                      : "#111"
+                  background: dragging ? "rgba(255, 209, 102, 0.12)" : "#111"
                 }}
               >
                 <p style={{ marginBottom: 14 }}>
-                  {uploading === "logo"
-                    ? "Uploading logo..."
-                    : "Drag and drop logo here"}
+                  {uploading ? "Uploading logo..." : "Drag and drop logo here"}
                 </p>
 
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleFileSelect(e, "logo")}
-                  disabled={uploading !== ""}
+                  onChange={handleFileSelect}
+                  disabled={uploading}
                 />
               </div>
 
@@ -249,90 +213,6 @@ export default function ArtworkPage() {
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
                 placeholder="https://example.com/logo.jpg"
-                style={{
-                  width: "100%",
-                  padding: 14,
-                  borderRadius: 10,
-                  marginBottom: 18
-                }}
-              />
-            </div>
-
-            <div className="section">
-              <h2>Hero Style</h2>
-
-              <select
-                value={heroStyle}
-                onChange={(e) => setHeroStyle(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: 14,
-                  borderRadius: 10,
-                  marginBottom: 18
-                }}
-              >
-                <option value="text">Text Background</option>
-                <option value="background">Full Hero Image</option>
-                <option value="spotlight">Spotlight Portrait</option>
-              </select>
-
-              <p className="details">
-                Text Background uses the large faded artist name. Full Hero Image
-                uses the uploaded image across the page. Spotlight Portrait is
-                for vertical photos or headshots.
-              </p>
-            </div>
-
-            <div className="section">
-              <h2>Upload Hero Background</h2>
-
-              <p className="details">
-                Optional. If no hero image is uploaded, the artist page can keep
-                using the large faded artist-name background.
-              </p>
-
-              <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setDragging("hero");
-                }}
-                onDragLeave={() => setDragging("")}
-                onDrop={(e) => handleDrop(e, "hero")}
-                style={{
-                  border:
-                    dragging === "hero"
-                      ? "2px solid #ffd166"
-                      : "2px dashed #555",
-                  borderRadius: 14,
-                  padding: 28,
-                  textAlign: "center",
-                  marginBottom: 18,
-                  background:
-                    dragging === "hero"
-                      ? "rgba(255, 209, 102, 0.12)"
-                      : "#111"
-                }}
-              >
-                <p style={{ marginBottom: 14 }}>
-                  {uploading === "hero"
-                    ? "Uploading hero image..."
-                    : "Drag and drop hero image here"}
-                </p>
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileSelect(e, "hero")}
-                  disabled={uploading !== ""}
-                />
-              </div>
-
-              <h2>Hero Image URL</h2>
-
-              <input
-                value={heroImageUrl}
-                onChange={(e) => setHeroImageUrl(e.target.value)}
-                placeholder="https://example.com/hero.jpg"
                 style={{
                   width: "100%",
                   padding: 14,
@@ -365,31 +245,6 @@ export default function ArtworkPage() {
                 />
               ) : (
                 <p className="empty">No logo set yet.</p>
-              )}
-            </div>
-
-            <div className="section">
-              <h2>Hero Preview</h2>
-
-              {heroImageUrl ? (
-                <img
-                  src={heroImageUrl}
-                  alt="Hero image preview"
-                  style={{
-                    width: "100%",
-                    maxHeight: 260,
-                    objectFit:
-                      heroStyle === "spotlight" ? "contain" : "cover",
-                    background: "#111",
-                    border: "1px solid #333",
-                    borderRadius: 12
-                  }}
-                />
-              ) : (
-                <p className="empty">
-                  No hero image set. The artist page can use the faded name
-                  background.
-                </p>
               )}
             </div>
           </div>
