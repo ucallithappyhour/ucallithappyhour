@@ -21,7 +21,7 @@ type Gig = {
 
 function fallbackLogo(slug: string) {
   if (slug === "brian-quinn") return "/brian-logo.jpg";
-  if (slug === "corey-and-friends") return "/corey & friends-logo.jpg";
+  if (slug === "corey-and-friends") return "/corey-friends-logo.jpg";
   return "";
 }
 
