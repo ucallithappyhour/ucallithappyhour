@@ -183,17 +183,17 @@ export default function DynamicArtistPage() {
             style={{
               position: "absolute",
               left: "50%",
-              top: 145,
+              top: 250,
               transform: "translateX(-50%)",
               width: "min(330px, 72vw)",
-              height: "min(420px, 62vh)",
+              height: "min(500px, 70vh)"
               borderRadius: 24,
               overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.18)",
               boxShadow: "0 25px 80px rgba(0,0,0,0.55)",
               zIndex: 0,
               pointerEvents: "none",
-              opacity: 0.72
+              opacity: 0.9
             }}
           >
             <img
