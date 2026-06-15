@@ -176,29 +176,32 @@ export default function Home() {
                 Request a Song
               </Link>
 
-              <div
-                style={{
-                  position: "absolute",
-                  top: 28,
-                  right: 36,
-                  width: 190,
-                  height: 170,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-              >
-                <img
-                  src={artist.logo}
-                  alt={`${artist.name} Logo`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    display: "block"
-                  }}
-                />
-              </div>
+              {artist.logo && (
+  <div
+    style={{
+      position: "absolute",
+      top: 28,
+      right: 36,
+      width: 190,
+      height: 170,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 2
+    }}
+  >
+    <img
+      src="/corey-friends-logo.jpg"
+      alt={`${artist.name} Logo`}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "contain",
+        display: "block"
+      }}
+    />
+  </div>
+)}
             </div>
           </div>
 
