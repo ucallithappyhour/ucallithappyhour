@@ -18,6 +18,7 @@ type ArtistProfile = {
   youtube: string | null;
   logo_url?: string | null;
   hero_image_url?: string | null;
+  hero_style?: string | null;
 };
 
 type Gig = {
@@ -139,10 +140,14 @@ export default function DynamicArtistPage() {
   const artistName = artist.artist_name || "Artist";
   const logo = artist.logo_url || "";
   const heroImage = artist.hero_image_url || "";
+  const heroStyle = artist.hero_style || "text";
+  const showTextHero = heroStyle === "text" || !heroImage;
+  const showBackgroundHero = heroStyle === "background" && heroImage;
+  const showSpotlightHero = heroStyle === "spotlight" && heroImage;
 
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
-      {heroImage ? (
+      {showBackgroundHero && (
         <div
           style={{
             position: "absolute",
@@ -155,7 +160,57 @@ export default function DynamicArtistPage() {
             pointerEvents: "none"
           }}
         />
-      ) : (
+      )}
+
+      {showSpotlightHero && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url(${heroImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(18px)",
+              transform: "scale(1.08)",
+              opacity: 0.18,
+              zIndex: 0,
+              pointerEvents: "none"
+            }}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: 145,
+              transform: "translateX(-50%)",
+              width: "min(330px, 72vw)",
+              height: "min(420px, 62vh)",
+              borderRadius: 24,
+              overflow: "hidden",
+              border: "1px solid rgba(255,255,255,0.18)",
+              boxShadow: "0 25px 80px rgba(0,0,0,0.55)",
+              zIndex: 0,
+              pointerEvents: "none",
+              opacity: 0.72
+            }}
+          >
+            <img
+              src={heroImage}
+              alt={`${artistName} hero`}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block"
+              }}
+            />
+          </div>
+        </>
+      )}
+
+      {showTextHero && (
         <div
           style={{
             position: "absolute",
