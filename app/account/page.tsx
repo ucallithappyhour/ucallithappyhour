@@ -84,6 +84,7 @@ export default function AccountPage() {
   const [authMode, setAuthMode] = useState<"login" | "create">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
@@ -123,9 +124,7 @@ export default function AccountPage() {
   function updateNewArtistField(field: keyof NewArtist, value: string) {
     setNewArtist((current) => ({
       ...current,
-      [field]: field === "artist_name" && !current.artist_slug
-        ? value
-        : value
+      [field]: value
     }));
   }
 
@@ -163,6 +162,26 @@ export default function AccountPage() {
     }
 
     window.location.reload();
+  }
+
+  async function handleForgotPassword() {
+    setMessage("");
+
+    if (!email) {
+      setMessage("Enter your email address first, then click Forgot Password.");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/account`
+    });
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    setMessage("Password reset email sent. Check your inbox.");
   }
 
   async function handleLogout() {
@@ -505,6 +524,22 @@ export default function AccountPage() {
                 <button className="btn" type="button" onClick={handleAuth}>
                   {authMode === "login" ? "Log In" : "Create Account"}
                 </button>
+
+                {authMode === "login" && (
+                  <button
+                    className="smallbtn"
+                    type="button"
+                    style={{
+                      marginTop: 14,
+                      background: "transparent",
+                      color: "#fff",
+                      textDecoration: "underline"
+                    }}
+                    onClick={handleForgotPassword}
+                  >
+                    Forgot Password?
+                  </button>
+                )}
 
                 <button
                   className="smallbtn"
