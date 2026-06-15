@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { artists } from "../../lib/artists";
 import { supabase } from "../../lib/supabase";
 
-const fallbackArtist = artists.coryFriends;
+const fallbackArtist = artists.coreyFriends;
 
 type ArtistProfile = {
   artist_slug: string;
@@ -125,15 +125,34 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="page">
-      <div className="overlay">
+    <main className="page" style={{ position: "relative", overflow: "hidden" }}>
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: 245,
+          transform: "translateX(-50%)",
+          width: "100vw",
+          textAlign: "center",
+          fontSize: "clamp(70px, 13vw, 200px)",
+          fontWeight: 900,
+          letterSpacing: "-7px",
+          color: "rgba(255,255,255,0.07)",
+          zIndex: 0,
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
+          lineHeight: 0.8
+        }}
+      >
+        {artist.name.toUpperCase()}
+      </div>
+
+      <div className="overlay" style={{ position: "relative", zIndex: 1 }}>
         <div className="container">
           <div className="hero">
-            <h1 className="title">{artist.name}</h1>
+            <h1 className="title">Request tonight&apos;s songs.</h1>
 
-            <p className="tagline">
-              Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
-            </p>
+            <p className="tagline">Influence tomorrow&apos;s setlist.</p>
 
             <div
               className="event-card"
@@ -150,7 +169,7 @@ export default function Home() {
                   ? `${gigs[0].venue_name || "Venue TBD"} • ${formatGigDate(
                       gigs[0].gig_date
                     )} • ${formatGigTime(gigs[0].start_time, gigs[0].end_time)}`
-                  : "Venue TBD • Day/time TBD"}
+                  : "Upcoming gigs coming soon"}
               </div>
 
               <Link className="btn" href={`/${artist.slug}/request-song`}>
@@ -187,26 +206,19 @@ export default function Home() {
             <p>
               <strong>Enjoying the music?</strong>
             </p>
-
-            {artist.tipLink ? (
-              <>
-                <span className="details">
-                  Tip {artist.name} directly on {artist.tipType}.
-                </span>
-                <br />
-                <br />
-                <a
-                  className="btn secondary"
-                  href={artist.tipLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Tip {artist.name}
-                </a>
-              </>
-            ) : (
-              <span className="details">Tip link coming soon.</span>
-            )}
+            <span className="details">
+              Tip {artist.name} directly on {artist.tipType}.
+            </span>
+            <br />
+            <br />
+            <a
+              className="btn secondary"
+              href={artist.tipLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Tip {artist.name}
+            </a>
           </div>
 
           <div className="section">
