@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { artists } from "../../lib/artists";
 import { supabase } from "../../lib/supabase";
 
-const fallbackArtist = artists.coreyFriends;
+const fallbackArtist = artists.brianQuinn;
 
 type ArtistProfile = {
   artist_slug: string;
