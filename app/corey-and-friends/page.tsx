@@ -190,16 +190,16 @@ export default function Home() {
       zIndex: 2
     }}
   >
-    <img
-      src="/corey-friends-logo.jpg"
-      alt={`${artist.name} Logo`}
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "contain",
-        display: "block"
-      }}
-    />
+   <img
+  src="/corey-friends-logo.jpg"
+  alt={`${artist.name} Logo`}
+  style={{
+    width: 160,
+    height: "auto",
+    display: "block",
+    objectFit: "contain"
+  }}
+/>
   </div>
 )}
             </div>
