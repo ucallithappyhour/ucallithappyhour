@@ -335,15 +335,11 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="actions" style={{ marginTop: 18 }}>
-                <Link className="btn secondary" href="/account">
-                  Artist Login
-                </Link>
-
-                <Link className="btn secondary" href="/registrations">
-                  Admin Registrations
-                </Link>
-              </div>
+<div className="actions" style={{ marginTop: 18 }}>
+  <Link className="btn secondary" href="/account">
+    Artist Login
+  </Link>
+</div>
             </div>
           </div>
         </div>
