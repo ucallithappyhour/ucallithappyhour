@@ -10,6 +10,15 @@ type Artist = {
   genres: string | null;
 };
 
+type Gig = {
+  artist_slug: string;
+  venue_name: string | null;
+  gig_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  recurring_type: string | null;
+};
+
 function fallbackLogo(slug: string) {
   if (slug === "brian-quinn") return "/brian-logo.jpg";
   if (slug === "corey-and-friends") return "/corey & friends-logo.jpg";
@@ -21,35 +30,105 @@ function artistButtonName(name: string) {
   return `Enter ${firstName}'s Page`;
 }
 
+function formatGigDate(dateValue: string | null) {
+  if (!dateValue) return "Date TBD";
+
+  const date = new Date(`${dateValue}T12:00:00`);
+
+  return date.toLocaleDateString([], {
+    weekday: "short",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+function formatTime(time: string | null) {
+  if (!time) return "";
+
+  const [hours, minutes] = time.split(":");
+  const hour = Number(hours);
+
+  return new Date(2000, 0, 1, hour, Number(minutes)).toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function formatGigTime(start: string | null, end: string | null) {
+  if (!start && !end) return "Time TBD";
+  if (start && !end) return formatTime(start);
+  if (!start && end) return formatTime(end);
+
+  return `${formatTime(start)} - ${formatTime(end)}`;
+}
+
+function gigDetails(gig: Gig | undefined) {
+  if (!gig) return "Next gig TBD";
+
+  const venue = gig.venue_name || "Venue TBD";
+  const date = formatGigDate(gig.gig_date);
+  const time = formatGigTime(gig.start_time, gig.end_time);
+
+  return `${venue} • ${date} • ${time}`;
+}
+
 export default function Home() {
   const [query, setQuery] = useState("");
   const [artists, setArtists] = useState<Artist[]>([]);
+  const [gigsByArtist, setGigsByArtist] = useState<Record<string, Gig>>({});
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  async function loadArtists() {
+  async function loadArtistsAndGigs() {
     setLoading(true);
     setMessage("");
 
-    const { data, error } = await supabase
+    const { data: artistData, error: artistError } = await supabase
       .from("artists")
       .select("artist_slug, artist_name, genres")
       .eq("is_active", true)
       .order("artist_name", { ascending: true });
 
-    if (error) {
+    if (artistError) {
       setMessage("Could not load artists right now.");
       setArtists([]);
       setLoading(false);
       return;
     }
 
-    setArtists(data || []);
+    const activeArtists = artistData || [];
+    setArtists(activeArtists);
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    const { data: gigData, error: gigError } = await supabase
+      .from("gigs")
+      .select("artist_slug, venue_name, gig_date, start_time, end_time, recurring_type")
+      .gte("gig_date", today)
+      .order("gig_date", { ascending: true })
+      .order("start_time", { ascending: true });
+
+    if (gigError) {
+      setMessage("Artists loaded, but upcoming gigs could not be loaded.");
+      setGigsByArtist({});
+      setLoading(false);
+      return;
+    }
+
+    const nextGigs: Record<string, Gig> = {};
+
+    (gigData || []).forEach((gig) => {
+      if (!nextGigs[gig.artist_slug]) {
+        nextGigs[gig.artist_slug] = gig;
+      }
+    });
+
+    setGigsByArtist(nextGigs);
     setLoading(false);
   }
 
   useEffect(() => {
-    loadArtists();
+    loadArtistsAndGigs();
   }, []);
 
   const filteredArtists = useMemo(() => {
@@ -109,6 +188,7 @@ export default function Home() {
                 filteredArtists.map((artist) => {
                   const name = artist.artist_name || "Unnamed Artist";
                   const logo = fallbackLogo(artist.artist_slug);
+                  const nextGig = gigsByArtist[artist.artist_slug];
 
                   return (
                     <div
@@ -123,8 +203,14 @@ export default function Home() {
                       <p className="performer">{name}</p>
 
                       <div className="details">
-                        {artist.genres || "Live music artist"}
+                        {gigDetails(nextGig)}
                       </div>
+
+                      {artist.genres && (
+                        <p style={{ marginTop: 10, opacity: 0.8 }}>
+                          {artist.genres}
+                        </p>
+                      )}
 
                       <Link className="btn" href={`/${artist.artist_slug}`}>
                         {artistButtonName(name)}
