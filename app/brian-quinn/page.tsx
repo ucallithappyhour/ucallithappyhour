@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { artists } from "../../lib/artists";
 import { supabase } from "../../lib/supabase";
 
-const fallbackArtist = artists.brianQuinn;
+const fallbackArtist = artists.coreyFriends;
 
 type ArtistProfile = {
   artist_slug: string;
@@ -134,7 +134,7 @@ export default function Home() {
           transform: "translateX(-50%)",
           width: "100vw",
           textAlign: "center",
-          fontSize: "clamp(90px, 16vw, 240px)",
+          fontSize: "clamp(70px, 13vw, 200px)",
           fontWeight: 900,
           letterSpacing: "-7px",
           color: "rgba(255,255,255,0.07)",
