@@ -192,12 +192,12 @@ export default function Home() {
   >
    <img
   src="/corey-friends-logo.jpg"
-  alt={`${artist.name} Logo`}
+  alt="Corey & Friends Logo"
   style={{
-    width: 160,
-    height: "auto",
-    display: "block",
-    objectFit: "contain"
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    display: "block"
   }}
 />
   </div>
