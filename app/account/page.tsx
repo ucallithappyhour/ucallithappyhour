@@ -910,24 +910,15 @@ export default function AccountPage() {
 </section>
 
 <section className="accountCard">
-  <h2>Audience Insights</h2>
+  <h2>Artwork</h2>
 
   <p className="empty">
-    Track requests, future song interest, tips, and fan engagement
-    trends from your performances.
+    Manage the logo or image shown on the artist page.
   </p>
 
-  <button
-    className="btn secondary"
-    disabled
-    style={{
-      marginTop: 12,
-      opacity: 0.7,
-      cursor: "not-allowed"
-    }}
-  >
-    Insights Dashboard (Coming Soon)
-  </button>
+  <a className="btn secondary" href="/account/artwork" style={{ marginTop: 12 }}>
+    Manage Artwork
+  </a>
 </section>
                 </div>
 
