@@ -6,7 +6,6 @@ export default function Home() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            
             <h1 className="title">Choose Your Artist</h1>
 
             <p className="tagline">
@@ -108,10 +107,28 @@ export default function Home() {
             <div className="section">
               <h2>For Artists</h2>
 
-              <p>
-                Give your crowd a simple way to request songs,
-                influence future setlists, and support you directly.
-              </p>
+              <div className="event-card">
+                <p className="performer">Bring U Call It Happy Hour to Your Shows</p>
+
+                <div className="details">
+                  Personalized artist page • Request dashboard • QR starter kit • Tip integration
+                </div>
+
+                <p style={{ marginTop: 14 }}>
+                  Give your crowd a simple way to request songs, influence future
+                  setlists, and support you directly.
+                </p>
+
+                <Link className="btn" href="/register">
+                  Request Artist Setup - $99
+                </Link>
+              </div>
+
+              <div className="actions" style={{ marginTop: 18 }}>
+                <Link className="btn secondary" href="/account">
+                  Artist Login
+                </Link>
+              </div>
             </div>
           </div>
         </div>
