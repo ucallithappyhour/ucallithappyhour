@@ -267,6 +267,10 @@ export default function Home() {
                     >
                       <p className="performer">{name}</p>
 
+<p style={{ fontSize: 12, opacity: 0.7 }}>
+  {artist.artist_slug}
+</p>
+
                       <div className="details">
                         {gigDetails(nextGig)}
                       </div>
