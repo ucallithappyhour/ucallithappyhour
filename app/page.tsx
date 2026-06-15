@@ -34,6 +34,7 @@ export default function Home() {
     const { data, error } = await supabase
       .from("artists")
       .select("artist_slug, artist_name, genres")
+      .eq("is_active", true)
       .order("artist_name", { ascending: true });
 
     if (error) {
