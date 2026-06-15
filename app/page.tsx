@@ -72,10 +72,28 @@ function gigDetails(gig: Gig | undefined) {
   return `${venue} • ${date} • ${time}`;
 }
 
+function isToday(dateValue: string | null) {
+  if (!dateValue) return false;
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  return dateValue === today;
+}
+
+function todayGigDetails(gig: Gig | undefined) {
+  if (!gig) return "";
+
+  const venue = gig.venue_name || "Venue TBD";
+  const time = formatGigTime(gig.start_time, gig.end_time);
+
+  return `${venue} • ${time}`;
+}
+
 export default function Home() {
   const [query, setQuery] = useState("");
   const [artists, setArtists] = useState<Artist[]>([]);
   const [gigsByArtist, setGigsByArtist] = useState<Record<string, Gig>>({});
+  const [todayGig, setTodayGig] = useState<Gig | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -99,11 +117,13 @@ export default function Home() {
     const activeArtists = artistData || [];
     setArtists(activeArtists);
 
+    const activeArtistSlugs = activeArtists.map((artist) => artist.artist_slug);
     const today = new Date().toISOString().slice(0, 10);
 
     const { data: gigData, error: gigError } = await supabase
       .from("gigs")
       .select("artist_slug, venue_name, gig_date, start_time, end_time, recurring_type")
+      .in("artist_slug", activeArtistSlugs.length > 0 ? activeArtistSlugs : [""])
       .gte("gig_date", today)
       .order("gig_date", { ascending: true })
       .order("start_time", { ascending: true });
@@ -111,25 +131,42 @@ export default function Home() {
     if (gigError) {
       setMessage("Artists loaded, but upcoming gigs could not be loaded.");
       setGigsByArtist({});
+      setTodayGig(null);
       setLoading(false);
       return;
     }
 
     const nextGigs: Record<string, Gig> = {};
+    let firstTodayGig: Gig | null = null;
 
     (gigData || []).forEach((gig) => {
       if (!nextGigs[gig.artist_slug]) {
         nextGigs[gig.artist_slug] = gig;
       }
+
+      if (!firstTodayGig && isToday(gig.gig_date)) {
+        firstTodayGig = gig;
+      }
     });
 
     setGigsByArtist(nextGigs);
+    setTodayGig(firstTodayGig);
     setLoading(false);
   }
 
   useEffect(() => {
     loadArtistsAndGigs();
   }, []);
+
+  const artistBySlug = useMemo(() => {
+    const lookup: Record<string, Artist> = {};
+
+    artists.forEach((artist) => {
+      lookup[artist.artist_slug] = artist;
+    });
+
+    return lookup;
+  }, [artists]);
 
   const filteredArtists = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -143,11 +180,39 @@ export default function Home() {
     );
   }, [query, artists]);
 
+  const todayArtist = todayGig ? artistBySlug[todayGig.artist_slug] : null;
+  const todayArtistName = todayArtist?.artist_name || "Tonight's Artist";
+
   return (
     <main className="page">
       <div className="overlay">
         <div className="container">
           <div className="hero">
+            {todayGig && todayArtist && (
+              <div
+                className="event-card"
+                style={{
+                  marginBottom: 28,
+                  border: "1px solid rgba(255, 209, 102, 0.7)",
+                  boxShadow: "0 0 35px rgba(255, 209, 102, 0.12)"
+                }}
+              >
+                <div className="details" style={{ color: "#ffd166", fontWeight: 900 }}>
+                  Tonight&apos;s Live Music
+                </div>
+
+                <p className="performer">{todayArtistName}</p>
+
+                <div className="details">
+                  {todayGigDetails(todayGig)}
+                </div>
+
+                <Link className="btn" href={`/${todayArtist.artist_slug}`}>
+                  Request Songs Now
+                </Link>
+              </div>
+            )}
+
             <h1 className="title">Choose Your Artist</h1>
 
             <p className="tagline">
