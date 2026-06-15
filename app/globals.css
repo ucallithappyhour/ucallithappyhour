@@ -84,3 +84,29 @@
   }
 }
 
+@media (max-width: 600px) {
+  .event-card {
+    padding-right: 20px !important;
+  }
+
+  .event-card > div[style*="position: absolute"] {
+    position: static !important;
+    width: 150px !important;
+    height: auto !important;
+    margin: 18px auto 0 !important;
+  }
+
+  .event-card img {
+    max-width: 150px;
+    max-height: 130px;
+  }
+
+  .performer {
+    font-size: 26px;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
