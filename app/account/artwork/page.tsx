@@ -8,6 +8,7 @@ type Artist = {
   artist_name: string | null;
   logo_url: string | null;
   hero_image_url: string | null;
+  hero_style: string | null;
 };
 
 type UploadKind = "logo" | "hero";
@@ -17,6 +18,7 @@ export default function ArtworkPage() {
   const [artistSlug, setArtistSlug] = useState("brian-quinn");
   const [logoUrl, setLogoUrl] = useState("");
   const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [heroStyle, setHeroStyle] = useState("text");
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState<UploadKind | "">("");
   const [dragging, setDragging] = useState<UploadKind | "">("");
@@ -24,7 +26,7 @@ export default function ArtworkPage() {
   async function loadArtists() {
     const { data, error } = await supabase
       .from("artists")
-      .select("artist_slug, artist_name, logo_url, hero_image_url")
+      .select("artist_slug, artist_name, logo_url, hero_image_url, hero_style")
       .eq("is_active", true)
       .order("artist_name", { ascending: true });
 
@@ -44,6 +46,7 @@ export default function ArtworkPage() {
       setArtistSlug(selected.artist_slug);
       setLogoUrl(selected.logo_url || "");
       setHeroImageUrl(selected.hero_image_url || "");
+      setHeroStyle(selected.hero_style || "text");
     }
   }
 
@@ -57,6 +60,7 @@ export default function ArtworkPage() {
     const selected = artists.find((artist) => artist.artist_slug === slug);
     setLogoUrl(selected?.logo_url || "");
     setHeroImageUrl(selected?.hero_image_url || "");
+    setHeroStyle(selected?.hero_style || "text");
     setMessage("");
   }
 
@@ -65,7 +69,8 @@ export default function ArtworkPage() {
       .from("artists")
       .update({
         logo_url: logoUrl.trim() || null,
-        hero_image_url: heroImageUrl.trim() || null
+        hero_image_url: heroImageUrl.trim() || null,
+        hero_style: heroStyle || "text"
       })
       .eq("artist_slug", artistSlug);
 
@@ -254,10 +259,35 @@ export default function ArtworkPage() {
             </div>
 
             <div className="section">
+              <h2>Hero Style</h2>
+
+              <select
+                value={heroStyle}
+                onChange={(e) => setHeroStyle(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: 14,
+                  borderRadius: 10,
+                  marginBottom: 18
+                }}
+              >
+                <option value="text">Text Background</option>
+                <option value="background">Full Hero Image</option>
+                <option value="spotlight">Spotlight Portrait</option>
+              </select>
+
+              <p className="details">
+                Text Background uses the large faded artist name. Full Hero Image
+                uses the uploaded image across the page. Spotlight Portrait is
+                for vertical photos or headshots.
+              </p>
+            </div>
+
+            <div className="section">
               <h2>Upload Hero Background</h2>
 
               <p className="details">
-                Optional. If no hero image is uploaded, the artist page will keep
+                Optional. If no hero image is uploaded, the artist page can keep
                 using the large faded artist-name background.
               </p>
 
@@ -348,7 +378,8 @@ export default function ArtworkPage() {
                   style={{
                     width: "100%",
                     maxHeight: 260,
-                    objectFit: "cover",
+                    objectFit:
+                      heroStyle === "spotlight" ? "contain" : "cover",
                     background: "#111",
                     border: "1px solid #333",
                     borderRadius: 12
@@ -356,7 +387,7 @@ export default function ArtworkPage() {
                 />
               ) : (
                 <p className="empty">
-                  No hero image set. The artist page will use the faded name
+                  No hero image set. The artist page can use the faded name
                   background.
                 </p>
               )}
