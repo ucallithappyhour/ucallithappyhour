@@ -14,11 +14,11 @@ export const artists = {
     logo: "/brian-logo.jpg"
   },
 
-  coryFriends: {
-    name: "Cory & Friends",
+  coreyFriends: {
+    name: "Corey & Friends",
     slug: "corey-and-friends",
     genre: "Jam Rock • Classic Rock • 90s Alternative • Original Music",
-    bio: "Cory & Friends bring a high-energy live experience to every show, blending an eclectic mix of crowd-favorite covers with original music of their own. From jam-band grooves and classic rock staples to '90s favorites and unexpected deep cuts, no two nights are exactly alike.",
+    bio: "Corey & Friends bring a high-energy live experience to every show, blending an eclectic mix of crowd-favorite covers with original music of their own. From jam-band grooves and classic rock staples to '90s favorites and unexpected deep cuts, no two nights are exactly alike.",
     venue: "Venue TBD",
     schedule: "Day/time TBD",
     tipLink: "https://venmo.com/Clint-Gallagher",
