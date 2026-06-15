@@ -8,7 +8,6 @@ type Artist = {
   artist_slug: string;
   artist_name: string | null;
   genres: string | null;
-  logo_url: string | null;
 };
 
 function fallbackLogo(slug: string) {
@@ -34,7 +33,7 @@ export default function Home() {
 
     const { data, error } = await supabase
       .from("artists")
-      .select("artist_slug, artist_name, genres, logo_url")
+      .select("artist_slug, artist_name, genres")
       .order("artist_name", { ascending: true });
 
     if (error) {
@@ -108,7 +107,7 @@ export default function Home() {
               ) : (
                 filteredArtists.map((artist) => {
                   const name = artist.artist_name || "Unnamed Artist";
-                  const logo = artist.logo_url || fallbackLogo(artist.artist_slug);
+                  const logo = fallbackLogo(artist.artist_slug);
 
                   return (
                     <div
