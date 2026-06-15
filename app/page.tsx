@@ -10,6 +10,7 @@ type Artist = {
   genres: string | null;
   logo_url: string | null;
 };
+
 type Gig = {
   artist_slug: string;
   venue_name: string | null;
@@ -122,7 +123,9 @@ export default function Home() {
 
     const { data: gigData, error: gigError } = await supabase
       .from("gigs")
-      .select("artist_slug, venue_name, gig_date, start_time, end_time, recurring_type")
+      .select(
+        "artist_slug, venue_name, gig_date, start_time, end_time, recurring_type"
+      )
       .in("artist_slug", activeArtistSlugs.length > 0 ? activeArtistSlugs : [""])
       .gte("gig_date", today)
       .order("gig_date", { ascending: true })
@@ -197,15 +200,16 @@ export default function Home() {
                   boxShadow: "0 0 35px rgba(255, 209, 102, 0.12)"
                 }}
               >
-                <div className="details" style={{ color: "#ffd166", fontWeight: 900 }}>
+                <div
+                  className="details"
+                  style={{ color: "#ffd166", fontWeight: 900 }}
+                >
                   Tonight&apos;s Live Music
                 </div>
 
                 <p className="performer">{todayArtistName}</p>
 
-                <div className="details">
-                  {todayGigDetails(todayGig)}
-                </div>
+                <div className="details">{todayGigDetails(todayGig)}</div>
 
                 <Link className="btn" href={`/${todayArtist.artist_slug}`}>
                   Request Songs Now
@@ -267,13 +271,11 @@ export default function Home() {
                     >
                       <p className="performer">{name}</p>
 
-<p style={{ fontSize: 12, opacity: 0.7 }}>
-  {artist.artist_slug}
-</p>
+                      <p style={{ fontSize: 12, opacity: 0.7 }}>
+                        {artist.artist_slug}
+                      </p>
 
-                      <div className="details">
-                        {gigDetails(nextGig)}
-                      </div>
+                      <div className="details">{gigDetails(nextGig)}</div>
 
                       {artist.genres && (
                         <p style={{ marginTop: 10, opacity: 0.8 }}>
@@ -324,26 +326,79 @@ export default function Home() {
                   Bring U Call It Happy Hour to Your Shows
                 </p>
 
-                <div className="details">
+                <p
+                  style={{
+                    fontSize: "1.1rem",
+                    fontWeight: 800,
+                    marginTop: 12
+                  }}
+                >
+                  Turn your crowd into part of the show.
+                </p>
+
+                <p style={{ marginTop: 14, lineHeight: 1.7 }}>
+                  Fans request songs, leave tips, and shape future setlists — all
+                  from their phones. Gain insight into what your audience loves,
+                  create a more interactive experience for venues, and give fans a
+                  reason to come back.
+                </p>
+
+                <div
+                  style={{
+                    marginTop: 18,
+                    lineHeight: 1.9,
+                    fontSize: 14,
+                    fontWeight: 700
+                  }}
+                >
+                  <div>✓ Let fans request songs from their phones</div>
+                  <div>✓ Discover what your audience actually wants to hear</div>
+                  <div>✓ Capture future requests before they walk out the door</div>
+                  <div>✓ Increase tips with built-in Venmo or Cash App links</div>
+                  <div>
+                    ✓ Stand out with your own personalized artist page and QR code
+                  </div>
+                  <div>
+                    ✓ Give venues an interactive experience they&apos;ll remember
+                  </div>
+                </div>
+
+                <div className="details" style={{ marginTop: 18 }}>
                   Personalized artist page • Request dashboard • QR starter kit •
                   Tip integration
                 </div>
 
-                <p style={{ marginTop: 14 }}>
-                  Give your crowd a simple way to request songs, influence future
-                  setlists, and support you directly.
+                <p
+                  style={{
+                    marginTop: 18,
+                    fontStyle: "italic",
+                    opacity: 0.9
+                  }}
+                >
+                  Venues love artists who keep crowds engaged and customers
+                  staying longer.
+                </p>
+
+                <p
+                  style={{
+                    marginTop: 16,
+                    fontWeight: 900,
+                    fontSize: "1.05rem"
+                  }}
+                >
+                  One extra booking pays for itself.
                 </p>
 
                 <Link className="btn" href="/register">
-                  Request Artist Setup - $99
+                  Apply for Artist Setup
                 </Link>
               </div>
 
-<div className="actions" style={{ marginTop: 18 }}>
-  <Link className="btn secondary" href="/account">
-    Artist Login
-  </Link>
-</div>
+              <div className="actions" style={{ marginTop: 18 }}>
+                <Link className="btn secondary" href="/account">
+                  Artist Login
+                </Link>
+              </div>
             </div>
           </div>
         </div>
