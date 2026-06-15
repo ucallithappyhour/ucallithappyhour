@@ -8,8 +8,8 @@ type Artist = {
   artist_slug: string;
   artist_name: string | null;
   genres: string | null;
+  logo_url: string | null;
 };
-
 type Gig = {
   artist_slug: string;
   venue_name: string | null;
@@ -103,7 +103,7 @@ export default function Home() {
 
     const { data: artistData, error: artistError } = await supabase
       .from("artists")
-      .select("artist_slug, artist_name, genres")
+      .select("artist_slug, artist_name, genres, logo_url")
       .eq("is_active", true)
       .order("artist_name", { ascending: true });
 
@@ -252,7 +252,7 @@ export default function Home() {
               ) : (
                 filteredArtists.map((artist) => {
                   const name = artist.artist_name || "Unnamed Artist";
-                  const logo = fallbackLogo(artist.artist_slug);
+                  const logo = artist.logo_url || fallbackLogo(artist.artist_slug);
                   const nextGig = gigsByArtist[artist.artist_slug];
 
                   return (
