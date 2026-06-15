@@ -130,7 +130,7 @@ export default function RegisterPage() {
               />
 
               <button className="btn" type="button" onClick={submitRegistration} disabled={loading}>
-                {loading ? "Submitting..." : "Apply Now - $99 Setup"}
+                {loading ? "Submitting..." : "Request Artist Setup - $99"}
               </button>
 
               <div className="actions" style={{ marginTop: 20 }}>
