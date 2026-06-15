@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
+const ADMIN_EMAIL = "u.call.it.happy.hour@gmail.com";
+
 type ArtistOption = {
   artist_slug: string;
   artist_name: string;
@@ -43,6 +45,12 @@ type NewGig = {
   recurring_type: string;
 };
 
+type NewArtist = {
+  artist_name: string;
+  artist_slug: string;
+  owner_email: string;
+};
+
 const emptyProfile: ArtistProfile = {
   artist_name: "",
   bio: "",
@@ -66,6 +74,12 @@ const emptyGig: NewGig = {
   recurring_type: "One-Time"
 };
 
+const emptyArtist: NewArtist = {
+  artist_name: "",
+  artist_slug: "",
+  owner_email: ""
+};
+
 export default function AccountPage() {
   const [authMode, setAuthMode] = useState<"login" | "create">("login");
   const [email, setEmail] = useState("");
@@ -74,11 +88,23 @@ export default function AccountPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   const [artistOptions, setArtistOptions] = useState<ArtistOption[]>([]);
-  const [selectedArtist, setSelectedArtist] = useState("brian-quinn");
+  const [selectedArtist, setSelectedArtist] = useState("");
   const [profile, setProfile] = useState<ArtistProfile>(emptyProfile);
   const [gigs, setGigs] = useState<Gig[]>([]);
   const [newGig, setNewGig] = useState<NewGig>(emptyGig);
+  const [newArtist, setNewArtist] = useState<NewArtist>(emptyArtist);
   const [message, setMessage] = useState("");
+
+  const isAdmin =
+    user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+
+  function makeSlug(name: string) {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
 
   function updateField(field: keyof ArtistProfile, value: string) {
     setProfile((current) => ({
@@ -91,6 +117,15 @@ export default function AccountPage() {
     setNewGig((current) => ({
       ...current,
       [field]: value
+    }));
+  }
+
+  function updateNewArtistField(field: keyof NewArtist, value: string) {
+    setNewArtist((current) => ({
+      ...current,
+      [field]: field === "artist_name" && !current.artist_slug
+        ? value
+        : value
     }));
   }
 
@@ -136,28 +171,54 @@ export default function AccountPage() {
   }
 
   async function loadArtists() {
-    const { data, error } = await supabase
-      .from("artists")
-      .select("artist_slug, artist_name")
-      .order("artist_name", { ascending: true });
+    if (!user?.email) return;
 
-    if (error) {
-      setMessage("Could not load artist list yet.");
+    if (isAdmin) {
+      const { data, error } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name")
+        .order("artist_name", { ascending: true });
+
+      if (error) {
+        setMessage("Could not load artist list yet.");
+        return;
+      }
+
+      setArtistOptions(data || []);
+
+      if (data && data.length > 0 && !selectedArtist) {
+        setSelectedArtist(data[0].artist_slug);
+      }
+
       return;
     }
 
-    setArtistOptions(data || []);
+    const { data, error } = await supabase
+      .from("artists")
+      .select("artist_slug, artist_name")
+      .eq("owner_email", user.email)
+      .maybeSingle();
 
-    if (
-      data &&
-      data.length > 0 &&
-      !data.some((a) => a.artist_slug === selectedArtist)
-    ) {
-      setSelectedArtist(data[0].artist_slug);
+    if (error) {
+      setMessage("Could not load your artist account.");
+      return;
     }
+
+    if (!data) {
+      setSelectedArtist("");
+      setProfile(emptyProfile);
+      setGigs([]);
+      setMessage("No artist profile has been assigned to this email address yet.");
+      return;
+    }
+
+    setArtistOptions([data]);
+    setSelectedArtist(data.artist_slug);
   }
 
   async function loadProfile() {
+    if (!selectedArtist) return;
+
     setMessage("");
 
     const { data, error } = await supabase
@@ -192,6 +253,8 @@ export default function AccountPage() {
   }
 
   async function loadGigs() {
+    if (!selectedArtist) return;
+
     const { data, error } = await supabase
       .from("gigs")
       .select("*")
@@ -207,6 +270,8 @@ export default function AccountPage() {
   }
 
   async function saveProfile() {
+    if (!selectedArtist) return;
+
     setMessage("Saving...");
 
     const { error } = await supabase.from("artists").upsert(
@@ -228,6 +293,8 @@ export default function AccountPage() {
   }
 
   async function addGig() {
+    if (!selectedArtist) return;
+
     if (!newGig.venue_name.trim()) {
       setMessage("Add a venue name before saving the gig.");
       return;
@@ -267,6 +334,51 @@ export default function AccountPage() {
 
     setMessage("Gig deleted.");
     loadGigs();
+  }
+
+  async function addArtist() {
+    if (!isAdmin) return;
+
+    const artistName = newArtist.artist_name.trim();
+    const artistSlug = newArtist.artist_slug.trim() || makeSlug(artistName);
+    const ownerEmail = newArtist.owner_email.trim();
+
+    if (!artistName || !artistSlug || !ownerEmail) {
+      setMessage("Artist name, slug, and owner email are required.");
+      return;
+    }
+
+    setMessage("Creating artist...");
+
+    const { error } = await supabase.from("artists").upsert(
+      {
+        artist_slug: artistSlug,
+        artist_name: artistName,
+        owner_email: ownerEmail,
+        bio: "",
+        genres: "",
+        tip_type: "",
+        tip_link: "",
+        tip_button_text: "Tip Me",
+        tip_thank_you: "Thanks for supporting live music!",
+        facebook: "",
+        instagram: "",
+        youtube: "",
+        website: "",
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: "artist_slug" }
+    );
+
+    if (error) {
+      setMessage("Could not create artist. Check Supabase permissions.");
+      return;
+    }
+
+    setNewArtist(emptyArtist);
+    setSelectedArtist(artistSlug);
+    setMessage("Artist created successfully.");
+    loadArtists();
   }
 
   function formatGigDate(dateValue: string | null) {
@@ -323,18 +435,18 @@ export default function AccountPage() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user?.email) {
       loadArtists();
     }
   }, [user]);
 
   useEffect(() => {
-    if (user) {
+    if (selectedArtist) {
       loadProfile();
       loadGigs();
       setNewGig(emptyGig);
     }
-  }, [selectedArtist, user]);
+  }, [selectedArtist]);
 
   if (checkingAuth) {
     return (
@@ -365,7 +477,7 @@ export default function AccountPage() {
               </h1>
 
               <p className="tagline">
-                Log in to manage your artist profile, gigs, tips, and links.
+                Manage your gigs, update your profile, track requests, and grow your audience.
               </p>
 
               {message && <div className="message">{message}</div>}
@@ -397,7 +509,12 @@ export default function AccountPage() {
                 <button
                   className="smallbtn"
                   type="button"
-                  style={{ marginTop: 16 }}
+                  style={{
+                    marginTop: 16,
+                    background: "transparent",
+                    color: "#fff",
+                    textDecoration: "underline"
+                  }}
                   onClick={() => {
                     setAuthMode(authMode === "login" ? "create" : "login");
                     setMessage("");
@@ -415,6 +532,34 @@ export default function AccountPage() {
     );
   }
 
+  if (!selectedArtist && !isAdmin) {
+    return (
+      <main className="page">
+        <div className="overlay">
+          <div className="container">
+            <div className="hero">
+              <div className="brand">U Call It Happy Hour</div>
+
+              <h1 className="title">No Artist Assigned</h1>
+
+              <p className="tagline">
+                This email address has not been linked to an artist profile yet.
+              </p>
+
+              {message && <div className="message">{message}</div>}
+
+              <div className="actions">
+                <button className="btn secondary" type="button" onClick={handleLogout}>
+                  Log Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="page">
       <div className="overlay">
@@ -422,10 +567,14 @@ export default function AccountPage() {
           <div className="hero">
             <div className="brand">U Call It Happy Hour</div>
 
-            <h1 className="title">Set Up Your Artist Profile</h1>
+            <h1 className="title">
+              {isAdmin ? "Admin Artist Management" : "Set Up Your Artist Profile"}
+            </h1>
 
             <p className="tagline">
-              Manage your profile, gigs, tip link, and social links.
+              {isAdmin
+                ? "Manage artists, profiles, gigs, tip links, and social links."
+                : "Manage your profile, gigs, tip link, and social links."}
             </p>
 
             <div className="actions">
@@ -438,250 +587,308 @@ export default function AccountPage() {
               </button>
             </div>
 
-            <section className="accountCard" style={{ marginBottom: 20 }}>
-              <h2>Editing Artist</h2>
+            {isAdmin && (
+              <section className="accountCard" style={{ marginBottom: 20 }}>
+                <h2>Admin: Select Artist</h2>
 
-              <label>Select Artist</label>
-              <select
-                value={selectedArtist}
-                onChange={(e) => setSelectedArtist(e.target.value)}
-              >
-                {artistOptions.map((artist) => (
-                  <option key={artist.artist_slug} value={artist.artist_slug}>
-                    {artist.artist_name}
-                  </option>
-                ))}
-              </select>
-            </section>
+                <label>Select Artist</label>
+                <select
+                  value={selectedArtist}
+                  onChange={(e) => setSelectedArtist(e.target.value)}
+                >
+                  {artistOptions.map((artist) => (
+                    <option key={artist.artist_slug} value={artist.artist_slug}>
+                      {artist.artist_name}
+                    </option>
+                  ))}
+                </select>
+              </section>
+            )}
+
+            {!isAdmin && (
+              <section className="accountCard" style={{ marginBottom: 20 }}>
+                <h2>Editing Artist: {profile.artist_name || "Loading..."}</h2>
+
+                <p className="empty">
+                  This account is linked to your artist profile.
+                </p>
+              </section>
+            )}
+
+            {isAdmin && (
+              <section className="accountCard" style={{ marginBottom: 20 }}>
+                <h2>Admin: Add Artist Without Fee</h2>
+
+                <label>Artist Name</label>
+                <input
+                  value={newArtist.artist_name}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewArtist((current) => ({
+                      ...current,
+                      artist_name: value,
+                      artist_slug: current.artist_slug || makeSlug(value)
+                    }));
+                  }}
+                  placeholder="Artist name"
+                />
+
+                <label>Artist Slug</label>
+                <input
+                  value={newArtist.artist_slug}
+                  onChange={(e) =>
+                    updateNewArtistField("artist_slug", e.target.value)
+                  }
+                  placeholder="artist-name"
+                />
+
+                <label>Owner Email</label>
+                <input
+                  value={newArtist.owner_email}
+                  onChange={(e) =>
+                    updateNewArtistField("owner_email", e.target.value)
+                  }
+                  placeholder="artist@email.com"
+                />
+
+                <button className="btn" type="button" onClick={addArtist}>
+                  Create Artist
+                </button>
+              </section>
+            )}
 
             {message && <div className="message">{message}</div>}
 
-            <div className="accountGrid">
-              <section className="accountCard">
-                <h2>Profile</h2>
+            {selectedArtist && (
+              <>
+                <div className="accountGrid">
+                  <section className="accountCard">
+                    <h2>Profile</h2>
 
-                <label>Your Name</label>
-                <input
-                  value={profile.artist_name}
-                  onChange={(e) => updateField("artist_name", e.target.value)}
-                  placeholder="Your Name"
-                />
+                    <label>Your Name</label>
+                    <input
+                      value={profile.artist_name}
+                      onChange={(e) => updateField("artist_name", e.target.value)}
+                      placeholder="Your Name"
+                    />
 
-                <label>Short Bio</label>
-                <textarea
-                  value={profile.bio}
-                  onChange={(e) => updateField("bio", e.target.value)}
-                  placeholder="Tell fans about yourself..."
-                />
+                    <label>Short Bio</label>
+                    <textarea
+                      value={profile.bio}
+                      onChange={(e) => updateField("bio", e.target.value)}
+                      placeholder="Tell fans about yourself..."
+                    />
 
-                <label>Genre(s)</label>
-                <input
-                  value={profile.genres}
-                  onChange={(e) => updateField("genres", e.target.value)}
-                  placeholder="Rock, Country, Acoustic..."
-                />
-              </section>
+                    <label>Genre(s)</label>
+                    <input
+                      value={profile.genres}
+                      onChange={(e) => updateField("genres", e.target.value)}
+                      placeholder="Rock, Country, Acoustic..."
+                    />
+                  </section>
 
-              <section className="accountCard">
-                <h2>E-Pay / Tips</h2>
+                  <section className="accountCard">
+                    <h2>E-Pay / Tips</h2>
 
-                <label>Payment Type</label>
-                <select
-                  value={profile.tip_type}
-                  onChange={(e) => updateField("tip_type", e.target.value)}
-                >
-                  <option value="">Choose payment type</option>
-                  <option value="Venmo">Venmo</option>
-                  <option value="Cash App">Cash App</option>
-                  <option value="PayPal">PayPal</option>
-                  <option value="Zelle">Zelle</option>
-                  <option value="Other">Other</option>
-                </select>
-
-                <label>Handle or Link</label>
-                <input
-                  value={profile.tip_link}
-                  onChange={(e) => updateField("tip_link", e.target.value)}
-                  placeholder="Payment handle or link"
-                />
-
-                <label>Button Text</label>
-                <input
-                  value={profile.tip_button_text}
-                  onChange={(e) =>
-                    updateField("tip_button_text", e.target.value)
-                  }
-                  placeholder="Tip Me"
-                />
-
-                <label>Thank You Message</label>
-                <textarea
-                  value={profile.tip_thank_you}
-                  onChange={(e) =>
-                    updateField("tip_thank_you", e.target.value)
-                  }
-                  placeholder="Thanks for supporting live music!"
-                />
-              </section>
-
-              <section className="accountCard">
-                <h2>Upcoming Gigs</h2>
-
-                {gigs.length === 0 ? (
-                  <p className="empty">No gigs added yet.</p>
-                ) : (
-                  gigs.map((gig) => (
-                    <div
-                      key={gig.id}
-                      style={{
-                        borderTop: "1px solid rgba(255,255,255,0.18)",
-                        paddingTop: 14,
-                        marginTop: 14
-                      }}
+                    <label>Payment Type</label>
+                    <select
+                      value={profile.tip_type}
+                      onChange={(e) => updateField("tip_type", e.target.value)}
                     >
-                      <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
-                        {gig.venue_name || "Venue TBD"}
-                      </p>
+                      <option value="">Choose payment type</option>
+                      <option value="Venmo">Venmo</option>
+                      <option value="Cash App">Cash App</option>
+                      <option value="PayPal">PayPal</option>
+                      <option value="Zelle">Zelle</option>
+                      <option value="Other">Other</option>
+                    </select>
 
-                      <p style={{ margin: "0 0 6px", color: "#ddd" }}>
-                        {formatGigDate(gig.gig_date)} •{" "}
-                        {formatGigTime(gig.start_time, gig.end_time)}
-                      </p>
+                    <label>Handle or Link</label>
+                    <input
+                      value={profile.tip_link}
+                      onChange={(e) => updateField("tip_link", e.target.value)}
+                      placeholder="Payment handle or link"
+                    />
 
-                      <p style={{ margin: "0 0 10px", color: "#bbb" }}>
-                        {gig.venue_address || "Address TBD"} •{" "}
-                        {gig.recurring_type || "One-Time"}
-                      </p>
+                    <label>Button Text</label>
+                    <input
+                      value={profile.tip_button_text}
+                      onChange={(e) =>
+                        updateField("tip_button_text", e.target.value)
+                      }
+                      placeholder="Tip Me"
+                    />
 
-                      <button
-                        className="smallbtn"
-                        type="button"
-                        onClick={() => deleteGig(gig.id)}
-                      >
-                        Delete Gig
-                      </button>
-                    </div>
-                  ))
-                )}
+                    <label>Thank You Message</label>
+                    <textarea
+                      value={profile.tip_thank_you}
+                      onChange={(e) =>
+                        updateField("tip_thank_you", e.target.value)
+                      }
+                      placeholder="Thanks for supporting live music!"
+                    />
+                  </section>
 
-                <hr style={{ margin: "22px 0", borderColor: "#333" }} />
+                  <section className="accountCard">
+                    <h2>Upcoming Gigs</h2>
 
-                <h3>Add New Gig</h3>
+                    {gigs.length === 0 ? (
+                      <p className="empty">No gigs added yet.</p>
+                    ) : (
+                      gigs.map((gig) => (
+                        <div
+                          key={gig.id}
+                          style={{
+                            borderTop: "1px solid rgba(255,255,255,0.18)",
+                            paddingTop: 14,
+                            marginTop: 14
+                          }}
+                        >
+                          <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+                            {gig.venue_name || "Venue TBD"}
+                          </p>
 
-                <label>Venue Name</label>
-                <input
-                  value={newGig.venue_name}
-                  onChange={(e) =>
-                    updateGigField("venue_name", e.target.value)
-                  }
-                  placeholder="Enter venue name"
-                />
+                          <p style={{ margin: "0 0 6px", color: "#ddd" }}>
+                            {formatGigDate(gig.gig_date)} •{" "}
+                            {formatGigTime(gig.start_time, gig.end_time)}
+                          </p>
 
-                <label>Venue Address</label>
-                <input
-                  value={newGig.venue_address}
-                  onChange={(e) =>
-                    updateGigField("venue_address", e.target.value)
-                  }
-                  placeholder="Enter venue address"
-                />
+                          <p style={{ margin: "0 0 10px", color: "#bbb" }}>
+                            {gig.venue_address || "Address TBD"} •{" "}
+                            {gig.recurring_type || "One-Time"}
+                          </p>
 
-                <label>Gig Date</label>
-                <input
-                  type="date"
-                  value={newGig.gig_date}
-                  onChange={(e) => updateGigField("gig_date", e.target.value)}
-                />
+                          <button
+                            className="smallbtn"
+                            type="button"
+                            onClick={() => deleteGig(gig.id)}
+                          >
+                            Delete Gig
+                          </button>
+                        </div>
+                      ))
+                    )}
 
-                <label>Start Time</label>
-                <input
-                  type="time"
-                  value={newGig.start_time}
-                  onChange={(e) => updateGigField("start_time", e.target.value)}
-                />
+                    <hr style={{ margin: "22px 0", borderColor: "#333" }} />
 
-                <label>End Time</label>
-                <input
-                  type="time"
-                  value={newGig.end_time}
-                  onChange={(e) => updateGigField("end_time", e.target.value)}
-                />
+                    <h3>Add New Gig</h3>
 
-                <label>Recurring Type</label>
-                <select
-                  value={newGig.recurring_type}
-                  onChange={(e) =>
-                    updateGigField("recurring_type", e.target.value)
-                  }
-                >
-                  <option value="One-Time">One-Time</option>
-                  <option value="Weekly">Weekly</option>
-                  <option value="Monthly">Monthly</option>
-                </select>
+                    <label>Venue Name</label>
+                    <input
+                      value={newGig.venue_name}
+                      onChange={(e) =>
+                        updateGigField("venue_name", e.target.value)
+                      }
+                      placeholder="Enter venue name"
+                    />
 
-                <button className="btn" type="button" onClick={addGig}>
-                  Save Gig
-                </button>
-              </section>
+                    <label>Venue Address</label>
+                    <input
+                      value={newGig.venue_address}
+                      onChange={(e) =>
+                        updateGigField("venue_address", e.target.value)
+                      }
+                      placeholder="Enter venue address"
+                    />
 
-              <section className="accountCard">
-                <h2>Social Links</h2>
+                    <label>Gig Date</label>
+                    <input
+                      type="date"
+                      value={newGig.gig_date}
+                      onChange={(e) => updateGigField("gig_date", e.target.value)}
+                    />
 
-                <label>Facebook</label>
-                <input
-                  value={profile.facebook}
-                  onChange={(e) => updateField("facebook", e.target.value)}
-                  placeholder="Facebook URL"
-                />
+                    <label>Start Time</label>
+                    <input
+                      type="time"
+                      value={newGig.start_time}
+                      onChange={(e) => updateGigField("start_time", e.target.value)}
+                    />
 
-                <label>Instagram</label>
-                <input
-                  value={profile.instagram}
-                  onChange={(e) => updateField("instagram", e.target.value)}
-                  placeholder="Instagram URL"
-                />
+                    <label>End Time</label>
+                    <input
+                      type="time"
+                      value={newGig.end_time}
+                      onChange={(e) => updateGigField("end_time", e.target.value)}
+                    />
 
-                <label>YouTube</label>
-                <input
-                  value={profile.youtube}
-                  onChange={(e) => updateField("youtube", e.target.value)}
-                  placeholder="YouTube URL"
-                />
+                    <label>Recurring Type</label>
+                    <select
+                      value={newGig.recurring_type}
+                      onChange={(e) =>
+                        updateGigField("recurring_type", e.target.value)
+                      }
+                    >
+                      <option value="One-Time">One-Time</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                    </select>
 
-                <label>Website</label>
-                <input
-                  value={profile.website}
-                  onChange={(e) => updateField("website", e.target.value)}
-                  placeholder="Website URL"
-                />
-              </section>
+                    <button className="btn" type="button" onClick={addGig}>
+                      Save Gig
+                    </button>
+                  </section>
 
-              <section className="accountCard">
-                <h2>Song Library</h2>
+                  <section className="accountCard">
+                    <h2>Social Links</h2>
 
-                <p className="empty">
-                  Phase 1C will add full song library management.
-                </p>
-              </section>
+                    <label>Facebook</label>
+                    <input
+                      value={profile.facebook}
+                      onChange={(e) => updateField("facebook", e.target.value)}
+                      placeholder="Facebook URL"
+                    />
 
-              <section className="accountCard">
-                <h2>Artwork</h2>
+                    <label>Instagram</label>
+                    <input
+                      value={profile.instagram}
+                      onChange={(e) => updateField("instagram", e.target.value)}
+                      placeholder="Instagram URL"
+                    />
 
-                <p className="empty">
-                  Artwork uploads will come after we connect Supabase storage.
-                </p>
-              </section>
-            </div>
+                    <label>YouTube</label>
+                    <input
+                      value={profile.youtube}
+                      onChange={(e) => updateField("youtube", e.target.value)}
+                      placeholder="YouTube URL"
+                    />
 
-            <div className="actions" style={{ marginTop: 28 }}>
-              <button className="btn" type="button" onClick={saveProfile}>
-                Save Account Info
-              </button>
+                    <label>Website</label>
+                    <input
+                      value={profile.website}
+                      onChange={(e) => updateField("website", e.target.value)}
+                      placeholder="Website URL"
+                    />
+                  </section>
 
-              <Link className="btn secondary" href="/dashboard">
-                Cancel
-              </Link>
-            </div>
+                  <section className="accountCard">
+                    <h2>Song Library</h2>
+
+                    <p className="empty">
+                      Phase 1C will add full song library management.
+                    </p>
+                  </section>
+
+                  <section className="accountCard">
+                    <h2>Artwork</h2>
+
+                    <p className="empty">
+                      Artwork uploads will come after we connect Supabase storage.
+                    </p>
+                  </section>
+                </div>
+
+                <div className="actions" style={{ marginTop: 28 }}>
+                  <button className="btn" type="button" onClick={saveProfile}>
+                    Save Account Info
+                  </button>
+
+                  <Link className="btn secondary" href="/dashboard">
+                    Cancel
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
