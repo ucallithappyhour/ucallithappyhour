@@ -67,6 +67,12 @@ const emptyGig: NewGig = {
 };
 
 export default function AccountPage() {
+  const [authMode, setAuthMode] = useState<"login" | "create">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState<any>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
   const [artistOptions, setArtistOptions] = useState<ArtistOption[]>([]);
   const [selectedArtist, setSelectedArtist] = useState("brian-quinn");
   const [profile, setProfile] = useState<ArtistProfile>(emptyProfile);
@@ -88,6 +94,47 @@ export default function AccountPage() {
     }));
   }
 
+  async function handleAuth() {
+    setMessage("");
+
+    if (!email || !password) {
+      setMessage("Please enter your email and password.");
+      return;
+    }
+
+    if (authMode === "create") {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      setMessage("Account created. Check your email to confirm it, then log in.");
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    window.location.reload();
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    window.location.reload();
+  }
+
   async function loadArtists() {
     const { data, error } = await supabase
       .from("artists")
@@ -101,7 +148,11 @@ export default function AccountPage() {
 
     setArtistOptions(data || []);
 
-    if (data && data.length > 0 && !data.some((a) => a.artist_slug === selectedArtist)) {
+    if (
+      data &&
+      data.length > 0 &&
+      !data.some((a) => a.artist_slug === selectedArtist)
+    ) {
       setSelectedArtist(data[0].artist_slug);
     }
   }
@@ -158,16 +209,14 @@ export default function AccountPage() {
   async function saveProfile() {
     setMessage("Saving...");
 
-    const { error } = await supabase
-      .from("artists")
-      .upsert(
-        {
-          artist_slug: selectedArtist,
-          ...profile,
-          updated_at: new Date().toISOString()
-        },
-        { onConflict: "artist_slug" }
-      );
+    const { error } = await supabase.from("artists").upsert(
+      {
+        artist_slug: selectedArtist,
+        ...profile,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: "artist_slug" }
+    );
 
     if (error) {
       setMessage("Save failed. Check Supabase table permissions.");
@@ -254,14 +303,117 @@ export default function AccountPage() {
   }
 
   useEffect(() => {
-    loadArtists();
+    async function checkUser() {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+      setCheckingAuth(false);
+    }
+
+    checkUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    loadProfile();
-    loadGigs();
-    setNewGig(emptyGig);
-  }, [selectedArtist]);
+    if (user) {
+      loadArtists();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+      loadGigs();
+      setNewGig(emptyGig);
+    }
+  }, [selectedArtist, user]);
+
+  if (checkingAuth) {
+    return (
+      <main className="page">
+        <div className="overlay">
+          <div className="container">
+            <div className="hero">
+              <h1 className="title">Loading...</h1>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main className="page">
+        <div className="overlay">
+          <div className="container">
+            <div className="hero">
+              <div className="brand">U Call It Happy Hour</div>
+
+              <h1 className="title">
+                {authMode === "login"
+                  ? "Artist Login"
+                  : "Create Artist Account"}
+              </h1>
+
+              <p className="tagline">
+                Log in to manage your artist profile, gigs, tips, and links.
+              </p>
+
+              {message && <div className="message">{message}</div>}
+
+              <section
+                className="accountCard"
+                style={{ maxWidth: 460, margin: "0 auto" }}
+              >
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email address"
+                />
+
+                <label>Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                />
+
+                <button className="btn" type="button" onClick={handleAuth}>
+                  {authMode === "login" ? "Log In" : "Create Account"}
+                </button>
+
+                <button
+                  className="smallbtn"
+                  type="button"
+                  style={{ marginTop: 16 }}
+                  onClick={() => {
+                    setAuthMode(authMode === "login" ? "create" : "login");
+                    setMessage("");
+                  }}
+                >
+                  {authMode === "login"
+                    ? "Need an account? Create one"
+                    : "Already have an account? Log in"}
+                </button>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="page">
@@ -280,6 +432,10 @@ export default function AccountPage() {
               <Link className="btn secondary" href="/dashboard">
                 Back to Dashboard
               </Link>
+
+              <button className="btn secondary" type="button" onClick={handleLogout}>
+                Log Out
+              </button>
             </div>
 
             <section className="accountCard" style={{ marginBottom: 20 }}>
