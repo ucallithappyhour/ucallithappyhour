@@ -904,17 +904,9 @@ export default function AccountPage() {
     organize, and feature songs from your catalog.
   </p>
 
-  <button
-    className="btn secondary"
-    disabled
-    style={{
-      marginTop: 12,
-      opacity: 0.7,
-      cursor: "not-allowed"
-    }}
-  >
-    Manage Library (Coming Soon)
-  </button>
+  <a className="btn secondary" href="/account/library" style={{ marginTop: 12 }}>
+  Manage Library
+</a>
 </section>
 
 <section className="accountCard">
