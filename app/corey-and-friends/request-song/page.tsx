@@ -1,33 +1,43 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "../../../lib/supabase";
 
-const songs = [
-  { title: "Truckin'", artist: "Grateful Dead" },
-  { title: "Uncle John's Band", artist: "Grateful Dead" },
-  { title: "China Cat Sunflower", artist: "Grateful Dead" },
-  { title: "I Know You Rider", artist: "Traditional / Grateful Dead" },
-  { title: "Sugaree", artist: "Jerry Garcia" },
-  { title: "Roadhouse Blues", artist: "The Doors" },
-  { title: "White Rabbit", artist: "Jefferson Airplane" },
-  { title: "Me and Bobby McGee", artist: "Janis Joplin / Kris Kristofferson" },
-  { title: "Get Out of My Life, Woman", artist: "Allen Toussaint" },
-  { title: "Turn On Your Love Light", artist: 'Bobby "Blue" Bland' },
-  { title: "Hey Pocky A-Way", artist: "The Meters" },
-  { title: "Interstate Love Song", artist: "Stone Temple Pilots" },
-  { title: "Plush", artist: "Stone Temple Pilots" },
-  { title: "Shine", artist: "Collective Soul" },
-  { title: "What I Got", artist: "Sublime" },
-  { title: "Jane Says", artist: "Jane's Addiction" },
-  { title: "Alive", artist: "Pearl Jam" },
-  { title: "Santeria", artist: "Sublime" },
-  { title: "Fool Me Twice", artist: "Corey & Friends" },
-  { title: "If I Die", artist: "Corey & Friends" },
-  { title: "We're All The Same", artist: "Corey & Friends" }
-];
+type Song = {
+  title: string;
+  artist: string;
+};
 
 export default function RequestSongPage() {
   const [query, setQuery] = useState("");
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [songsLoading, setSongsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadSongs() {
+      setSongsLoading(true);
+
+      const { data, error } = await supabase
+        .from("songs")
+        .select("title, artist")
+        .eq("artist_slug", "corey-and-friends")
+        .eq("is_active", true)
+        .order("artist", { ascending: true })
+        .order("title", { ascending: true });
+
+      if (error) {
+        alert("Could not load songs: " + error.message);
+        setSongs([]);
+        setSongsLoading(false);
+        return;
+      }
+
+      setSongs(data || []);
+      setSongsLoading(false);
+    }
+
+    loadSongs();
+  }, []);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -37,11 +47,9 @@ export default function RequestSongPage() {
     }
 
     return songs.filter((song) =>
-      `${song.title} ${song.artist}`
-        .toLowerCase()
-        .includes(q)
+      `${song.title} ${song.artist}`.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, songs]);
 
   return (
     <main
@@ -59,9 +67,7 @@ export default function RequestSongPage() {
         Influence tomorrow&apos;s setlist.
       </h1>
 
-      <p>
-        Search the current Corey &amp; Friends catalog.
-      </p>
+      <p>Search the current Corey &amp; Friends catalog.</p>
 
       <input
         value={query}
@@ -83,7 +89,9 @@ export default function RequestSongPage() {
           maxWidth: "500px"
         }}
       >
-        {matches.length > 0 ? (
+        {songsLoading ? (
+          <p>Loading songs...</p>
+        ) : matches.length > 0 ? (
           matches.map((song) => (
             <button
               key={`${song.title}-${song.artist}`}
@@ -105,8 +113,10 @@ export default function RequestSongPage() {
               <span>{song.artist}</span>
             </button>
           ))
-        ) : (
+        ) : query.trim().length > 0 ? (
           <p>No songs found.</p>
+        ) : (
+          <p>No songs are currently loaded for this artist.</p>
         )}
       </div>
     </main>
