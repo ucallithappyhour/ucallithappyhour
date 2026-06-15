@@ -14,6 +14,8 @@ export default function ArtworkPage() {
   const [artistSlug, setArtistSlug] = useState("brian-quinn");
   const [logoUrl, setLogoUrl] = useState("");
   const [message, setMessage] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   async function loadArtists() {
     const { data, error } = await supabase
@@ -52,11 +54,13 @@ export default function ArtworkPage() {
     setMessage("");
   }
 
-  async function saveArtwork() {
+  async function saveArtwork(urlToSave?: string) {
+    const finalUrl = (urlToSave ?? logoUrl).trim();
+
     const { error } = await supabase
       .from("artists")
       .update({
-        logo_url: logoUrl.trim() || null
+        logo_url: finalUrl || null
       })
       .eq("artist_slug", artistSlug);
 
@@ -67,6 +71,72 @@ export default function ArtworkPage() {
 
     setMessage("Artwork saved.");
     loadArtists();
+  }
+
+  async function uploadLogo(file: File) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setMessage("Please upload an image file.");
+      return;
+    }
+
+    setUploading(true);
+    setMessage("");
+
+    const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const filePath = `${artistSlug}/logo.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("artist-artwork")
+      .upload(filePath, file, {
+        upsert: true,
+        contentType: file.type
+      });
+
+    if (uploadError) {
+      setUploading(false);
+      setMessage("Could not upload logo: " + uploadError.message);
+      return;
+    }
+
+    const { data } = supabase.storage
+      .from("artist-artwork")
+      .getPublicUrl(filePath);
+
+    const publicUrl = data.publicUrl;
+
+    setLogoUrl(publicUrl);
+
+    const { error: saveError } = await supabase
+      .from("artists")
+      .update({
+        logo_url: publicUrl
+      })
+      .eq("artist_slug", artistSlug);
+
+    setUploading(false);
+
+    if (saveError) {
+      setMessage("Logo uploaded, but could not save URL: " + saveError.message);
+      return;
+    }
+
+    setMessage("Logo uploaded and saved.");
+    loadArtists();
+  }
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) uploadLogo(file);
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadLogo(file);
   }
 
   return (
@@ -104,12 +174,42 @@ export default function ArtworkPage() {
             </div>
 
             <div className="section">
-              <h2>Logo URL</h2>
+              <h2>Upload Logo</h2>
 
               <p className="details">
-                Paste a public image URL for the artist logo. Full image uploads
-                will come later.
+                Drop an image here or choose a file. This will update the
+                artist logo automatically.
               </p>
+
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragging(true);
+                }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={handleDrop}
+                style={{
+                  border: dragging ? "2px solid #ffd166" : "2px dashed #555",
+                  borderRadius: 14,
+                  padding: 28,
+                  textAlign: "center",
+                  marginBottom: 18,
+                  background: dragging ? "rgba(255, 209, 102, 0.12)" : "#111"
+                }}
+              >
+                <p style={{ marginBottom: 14 }}>
+                  {uploading ? "Uploading..." : "Drag and drop logo here"}
+                </p>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  disabled={uploading}
+                />
+              </div>
+
+              <h2>Logo URL</h2>
 
               <input
                 value={logoUrl}
@@ -123,7 +223,7 @@ export default function ArtworkPage() {
                 }}
               />
 
-              <button className="btn" onClick={saveArtwork}>
+              <button className="btn" onClick={() => saveArtwork()}>
                 Save Artwork
               </button>
             </div>
