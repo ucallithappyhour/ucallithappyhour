@@ -89,7 +89,7 @@ export default function RequestSongPage() {
             marginBottom: 24
           }}
         >
-          Search the current Corey &amp; Friends catalog.
+          Search the current Cory &amp; Friends catalog.
         </p>
 
         <input

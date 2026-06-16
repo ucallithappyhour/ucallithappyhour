@@ -192,7 +192,7 @@ export default function Home() {
   >
    <img
   src="/corey-friends-logo.jpg"
-  alt="Corey & Friends Logo"
+  alt="Cory & Friends Logo"
   style={{
     width: "100%",
     height: "100%",

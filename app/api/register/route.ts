@@ -70,7 +70,7 @@ export async function POST(request: Request) {
         </p>
 
         <p>
-          <strong>Artist Type:</strong> ${artistType}
+          <strong>Artist Type:</strong> ${artistType || "Not provided"}
         </p>
 
         <p>
@@ -79,10 +79,54 @@ export async function POST(request: Request) {
 
         <br />
 
-         <p>
-             Cheers,<br />
-             The U Call It Happy Hour Team
+        <p>
+          Cheers,<br />
+          The U Call It Happy Hour Team
         </p>
+      `
+    });
+
+    await resend.emails.send({
+      from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
+      to: "u.call.it.happy.hour@gmail.com",
+      subject: `🎤 New Artist Registration: ${artistName}`,
+      html: `
+        <div style="text-align:center; margin-bottom:24px;">
+          <img
+            src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
+            alt="U Call It Happy Hour"
+            width="200"
+            style="display:block; margin:0 auto;"
+          />
+        </div>
+
+        <h2>New Artist Registration</h2>
+
+        <p><strong>Artist Name:</strong> ${artistName}</p>
+        <p><strong>Contact Name:</strong> ${contactName}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
+        <p><strong>Artist Type:</strong> ${artistType || "Not provided"}</p>
+        <p><strong>Notes:</strong> ${notes || "None"}</p>
+
+        <br />
+
+<p>
+  <a
+    href="https://www.ucallithappyhour.com/admin/registrations"
+    style="
+      display:inline-block;
+      background:#d4af37;
+      color:#000000;
+      padding:12px 20px;
+      text-decoration:none;
+      border-radius:6px;
+      font-weight:bold;
+    "
+  >
+    Review &amp; Approve Registration &rarr;
+  </a>
+</p>
       `
     });
 
