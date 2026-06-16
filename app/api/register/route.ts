@@ -14,7 +14,8 @@ export async function POST(request: Request) {
       email,
       phone,
       artistType,
-      notes
+      notes,
+      referredBy
     } = body;
 
     if (!artistName || !contactName || !email) {
@@ -33,11 +34,14 @@ export async function POST(request: Request) {
         phone,
         artist_type: artistType,
         notes,
+        referred_by: referredBy || null,
         setup_fee: 99,
         status: "pending"
       });
 
     if (error) {
+      console.error(error);
+
       return NextResponse.json(
         { error: "Could not submit registration." },
         { status: 500 }
@@ -77,6 +81,28 @@ export async function POST(request: Request) {
           <strong>Setup Fee:</strong> $99
         </p>
 
+        <hr style="margin:24px 0;" />
+
+        <h3>🎵 Give $20, Get $20 Referral Program</h3>
+
+        <p>
+          Once approved, you'll receive your own personal referral link.
+        </p>
+
+        <p>
+          Invite other musicians to U Call It Happy Hour and earn
+          <strong> $20 </strong>
+          every time an artist you refer completes setup.
+        </p>
+
+        <p>
+          They'll save <strong>$20</strong> on their setup fee, too.
+        </p>
+
+        <p>
+          Because great musicians know great musicians.
+        </p>
+
         <br />
 
         <p>
@@ -108,25 +134,26 @@ export async function POST(request: Request) {
         <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
         <p><strong>Artist Type:</strong> ${artistType || "Not provided"}</p>
         <p><strong>Notes:</strong> ${notes || "None"}</p>
+        <p><strong>Referred By:</strong> ${referredBy || "None"}</p>
 
         <br />
 
-<p>
-  <a
-    href="https://www.ucallithappyhour.com/admin/registrations"
-    style="
-      display:inline-block;
-      background:#d4af37;
-      color:#000000;
-      padding:12px 20px;
-      text-decoration:none;
-      border-radius:6px;
-      font-weight:bold;
-    "
-  >
-    Review &amp; Approve Registration &rarr;
-  </a>
-</p>
+        <p>
+          <a
+            href="https://www.ucallithappyhour.com/admin/registrations"
+            style="
+              display:inline-block;
+              background:#d4af37;
+              color:#000000;
+              padding:12px 20px;
+              text-decoration:none;
+              border-radius:6px;
+              font-weight:bold;
+            "
+          >
+            Review &amp; Approve Registration &rarr;
+          </a>
+        </p>
       `
     });
 

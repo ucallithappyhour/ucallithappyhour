@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function RegisterPage() {
   const [artistName, setArtistName] = useState("");
@@ -10,8 +10,18 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [artistType, setArtistType] = useState("Solo Artist");
   const [notes, setNotes] = useState("");
+  const [referredBy, setReferredBy] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+
+    if (ref) {
+      setReferredBy(ref);
+    }
+  }, []);
 
   async function submitRegistration() {
     setMessage("");
@@ -34,7 +44,8 @@ export default function RegisterPage() {
         email,
         phone,
         artistType,
-        notes
+        notes,
+        referredBy
       })
     });
 
@@ -52,7 +63,9 @@ export default function RegisterPage() {
     setPhone("");
     setArtistType("Solo Artist");
     setNotes("");
-    setMessage("Registration received. Check your email for confirmation.");
+    setMessage(
+      "Registration received! Your artist setup is almost complete. The final step is payment."
+    );
     setLoading(false);
   }
 
@@ -135,7 +148,37 @@ export default function RegisterPage() {
               </p>
             </section>
 
-            {message && <div className="message">{message}</div>}
+            {message && (
+              <div className="message">
+                <p>{message}</p>
+
+                {message.includes("almost complete") && (
+                  <div style={{ marginTop: 20 }}>
+                    <button
+                      className="btn"
+                      type="button"
+                      disabled
+                      style={{
+                        opacity: 0.75,
+                        cursor: "not-allowed"
+                      }}
+                    >
+                      Complete $99 Artist Setup Payment (Available Soon)
+                    </button>
+
+                    <p
+                      style={{
+                        marginTop: 12,
+                        fontSize: 13,
+                        opacity: 0.8
+                      }}
+                    >
+                      Payment will activate your artist page immediately.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             <section
               className="accountCard"
@@ -215,8 +258,8 @@ export default function RegisterPage() {
                 </p>
 
                 <p style={{ marginBottom: 10 }}>
-                  Once approved, you{"'"}ll receive your own personal referral
-                  link to share with fellow artists.
+                  Once your setup is complete, you{"'"}ll receive your own
+                  personal referral link to share with fellow artists.
                 </p>
 
                 <p style={{ marginBottom: 10 }}>
