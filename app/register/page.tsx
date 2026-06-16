@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { supabase } from "../../lib/supabase";
 
 export default function RegisterPage() {
   const [artistName, setArtistName] = useState("");
@@ -24,21 +23,25 @@ export default function RegisterPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.from("artist_registrations").insert({
-      artist_name: artistName,
-      contact_name: contactName,
-      email,
-      phone,
-      artist_type: artistType,
-      notes,
-      setup_fee: 99,
-      status: "pending"
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        artistName,
+        contactName,
+        email,
+        phone,
+        artistType,
+        notes
+      })
     });
 
-    if (error) {
-      setMessage(
-        "Could not submit registration. The registration table may need to be created in Supabase."
-      );
+    const result = await response.json();
+
+    if (!response.ok) {
+      setMessage(result.error || "Could not submit registration.");
       setLoading(false);
       return;
     }
@@ -50,7 +53,7 @@ export default function RegisterPage() {
     setArtistType("Solo Artist");
     setNotes("");
     setMessage(
-      "Registration received. We'll contact you to complete setup and payment."
+      "Registration received. Check your email for confirmation."
     );
     setLoading(false);
   }
@@ -71,24 +74,11 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Artist Setup Includes</h2>
 
-              <p
-                style={{
-                  fontSize: "1.1rem",
-                  fontWeight: 800,
-                  marginTop: 12
-                }}
-              >
+              <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
                 Everything you need to launch.
               </p>
 
-              <div
-                style={{
-                  marginTop: 18,
-                  lineHeight: 1.9,
-                  fontSize: 14,
-                  fontWeight: 700
-                }}
-              >
+              <div style={{ marginTop: 18, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
                 <div>✓ Personalized artist page for your fans</div>
                 <div>✓ QR starter kit for tables, flyers, and signs</div>
                 <div>✓ Fan song request dashboard</div>
@@ -106,14 +96,7 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Why Artists Use It</h2>
 
-              <div
-                style={{
-                  marginTop: 16,
-                  lineHeight: 1.9,
-                  fontSize: 14,
-                  fontWeight: 700
-                }}
-              >
+              <div style={{ marginTop: 16, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
                 <div>✓ Engage your crowd in a new way</div>
                 <div>✓ Discover what fans actually want to hear</div>
                 <div>✓ Create a more memorable venue experience</div>
@@ -121,13 +104,7 @@ export default function RegisterPage() {
                 <div>✓ Increase tip opportunities</div>
               </div>
 
-              <p
-                style={{
-                  marginTop: 18,
-                  fontStyle: "italic",
-                  opacity: 0.9
-                }}
-              >
+              <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
                 One extra booking pays for itself.
               </p>
             </section>
@@ -135,13 +112,7 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Investment</h2>
 
-              <p
-                style={{
-                  fontSize: "1.35rem",
-                  fontWeight: 900,
-                  marginTop: 12
-                }}
-              >
+              <p style={{ fontSize: "1.35rem", fontWeight: 900, marginTop: 12 }}>
                 One-time artist setup fee: $99
               </p>
 
@@ -154,10 +125,7 @@ export default function RegisterPage() {
 
             {message && <div className="message">{message}</div>}
 
-            <section
-              className="accountCard"
-              style={{ maxWidth: 620, margin: "0 auto" }}
-            >
+            <section className="accountCard" style={{ maxWidth: 620, margin: "0 auto" }}>
               <h2>Ready to Get Started?</h2>
 
               <p className="empty">
