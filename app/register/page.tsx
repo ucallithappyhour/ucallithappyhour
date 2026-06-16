@@ -52,9 +52,7 @@ export default function RegisterPage() {
     setPhone("");
     setArtistType("Solo Artist");
     setNotes("");
-    setMessage(
-      "Registration received. Check your email for confirmation."
-    );
+    setMessage("Registration received. Check your email for confirmation.");
     setLoading(false);
   }
 
@@ -78,7 +76,14 @@ export default function RegisterPage() {
                 Everything you need to launch.
               </p>
 
-              <div style={{ marginTop: 18, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+              <div
+                style={{
+                  marginTop: 18,
+                  lineHeight: 1.9,
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
                 <div>✓ Personalized artist page for your fans</div>
                 <div>✓ QR starter kit for tables, flyers, and signs</div>
                 <div>✓ Fan song request dashboard</div>
@@ -96,7 +101,14 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Why Artists Use It</h2>
 
-              <div style={{ marginTop: 16, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+              <div
+                style={{
+                  marginTop: 16,
+                  lineHeight: 1.9,
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
                 <div>✓ Engage your crowd in a new way</div>
                 <div>✓ Discover what fans actually want to hear</div>
                 <div>✓ Create a more memorable venue experience</div>
@@ -125,7 +137,10 @@ export default function RegisterPage() {
 
             {message && <div className="message">{message}</div>}
 
-            <section className="accountCard" style={{ maxWidth: 620, margin: "0 auto" }}>
+            <section
+              className="accountCard"
+              style={{ maxWidth: 620, margin: "0 auto" }}
+            >
               <h2>Ready to Get Started?</h2>
 
               <p className="empty">
@@ -180,6 +195,45 @@ export default function RegisterPage() {
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Tell us where you play, how often you gig, or anything else we should know."
               />
+
+              <div
+                style={{
+                  marginTop: 30,
+                  marginBottom: 30,
+                  padding: 20,
+                  border: "1px solid rgba(212,175,55,0.35)",
+                  borderRadius: 12,
+                  background: "rgba(212,175,55,0.08)"
+                }}
+              >
+                <h3 style={{ marginBottom: 10 }}>
+                  🎵 Give $20, Get $20 Referral Program
+                </h3>
+
+                <p style={{ marginBottom: 10 }}>
+                  Know other musicians who would love U Call It Happy Hour?
+                </p>
+
+                <p style={{ marginBottom: 10 }}>
+                  Once approved, you{"'"}ll receive your own personal referral
+                  link to share with fellow artists.
+                </p>
+
+                <p style={{ marginBottom: 10 }}>
+                  <strong>You earn $20</strong> every time an artist you refer
+                  completes setup.
+                </p>
+
+                <p style={{ marginBottom: 10 }}>
+                  <strong>They save $20</strong> on their setup fee when they
+                  use your link.
+                </p>
+
+                <p style={{ marginBottom: 0, opacity: 0.85 }}>
+                  Great musicians know great musicians. Help grow the community
+                  and get rewarded.
+                </p>
+              </div>
 
               <button
                 className="btn"
