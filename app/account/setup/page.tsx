@@ -81,7 +81,7 @@ export default function ArtistSetupPage() {
       return;
     }
 
-    window.location.href = `/${artist.artist_slug}`;
+    window.location.href = `/account/setup/next?token=${token}`;
   }
 
   if (!artist) {
@@ -217,7 +217,7 @@ export default function ArtistSetupPage() {
                   onClick={saveSetup}
                   disabled={saving}
                 >
-                  {saving ? "Saving..." : "Save Setup & View My Page"}
+                  {saving ? "Saving..." : "Save Profile & Continue →"}
                 </button>
               </div>
             </section>
