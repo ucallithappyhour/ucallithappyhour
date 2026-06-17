@@ -123,6 +123,8 @@ export async function POST(request: Request) {
       }
 
       if (!existingArtist) {
+        const setupToken = crypto.randomUUID();
+
         const { error: artistCreateError } = await supabaseAdmin
           .from("artists")
           .insert({
@@ -134,6 +136,8 @@ export async function POST(request: Request) {
             tip_link: null,
             logo_url: null,
             owner_email: email || null,
+            setup_token: setupToken,
+            setup_completed: false,
             is_active: true,
             referral_code: referralCode,
             referral_count: 0,
