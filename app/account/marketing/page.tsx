@@ -46,13 +46,75 @@ export default function MarketingKitPage() {
 
     const artistPageUrl = `https://www.ucallithappyhour.com/${data.artist_slug}`;
 
-    const qr = await QRCode.toDataURL(artistPageUrl, {
+    const plainQr = await QRCode.toDataURL(artistPageUrl, {
       width: 900,
-      margin: 2
+      margin: 2,
+      errorCorrectionLevel: "H"
     });
 
-    setQrUrl(qr);
+    const brandedQr = await addLogoToQr(plainQr, "/ucallit-qr-logo.png");
+
+    setQrUrl(brandedQr);
     setMessage("");
+  }
+
+  function getLogoSrc() {
+    return artist?.logo_url || "/ucallit-logo.png.png";
+  }
+
+  function loadImage(src: string): Promise<HTMLImageElement | null> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+
+  function addLogoToQr(qrDataUrl: string, logoSrc: string): Promise<string> {
+    return new Promise((resolve) => {
+      const qrImage = new Image();
+      qrImage.crossOrigin = "anonymous";
+
+      qrImage.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 900;
+        canvas.height = 900;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(qrDataUrl);
+          return;
+        }
+
+        ctx.drawImage(qrImage, 0, 0, 900, 900);
+
+        const logoImage = new Image();
+        logoImage.crossOrigin = "anonymous";
+
+        logoImage.onload = () => {
+          const boxSize = 190;
+          const logoSize = 150;
+          const boxX = (900 - boxSize) / 2;
+          const boxY = (900 - boxSize) / 2;
+          const logoX = (900 - logoSize) / 2;
+          const logoY = (900 - logoSize) / 2;
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(boxX, boxY, boxSize, boxSize);
+          ctx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
+
+          resolve(canvas.toDataURL("image/png"));
+        };
+
+        logoImage.onerror = () => resolve(qrDataUrl);
+        logoImage.src = logoSrc;
+      };
+
+      qrImage.onerror = () => resolve(qrDataUrl);
+      qrImage.src = qrDataUrl;
+    });
   }
 
   function downloadQRCode() {
@@ -64,8 +126,10 @@ export default function MarketingKitPage() {
     link.click();
   }
 
-  function downloadTableTent() {
-    if (!artist) return;
+  async function downloadTableTent() {
+    if (!artist || !qrUrl) return;
+
+    const logo = await loadImage(getLogoSrc());
 
     const pdf = new jsPDF({
       orientation: "landscape",
@@ -73,40 +137,99 @@ export default function MarketingKitPage() {
       format: "letter"
     });
 
-    pdf.setFontSize(22);
-    pdf.text("U CALL IT HAPPY HOUR", 20, 25);
+    const centerX = 139.5;
 
-    pdf.setFontSize(28);
-    pdf.text(artist.artist_name || "Artist", 20, 50);
+    pdf.setFillColor(10, 10, 10);
+    pdf.rect(0, 0, 279, 216, "F");
 
-    pdf.setFontSize(14);
-    pdf.text("Request Tonight's Songs", 20, 65);
+    pdf.setTextColor(212, 175, 55);
+    pdf.setFontSize(20);
+    pdf.text("U CALL IT HAPPY HOUR", centerX, 22, { align: "center" });
 
-    pdf.text(`ucallithappyhour.com/${artist.artist_slug}`, 20, 80);
+    if (logo) {
+      pdf.addImage(logo, "PNG", 118.5, 30, 42, 42);
+    }
+
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(32);
+    pdf.text(artist.artist_name || "Artist", centerX, 82, {
+      align: "center"
+    });
+
+    pdf.setTextColor(212, 175, 55);
+    pdf.setFontSize(18);
+    pdf.text("SCAN TO REQUEST SONGS", centerX, 100, {
+      align: "center"
+    });
+
+    pdf.addImage(qrUrl, "PNG", 99.5, 110, 80, 80);
+
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(15);
+    pdf.text("Influence Tomorrow's Setlist", centerX, 200, {
+      align: "center"
+    });
+
+    pdf.setFontSize(11);
+    pdf.text(`ucallithappyhour.com/${artist.artist_slug}`, centerX, 209, {
+      align: "center"
+    });
 
     pdf.save(`${artist.artist_slug}-table-tent.pdf`);
   }
 
-  function downloadFlyer() {
-    if (!artist) return;
+  async function downloadFlyer() {
+    if (!artist || !qrUrl) return;
+
+    const logo = await loadImage(getLogoSrc());
 
     const pdf = new jsPDF();
+    const centerX = 105;
 
-    pdf.setFontSize(30);
-    pdf.text(artist.artist_name || "Artist", 20, 35);
+    pdf.setFillColor(10, 10, 10);
+    pdf.rect(0, 0, 210, 297, "F");
 
+    pdf.setTextColor(212, 175, 55);
     pdf.setFontSize(18);
-    pdf.text("Request Tonight's Songs", 20, 55);
+    pdf.text("U CALL IT HAPPY HOUR", centerX, 24, { align: "center" });
 
-    pdf.text("Influence Tomorrow's Setlist", 20, 70);
+    if (logo) {
+      pdf.addImage(logo, "PNG", 78, 35, 54, 54);
+    }
 
-    pdf.text(`ucallithappyhour.com/${artist.artist_slug}`, 20, 95);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(32);
+    pdf.text(artist.artist_name || "Artist", centerX, 105, {
+      align: "center"
+    });
+
+    pdf.setTextColor(212, 175, 55);
+    pdf.setFontSize(19);
+    pdf.text("SCAN TO REQUEST SONGS", centerX, 123, {
+      align: "center"
+    });
+
+    pdf.addImage(qrUrl, "PNG", 45, 138, 120, 120);
+
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(17);
+    pdf.text("Influence Tomorrow's Setlist", centerX, 272, {
+      align: "center"
+    });
+
+    pdf.setFontSize(12);
+    pdf.text(`ucallithappyhour.com/${artist.artist_slug}`, centerX, 286, {
+      align: "center"
+    });
 
     pdf.save(`${artist.artist_slug}-flyer.pdf`);
   }
 
-  function downloadSocialGraphic() {
-    if (!artist) return;
+  async function downloadSocialGraphic() {
+    if (!artist || !qrUrl) return;
+
+    const logo = await loadImage(getLogoSrc());
+    const qrImage = await loadImage(qrUrl);
 
     const canvas = document.createElement("canvas");
     canvas.width = 1080;
@@ -115,18 +238,39 @@ export default function MarketingKitPage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "#111";
+    ctx.fillStyle = "#0b0b0b";
     ctx.fillRect(0, 0, 1080, 1080);
 
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 70px Arial";
-    ctx.fillText(artist.artist_name || "Artist", 60, 150);
+    ctx.textAlign = "center";
 
-    ctx.font = "40px Arial";
-    ctx.fillText("Request Tonight's Songs", 60, 230);
+    ctx.fillStyle = "#d4af37";
+    ctx.font = "bold 44px Arial";
+    ctx.fillText("U CALL IT HAPPY HOUR", 540, 75);
 
-    ctx.font = "34px Arial";
-    ctx.fillText(`ucallithappyhour.com/${artist.artist_slug}`, 60, 310);
+    if (logo) {
+      ctx.drawImage(logo, 420, 105, 240, 240);
+    }
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 76px Arial";
+    ctx.fillText(artist.artist_name || "Artist", 540, 410);
+
+    ctx.fillStyle = "#d4af37";
+    ctx.font = "bold 48px Arial";
+    ctx.fillText("SCAN TO REQUEST SONGS", 540, 485);
+
+    if (qrImage) {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(310, 525, 460, 460);
+      ctx.drawImage(qrImage, 330, 545, 420, 420);
+    }
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 34px Arial";
+    ctx.fillText("Influence Tomorrow's Setlist", 540, 1020);
+
+    ctx.font = "26px Arial";
+    ctx.fillText(`ucallithappyhour.com/${artist.artist_slug}`, 540, 1055);
 
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
@@ -164,24 +308,13 @@ export default function MarketingKitPage() {
 
                 {qrUrl && (
                   <div style={{ textAlign: "center", marginTop: 25 }}>
-                    {artist.logo_url && (
-                      <img
-                        src={artist.logo_url}
-                        alt="Artist Logo"
-                        style={{
-                          width: 200,
-                          maxWidth: "100%",
-                          marginBottom: 20,
-                          borderRadius: 12
-                        }}
-                      />
-                    )}
-
+                    
                     <img
                       src={qrUrl}
                       alt="Artist QR Code"
                       style={{
                         width: 260,
+                        marginTop: 20,
                         maxWidth: "100%",
                         background: "#fff",
                         padding: 12,
