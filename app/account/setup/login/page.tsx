@@ -109,22 +109,59 @@ export default function SetupLoginPage() {
         <div className="overlay">
           <div className="container">
             <div className="hero">
-              <section className="accountCard" style={{ maxWidth: 700, margin: "0 auto" }}>
+              <section
+                className="accountCard"
+                style={{ maxWidth: 700, margin: "0 auto" }}
+              >
                 <div className="brand">U CALL IT HAPPY HOUR</div>
 
-                <h1 className="title">🎉 Your Artist Page Is Ready!</h1>
+                <h1 className="title">📧 Check Your Email</h1>
 
                 <p className="tagline">
-                  Check your email to confirm your login, then you can return anytime to manage your page.
+                  Your login has been created. One final step remains.
                 </p>
 
-                <div className="actions" style={{ marginTop: 28 }}>
-                  <Link className="btn" href={`/${artist.artist_slug}`}>
-                    View My Artist Page →
-                  </Link>
+                <div
+                  style={{
+                    marginTop: 24,
+                    padding: 22,
+                    border: "1px solid rgba(212,175,55,0.35)",
+                    borderRadius: 12,
+                    background: "rgba(212,175,55,0.08)"
+                  }}
+                >
+                  <p style={{ lineHeight: 1.8 }}>
+                    We sent a confirmation email to:
+                    <br />
+                    <strong>{email}</strong>
+                  </p>
 
-                  <Link className="btn secondary" href="/account">
-                    Go to Dashboard
+                  <p style={{ marginTop: 16, lineHeight: 1.8 }}>
+                    Please click the confirmation link in that email before
+                    signing in.
+                  </p>
+
+                  <p style={{ marginTop: 16, lineHeight: 1.8 }}>
+                    After confirming, you'll be able to manage your songs, gigs,
+                    artwork, requests, and referral program.
+                  </p>
+                </div>
+
+                <div className="actions" style={{ marginTop: 28 }}>
+                  <a
+                    className="btn"
+                    href="https://mail.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open Gmail →
+                  </a>
+
+                  <Link
+                    className="btn secondary"
+                    href={`/${artist.artist_slug}`}
+                  >
+                    View My Artist Page
                   </Link>
                 </div>
               </section>
@@ -140,18 +177,23 @@ export default function SetupLoginPage() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <section className="accountCard" style={{ maxWidth: 700, margin: "0 auto" }}>
+            <section
+              className="accountCard"
+              style={{ maxWidth: 700, margin: "0 auto" }}
+            >
               <div className="brand">U CALL IT HAPPY HOUR</div>
 
               <h1 className="title">Secure Your Account</h1>
 
               <p className="tagline">
-                Create your login so you can come back anytime to manage gigs, songs, artwork, and requests.
+                Create your login so you can come back anytime to manage gigs,
+                songs, artwork, and requests.
               </p>
 
               {artist && (
                 <p className="details" style={{ marginTop: 16 }}>
-                  Artist: <strong>{artist.artist_name || artist.artist_slug}</strong>
+                  Artist:{" "}
+                  <strong>{artist.artist_name || artist.artist_slug}</strong>
                 </p>
               )}
 
@@ -183,12 +225,20 @@ export default function SetupLoginPage() {
               />
 
               <div className="actions" style={{ marginTop: 28 }}>
-                <button className="btn" type="button" onClick={createLogin} disabled={saving}>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={createLogin}
+                  disabled={saving}
+                >
                   {saving ? "Creating Login..." : "Create My Login →"}
                 </button>
 
                 {token && (
-                  <Link className="btn secondary" href={`/account/setup/next?token=${token}`}>
+                  <Link
+                    className="btn secondary"
+                    href={`/account/setup/next?token=${token}`}
+                  >
                     Back to Setup Steps
                   </Link>
                 )}
