@@ -17,18 +17,22 @@ export default function SuccessPage() {
         return;
       }
 
-      const response = await fetch("/api/get-setup-link", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ sessionId })
-      });
+      try {
+        const response = await fetch("/api/get-setup-link", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ sessionId })
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (response.ok && result.setupUrl) {
-        setSetupUrl(result.setupUrl);
+        if (response.ok && result.setupUrl) {
+          setSetupUrl(result.setupUrl);
+        }
+      } catch (error) {
+        console.error("Could not load setup link:", error);
       }
 
       setLoadingSetupLink(false);
@@ -42,71 +46,52 @@ export default function SuccessPage() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <img
-                src="/ucallit-logo.png.png"
-                alt="U Call It Happy Hour"
-                style={{
-                  width: 120,
-                  height: "auto",
-                  display: "inline-block"
-                }}
-              />
-            </div>
-
             <section
               className="accountCard"
-              style={{ maxWidth: 700, margin: "0 auto" }}
+              style={{
+                maxWidth: 700,
+                margin: "0 auto"
+              }}
             >
-              <div className="brand">U CALL IT HAPPY HOUR</div>
+              <div className="brand">
+                U CALL IT HAPPY HOUR
+              </div>
 
-              <h1 className="title">Payment Received 🎉</h1>
+              <h1 className="title">
+                🎉 You're officially part of U Call It Happy Hour.
+              </h1>
 
               <p
                 style={{
-                  fontSize: "1.25rem",
-                  fontWeight: 700,
-                  marginBottom: 20
+                  fontSize: "1.1rem",
+                  lineHeight: 1.8,
+                  marginTop: 24,
+                  marginBottom: 36
                 }}
               >
-                One more step: complete your artist setup.
-              </p>
-
-              <p style={{ lineHeight: 1.7 }}>
-                Your artist page has been created. Now finish setting up your
-                profile so fans can request songs, tip you, and stay connected
-                to your shows.
+                Your payment has been received and your artist page has
+                been created.
+                <br /><br />
+                Let's get your page ready for fans. It only takes about
+                2 minutes.
               </p>
 
               <div
                 style={{
-                  marginTop: 30,
-                  padding: 24,
-                  border: "1px solid rgba(212,175,55,0.35)",
-                  borderRadius: 12,
-                  background: "rgba(212,175,55,0.08)"
+                  textAlign: "center"
                 }}
               >
-                <h2 style={{ marginBottom: 16 }}>Complete your setup</h2>
-
-                <div style={{ lineHeight: 2 }}>
-                  <div>✓ Add your bio and genres</div>
-                  <div>✓ Connect your tip link</div>
-                  <div>✓ Add social links</div>
-                  <div>✓ Add gigs, logo, and songs next</div>
-                  <div>✓ Receive your referral link</div>
-                </div>
-              </div>
-
-              <div className="actions" style={{ marginTop: 32 }}>
-                <Link className="btn" href={setupUrl}>
+                <Link
+                  className="btn"
+                  href={setupUrl}
+                  style={{
+                    fontSize: "1.05rem",
+                    padding: "14px 28px"
+                  }}
+                >
                   {loadingSetupLink
-                    ? "Preparing Setup Link..."
-                    : "Finish Setting Up My Artist Page"}
-                </Link>
-
-                <Link className="btn secondary" href="/">
-                  Back to Home
+                    ? "Preparing Your Setup..."
+                    : "Complete My Artist Setup →"}
                 </Link>
               </div>
             </section>
