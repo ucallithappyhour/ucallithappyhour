@@ -3,9 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const stripePaymentLink =
-  process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
-
 export default function RegisterPage() {
   const [artistName, setArtistName] = useState("");
   const [contactName, setContactName] = useState("");
@@ -42,7 +39,7 @@ export default function RegisterPage() {
 
     setLoading(true);
 
-    const response = await fetch("/api/register", {
+    const registrationResponse = await fetch("/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -58,20 +55,38 @@ export default function RegisterPage() {
       })
     });
 
-    const result = await response.json();
+    const registrationResult = await registrationResponse.json();
 
-    if (!response.ok) {
-      setMessage(result.error || "Could not submit registration.");
+    if (!registrationResponse.ok) {
+      setMessage(registrationResult.error || "Could not submit registration.");
       setLoading(false);
       return;
     }
 
-    if (stripePaymentLink) {
-      window.location.href = stripePaymentLink;
+    const checkoutResponse = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        registrationId: registrationResult.registrationId,
+        artistName,
+        email,
+        referredBy
+      })
+    });
+
+    const checkoutResult = await checkoutResponse.json();
+
+    if (checkoutResponse.ok && checkoutResult.url) {
+      window.location.href = checkoutResult.url;
       return;
     }
 
     setSubmitted(true);
+    setMessage(
+      "Registration saved. Stripe checkout is not ready yet, but your registration was received."
+    );
     setLoading(false);
   }
 
@@ -95,7 +110,14 @@ export default function RegisterPage() {
                 Everything you need to launch.
               </p>
 
-              <div style={{ marginTop: 18, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+              <div
+                style={{
+                  marginTop: 18,
+                  lineHeight: 1.9,
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
                 <div>✓ Personalized artist page for your fans</div>
                 <div>✓ QR starter kit for tables, flyers, and signs</div>
                 <div>✓ Fan song request dashboard</div>
@@ -113,7 +135,14 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Why Artists Use It</h2>
 
-              <div style={{ marginTop: 16, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+              <div
+                style={{
+                  marginTop: 16,
+                  lineHeight: 1.9,
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
                 <div>✓ Engage your crowd in a new way</div>
                 <div>✓ Discover what fans actually want to hear</div>
                 <div>✓ Create a more memorable venue experience</div>
@@ -140,7 +169,10 @@ export default function RegisterPage() {
               </p>
             </section>
 
-            <section className="accountCard" style={{ maxWidth: 620, margin: "0 auto" }}>
+            <section
+              className="accountCard"
+              style={{ maxWidth: 620, margin: "0 auto" }}
+            >
               <h2>Ready to Get Started?</h2>
 
               <p className="empty">
@@ -149,19 +181,44 @@ export default function RegisterPage() {
               </p>
 
               <label>Artist / Band Name</label>
-              <input value={artistName} onChange={(e) => setArtistName(e.target.value)} placeholder="Artist or band name" disabled={submitted} />
+              <input
+                value={artistName}
+                onChange={(e) => setArtistName(e.target.value)}
+                placeholder="Artist or band name"
+                disabled={submitted || loading}
+              />
 
               <label>Contact Name</label>
-              <input value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Your name" disabled={submitted} />
+              <input
+                value={contactName}
+                onChange={(e) => setContactName(e.target.value)}
+                placeholder="Your name"
+                disabled={submitted || loading}
+              />
 
               <label>Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" disabled={submitted} />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+                disabled={submitted || loading}
+              />
 
               <label>Phone</label>
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number" disabled={submitted} />
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Phone number"
+                disabled={submitted || loading}
+              />
 
               <label>Artist Type</label>
-              <select value={artistType} onChange={(e) => setArtistType(e.target.value)} disabled={submitted}>
+              <select
+                value={artistType}
+                onChange={(e) => setArtistType(e.target.value)}
+                disabled={submitted || loading}
+              >
                 <option>Solo Artist</option>
                 <option>Duo</option>
                 <option>Band</option>
@@ -170,13 +227,41 @@ export default function RegisterPage() {
               </select>
 
               <label>Notes</label>
-              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Tell us where you play, how often you gig, or anything else we should know." disabled={submitted} />
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Tell us where you play, how often you gig, or anything else we should know."
+                disabled={submitted || loading}
+              />
 
-              <div style={{ marginTop: 30, marginBottom: 30, padding: 20, border: "1px solid rgba(212,175,55,0.35)", borderRadius: 12, background: "rgba(212,175,55,0.08)" }}>
-                <h3 style={{ marginBottom: 10 }}>🎵 Give $20, Get $20 Referral Program</h3>
-                <p>Once your setup is complete, you{"'"}ll receive your own referral link.</p>
-                <p><strong>You earn $20</strong> every time an artist you refer completes setup.</p>
-                <p><strong>They save $20</strong> on their setup fee when they use your link.</p>
+              <div
+                style={{
+                  marginTop: 30,
+                  marginBottom: 30,
+                  padding: 20,
+                  border: "1px solid rgba(212,175,55,0.35)",
+                  borderRadius: 12,
+                  background: "rgba(212,175,55,0.08)"
+                }}
+              >
+                <h3 style={{ marginBottom: 10 }}>
+                  🎵 Give $20, Get $20 Referral Program
+                </h3>
+
+                <p style={{ marginBottom: 10 }}>
+                  Once your setup is complete, you{"'"}ll receive your own
+                  referral link.
+                </p>
+
+                <p style={{ marginBottom: 10 }}>
+                  <strong>You earn $20</strong> every time an artist you refer
+                  completes setup.
+                </p>
+
+                <p style={{ marginBottom: 0 }}>
+                  <strong>They save $20</strong> on their setup fee when they
+                  use your link.
+                </p>
               </div>
 
               {message && !submitted && (
@@ -186,8 +271,13 @@ export default function RegisterPage() {
               )}
 
               {!submitted && requiredFieldsComplete && (
-                <button className="btn" type="button" onClick={submitRegistration} disabled={loading}>
-                  {loading ? "Submitting..." : "Submit Registration"}
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={submitRegistration}
+                  disabled={loading}
+                >
+                  {loading ? "Preparing Secure Checkout..." : "Submit Registration"}
                 </button>
               )}
 
@@ -198,12 +288,34 @@ export default function RegisterPage() {
               )}
 
               {submitted && (
-                <div style={{ marginTop: 20, padding: 20, border: "1px solid rgba(34,197,94,0.45)", borderRadius: 12, background: "rgba(34,197,94,0.12)" }}>
-                  <h3 style={{ marginBottom: 10 }}>Final Step: Activate Your Artist Page</h3>
+                <div
+                  style={{
+                    marginTop: 20,
+                    padding: 20,
+                    border: "1px solid rgba(34,197,94,0.45)",
+                    borderRadius: 12,
+                    background: "rgba(34,197,94,0.12)"
+                  }}
+                >
+                  <h3 style={{ marginBottom: 10 }}>
+                    Registration Saved
+                  </h3>
+
                   <p style={{ marginBottom: 16 }}>
-                    Your registration has been received successfully. Complete payment to activate your artist page immediately.
+                    Your registration has been received. Stripe checkout is not
+                    connected yet. Once Stripe is ready, this step will send
+                    artists directly to secure checkout.
                   </p>
-                  <button className="btn" type="button" disabled style={{ opacity: 0.75, cursor: "not-allowed" }}>
+
+                  <button
+                    className="btn"
+                    type="button"
+                    disabled
+                    style={{
+                      opacity: 0.75,
+                      cursor: "not-allowed"
+                    }}
+                  >
                     Activate My Artist Page – $99
                   </button>
                 </div>

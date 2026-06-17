@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { supabase } from "../../../lib/supabase";
+import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error } = await supabase
+    const { data: registration, error } = await supabaseAdmin
       .from("artist_registrations")
       .insert({
         artist_name: artistName,
@@ -37,9 +37,12 @@ export async function POST(request: Request) {
         referred_by: referredBy || null,
         setup_fee: 99,
         status: "unpaid"
-      });
+      })
+      .select("id");
 
-    if (error) {
+    console.log("Registration insert result:", registration);
+
+    if (error || !registration || registration.length === 0) {
       console.error(error);
 
       return NextResponse.json(
@@ -47,6 +50,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    const registrationId = registration[0].id;
 
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
@@ -74,17 +79,8 @@ export async function POST(request: Request) {
           Once payment is complete, your U Call It Happy Hour artist setup can be activated.
         </p>
 
-        <p>
-          <strong>Artist Type:</strong> ${artistType || "Not provided"}
-        </p>
-
-        <p>
-          <strong>Setup Fee:</strong> $99
-        </p>
-
-        <p>
-          Tomorrow, the payment button on the registration page will be connected to Stripe checkout.
-        </p>
+        <p><strong>Artist Type:</strong> ${artistType || "Not provided"}</p>
+        <p><strong>Setup Fee:</strong> $99</p>
 
         <hr style="margin:24px 0;" />
 
@@ -100,13 +96,9 @@ export async function POST(request: Request) {
           every time an artist you refer completes setup.
         </p>
 
-        <p>
-          They'll save <strong>$20</strong> on their setup fee, too.
-        </p>
+        <p>They'll save <strong>$20</strong> on their setup fee, too.</p>
 
-        <p>
-          Because great musicians know great musicians.
-        </p>
+        <p>Because great musicians know great musicians.</p>
 
         <br />
 
@@ -134,6 +126,7 @@ export async function POST(request: Request) {
         <h2>New Artist Registration</h2>
 
         <p><strong>Status:</strong> unpaid</p>
+        <p><strong>Registration ID:</strong> ${registrationId}</p>
         <p><strong>Artist Name:</strong> ${artistName}</p>
         <p><strong>Contact Name:</strong> ${contactName}</p>
         <p><strong>Email:</strong> ${email}</p>
@@ -164,7 +157,10 @@ export async function POST(request: Request) {
       `
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      registrationId
+    });
   } catch (error) {
     console.error(error);
 
