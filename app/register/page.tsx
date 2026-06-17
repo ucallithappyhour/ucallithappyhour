@@ -13,6 +13,12 @@ export default function RegisterPage() {
   const [referredBy, setReferredBy] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const requiredFieldsComplete =
+    artistName.trim() !== "" &&
+    contactName.trim() !== "" &&
+    email.trim() !== "";
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -26,7 +32,7 @@ export default function RegisterPage() {
   async function submitRegistration() {
     setMessage("");
 
-    if (!artistName || !contactName || !email) {
+    if (!requiredFieldsComplete) {
       setMessage("Artist name, contact name, and email are required.");
       return;
     }
@@ -57,12 +63,7 @@ export default function RegisterPage() {
       return;
     }
 
-    setArtistName("");
-    setContactName("");
-    setEmail("");
-    setPhone("");
-    setArtistType("Solo Artist");
-    setNotes("");
+    setSubmitted(true);
     setMessage(
       "Registration received! Your artist setup is almost complete. The final step is payment."
     );
@@ -148,38 +149,6 @@ export default function RegisterPage() {
               </p>
             </section>
 
-            {message && (
-              <div className="message">
-                <p>{message}</p>
-
-                {message.includes("almost complete") && (
-                  <div style={{ marginTop: 20 }}>
-                    <button
-                      className="btn"
-                      type="button"
-                      disabled
-                      style={{
-                        opacity: 0.75,
-                        cursor: "not-allowed"
-                      }}
-                    >
-                      Complete $99 Artist Setup Payment (Available Soon)
-                    </button>
-
-                    <p
-                      style={{
-                        marginTop: 12,
-                        fontSize: 13,
-                        opacity: 0.8
-                      }}
-                    >
-                      Payment will activate your artist page immediately.
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
             <section
               className="accountCard"
               style={{ maxWidth: 620, margin: "0 auto" }}
@@ -187,8 +156,8 @@ export default function RegisterPage() {
               <h2>Ready to Get Started?</h2>
 
               <p className="empty">
-                Fill out the short form below and we&apos;ll contact you to
-                complete setup and payment.
+                Fill out the short form below. Artist name, contact name, and
+                email are required. Notes are optional.
               </p>
 
               <label>Artist / Band Name</label>
@@ -196,6 +165,7 @@ export default function RegisterPage() {
                 value={artistName}
                 onChange={(e) => setArtistName(e.target.value)}
                 placeholder="Artist or band name"
+                disabled={submitted}
               />
 
               <label>Contact Name</label>
@@ -203,6 +173,7 @@ export default function RegisterPage() {
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
                 placeholder="Your name"
+                disabled={submitted}
               />
 
               <label>Email</label>
@@ -211,6 +182,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
+                disabled={submitted}
               />
 
               <label>Phone</label>
@@ -218,12 +190,14 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Phone number"
+                disabled={submitted}
               />
 
               <label>Artist Type</label>
               <select
                 value={artistType}
                 onChange={(e) => setArtistType(e.target.value)}
+                disabled={submitted}
               >
                 <option>Solo Artist</option>
                 <option>Duo</option>
@@ -237,6 +211,7 @@ export default function RegisterPage() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Tell us where you play, how often you gig, or anything else we should know."
+                disabled={submitted}
               />
 
               <div
@@ -278,14 +253,61 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={submitRegistration}
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Apply for Artist Setup"}
-              </button>
+              {message && (
+                <div className="message" style={{ marginBottom: 20 }}>
+                  <p>{message}</p>
+                </div>
+              )}
+
+              {!submitted && requiredFieldsComplete && (
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={submitRegistration}
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Submit Registration"}
+                </button>
+              )}
+
+              {!submitted && !requiredFieldsComplete && (
+                <p style={{ marginTop: 14, opacity: 0.75, fontSize: 13 }}>
+                  Enter artist name, contact name, and email to continue.
+                </p>
+              )}
+
+              {submitted && (
+                <div
+                  style={{
+                    marginTop: 20,
+                    padding: 20,
+                    border: "1px solid rgba(34,197,94,0.45)",
+                    borderRadius: 12,
+                    background: "rgba(34,197,94,0.12)"
+                  }}
+                >
+                  <h3 style={{ marginBottom: 10 }}>
+                    Final Step: Complete Payment
+                  </h3>
+
+                  <p style={{ marginBottom: 16 }}>
+                    Your registration has been received. Payment will activate
+                    your artist page immediately.
+                  </p>
+
+                  <button
+                    className="btn"
+                    type="button"
+                    disabled
+                    style={{
+                      opacity: 0.75,
+                      cursor: "not-allowed"
+                    }}
+                  >
+                    Complete $99 Artist Setup Payment (Available Soon)
+                  </button>
+                </div>
+              )}
 
               <div className="actions" style={{ marginTop: 20 }}>
                 <Link className="btn secondary" href="/account">
