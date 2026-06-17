@@ -400,6 +400,23 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div
+  style={{
+    textAlign: "center",
+    marginTop: 40,
+    marginBottom: 0
+  }}
+>
+  <img
+    src="/happy.png"
+    alt="Happy"
+    style={{
+      width: 250,
+      maxWidth: "70vw",
+      height: "auto"
+    }}
+  />
+</div>
       </div>
     </main>
   );
