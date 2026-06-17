@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Resend } from "resend";
-import { supabase } from "../../../lib/supabase";
+import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -47,9 +47,21 @@ export async function POST(request: Request) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      const registrationId = session.metadata?.registrationId || "";
-      const artistNameFromStripe = session.metadata?.artistName || "";
-      const referredByFromStripe = session.metadata?.referredBy || "";
+      console.log("Stripe checkout metadata:", session.metadata);
+
+      const registrationId =
+        session.metadata?.registration_id ||
+        session.metadata?.registrationId ||
+        "";
+
+      const artistNameFromStripe =
+        session.metadata?.artist_name || session.metadata?.artistName || "";
+
+      const referredByFromStripe =
+        session.metadata?.referred_by || session.metadata?.referredBy || "";
+
+      const emailFromStripe =
+        session.metadata?.email || session.customer_email || "";
 
       if (!registrationId) {
         console.error("Missing registrationId in Stripe metadata.");
@@ -57,45 +69,50 @@ export async function POST(request: Request) {
       }
 
       const { data: registration, error: registrationFetchError } =
-        await supabase
+        await supabaseAdmin
           .from("artist_registrations")
           .select("*")
-          .eq("id", registrationId)
+          .eq("id", Number(registrationId))
           .maybeSingle();
 
       if (registrationFetchError || !registration) {
-        console.error(
-          "Could not find registration after Stripe payment:",
-          registrationFetchError
-        );
+        console.error("Could not find registration after Stripe payment:", {
+          registrationFetchError,
+          registrationId,
+          metadata: session.metadata
+        });
+
         return NextResponse.json({ received: true });
       }
 
-      if (registration.status === "paid" || registration.status === "artist_created") {
+      if (
+        registration.status === "paid" ||
+        registration.status === "artist_created"
+      ) {
         return NextResponse.json({ received: true });
       }
 
       const artistName = registration.artist_name || artistNameFromStripe;
       const contactName = registration.contact_name || "";
-      const email = registration.email || session.customer_email || "";
+      const email = registration.email || emailFromStripe;
       const artistType = registration.artist_type || null;
       const referredBy = registration.referred_by || referredByFromStripe || "";
       const slug = makeSlug(artistName);
       const referralCode = makeReferralCode(artistName);
 
-      const { error: paidError } = await supabase
+      const { error: paidError } = await supabaseAdmin
         .from("artist_registrations")
         .update({
           status: "paid"
         })
-        .eq("id", registrationId);
+        .eq("id", Number(registrationId));
 
       if (paidError) {
         console.error("Could not mark registration paid:", paidError);
       }
 
       const { data: existingArtist, error: existingArtistError } =
-        await supabase
+        await supabaseAdmin
           .from("artists")
           .select("artist_slug")
           .eq("artist_slug", slug)
@@ -106,7 +123,7 @@ export async function POST(request: Request) {
       }
 
       if (!existingArtist) {
-        const { error: artistCreateError } = await supabase
+        const { error: artistCreateError } = await supabaseAdmin
           .from("artists")
           .insert({
             artist_slug: slug,
@@ -116,6 +133,7 @@ export async function POST(request: Request) {
             tip_type: null,
             tip_link: null,
             logo_url: null,
+            owner_email: email || null,
             is_active: true,
             referral_code: referralCode,
             referral_count: 0,
@@ -124,15 +142,21 @@ export async function POST(request: Request) {
 
         if (artistCreateError) {
           console.error("Could not create artist:", artistCreateError);
+        } else {
+          console.log("Artist created from Stripe payment:", {
+            slug,
+            artistName,
+            registrationId
+          });
         }
       }
 
-      const { error: artistCreatedStatusError } = await supabase
+      const { error: artistCreatedStatusError } = await supabaseAdmin
         .from("artist_registrations")
         .update({
           status: "artist_created"
         })
-        .eq("id", registrationId);
+        .eq("id", Number(registrationId));
 
       if (artistCreatedStatusError) {
         console.error(
@@ -143,7 +167,7 @@ export async function POST(request: Request) {
 
       if (referredBy) {
         const { data: referringArtist, error: referringArtistError } =
-          await supabase
+          await supabaseAdmin
             .from("artists")
             .select("artist_slug, referral_count, referral_earnings")
             .eq("referral_code", referredBy)
@@ -157,7 +181,7 @@ export async function POST(request: Request) {
           const currentCount = referringArtist.referral_count || 0;
           const currentEarnings = Number(referringArtist.referral_earnings || 0);
 
-          const { error: referralUpdateError } = await supabase
+          const { error: referralUpdateError } = await supabaseAdmin
             .from("artists")
             .update({
               referral_count: currentCount + 1,
@@ -172,7 +196,7 @@ export async function POST(request: Request) {
       }
 
       if (email) {
-        await resend.emails.send({
+        const welcomeEmail = await resend.emails.send({
           from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
           to: email,
           subject: "🎉 Welcome to U Call It Happy Hour!",
@@ -230,9 +254,11 @@ export async function POST(request: Request) {
             </p>
           `
         });
+
+        console.log("Welcome email result:", welcomeEmail);
       }
 
-      await resend.emails.send({
+      const adminEmail = await resend.emails.send({
         from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
         to: "u.call.it.happy.hour@gmail.com",
         subject: `✅ Paid artist activated: ${artistName}`,
@@ -247,6 +273,8 @@ export async function POST(request: Request) {
           <p><strong>Stripe Session:</strong> ${session.id}</p>
         `
       });
+
+      console.log("Admin activation email result:", adminEmail);
     }
 
     return NextResponse.json({ received: true });
