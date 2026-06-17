@@ -75,7 +75,7 @@ export default function RegisterSuccessPage() {
                 </Link>
 
                 <Link className="btn secondary" href="/account">
-                  Artist Login
+                  Complete Your Setup
                 </Link>
               </div>
             </section>
