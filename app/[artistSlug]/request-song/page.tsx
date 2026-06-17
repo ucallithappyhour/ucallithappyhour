@@ -116,6 +116,7 @@ export default function DynamicRequestSongPage() {
     setLoading(true);
 
     try {
+      alert("USING API ROUTE");
       const response = await fetch("/api/song-request", {
   method: "POST",
   headers: {
