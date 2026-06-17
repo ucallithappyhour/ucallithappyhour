@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 
@@ -18,6 +19,8 @@ type Song = {
 export default function SongLibraryPage() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [artistSlug, setArtistSlug] = useState("brian-quinn");
+  const [lockedArtist, setLockedArtist] = useState<Artist | null>(null);
+  const [setupToken, setSetupToken] = useState("");
   const [songs, setSongs] = useState<Song[]>([]);
   const [query, setQuery] = useState("");
   const [newTitle, setNewTitle] = useState("");
@@ -26,6 +29,29 @@ export default function SongLibraryPage() {
   const [message, setMessage] = useState("");
 
   async function loadArtists() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") || "";
+    setSetupToken(token);
+
+    if (token) {
+      const { data, error } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name")
+        .eq("setup_token", token)
+        .maybeSingle();
+
+      if (error || !data) {
+        setMessage("Could not find your artist setup.");
+        return;
+      }
+
+      setLockedArtist(data);
+      setArtistSlug(data.artist_slug);
+      setArtists([data]);
+      loadSongs(data.artist_slug);
+      return;
+    }
+
     const { data } = await supabase
       .from("artists")
       .select("artist_slug, artist_name")
@@ -53,11 +79,12 @@ export default function SongLibraryPage() {
 
   useEffect(() => {
     loadArtists();
-    loadSongs();
   }, []);
 
   useEffect(() => {
-    loadSongs(artistSlug);
+    if (artistSlug) {
+      loadSongs(artistSlug);
+    }
   }, [artistSlug]);
 
   const filteredSongs = useMemo(() => {
@@ -169,7 +196,10 @@ export default function SongLibraryPage() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
+            <div className="brand">U CALL IT HAPPY HOUR</div>
+
             <h1 className="title">Song Library</h1>
+
             <p className="tagline">
               Add, remove, and manage requestable songs.
             </p>
@@ -179,22 +209,37 @@ export default function SongLibraryPage() {
             <div className="section">
               <h2>Artist</h2>
 
-              <select
-                value={artistSlug}
-                onChange={(e) => setArtistSlug(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: 14,
-                  borderRadius: 10,
-                  marginBottom: 18
-                }}
-              >
-                {artists.map((artist) => (
-                  <option key={artist.artist_slug} value={artist.artist_slug}>
-                    {artist.artist_name || artist.artist_slug}
-                  </option>
-                ))}
-              </select>
+              {lockedArtist ? (
+                <div
+                  style={{
+                    padding: 14,
+                    borderRadius: 10,
+                    marginBottom: 18,
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    background: "rgba(255,255,255,0.08)",
+                    fontWeight: 800
+                  }}
+                >
+                  {lockedArtist.artist_name || lockedArtist.artist_slug}
+                </div>
+              ) : (
+                <select
+                  value={artistSlug}
+                  onChange={(e) => setArtistSlug(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: 14,
+                    borderRadius: 10,
+                    marginBottom: 18
+                  }}
+                >
+                  {artists.map((artist) => (
+                    <option key={artist.artist_slug} value={artist.artist_slug}>
+                      {artist.artist_name || artist.artist_slug}
+                    </option>
+                  ))}
+                </select>
+              )}
 
               <input
                 value={query}
@@ -219,7 +264,7 @@ export default function SongLibraryPage() {
               <input
                 value={newArtist}
                 onChange={(e) => setNewArtist(e.target.value)}
-                placeholder="Artist"
+                placeholder="Original artist / performer"
                 style={{
                   width: "100%",
                   padding: 14,
@@ -309,7 +354,22 @@ export default function SongLibraryPage() {
                   </div>
                 </div>
               ))}
+
+              {filteredSongs.length === 0 && (
+                <p className="details">No songs added yet.</p>
+              )}
             </div>
+
+            {setupToken && (
+              <div className="actions" style={{ marginTop: 24 }}>
+                <Link
+                  className="btn"
+                  href={`/account/setup/next?token=${setupToken}`}
+                >
+                  Back to Setup Steps
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
