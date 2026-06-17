@@ -912,25 +912,16 @@ export default function AccountPage() {
 <section className="accountCard">
   <p className="performer">Marketing Tools</p>
 
+  <p className="empty" style={{ marginTop: 10 }}>
+    Download your QR code, table tent, flyer, and social media graphics.
+  </p>
+
   <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
     <Link className="btn" href="/account/marketing">
-      📱 Download QR Code
+      🎨 Open Marketing Kit
     </Link>
-
-    <button className="btn secondary" disabled>
-      🖨️ Table Tent coming soon
-    </button>
-
-    <button className="btn secondary" disabled>
-      📄 Flyer coming soon
-    </button>
-
-    <button className="btn secondary" disabled>
-      📣 Social Media Graphic coming soon
-    </button>
   </div>
 </section>
-
 <section className="accountCard">
   <h2>Artwork</h2>
 
