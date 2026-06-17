@@ -13,7 +13,6 @@ export default function RegisterPage() {
   const [referredBy, setReferredBy] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   const requiredFieldsComplete =
     artistName.trim() !== "" &&
@@ -39,55 +38,61 @@ export default function RegisterPage() {
 
     setLoading(true);
 
-    const registrationResponse = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        artistName,
-        contactName,
-        email,
-        phone,
-        artistType,
-        notes,
-        referredBy
-      })
-    });
+    try {
+      const registrationResponse = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          artistName,
+          contactName,
+          email,
+          phone,
+          artistType,
+          notes,
+          referredBy
+        })
+      });
 
-    const registrationResult = await registrationResponse.json();
+      const registrationResult = await registrationResponse.json();
 
-    if (!registrationResponse.ok) {
-      setMessage(registrationResult.error || "Could not submit registration.");
-      setLoading(false);
-      return;
-    }
+      if (!registrationResponse.ok) {
+        setMessage(registrationResult.error || "Could not submit registration.");
+        setLoading(false);
+        return;
+      }
 
-    const checkoutResponse = await fetch("/api/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        registrationId: registrationResult.registrationId,
-        artistName,
-        email,
-        referredBy
-      })
-    });
+      const checkoutResponse = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          registrationId: registrationResult.registrationId,
+          artistName,
+          email,
+          referredBy
+        })
+      });
 
-    const checkoutResult = await checkoutResponse.json();
+      const checkoutResult = await checkoutResponse.json();
 
-    if (checkoutResponse.ok && checkoutResult.url) {
+      if (!checkoutResponse.ok || !checkoutResult.url) {
+        setMessage(
+          checkoutResult.error ||
+            "Registration saved, but Stripe checkout could not open. Please try again."
+        );
+        setLoading(false);
+        return;
+      }
+
       window.location.href = checkoutResult.url;
-      return;
+    } catch (error) {
+      console.error(error);
+      setMessage("Something went wrong. Please try again.");
+      setLoading(false);
     }
-
-    setSubmitted(true);
-    setMessage(
-      "Registration saved. Stripe checkout is not ready yet, but your registration was received."
-    );
-    setLoading(false);
   }
 
   return (
@@ -185,7 +190,7 @@ export default function RegisterPage() {
                 value={artistName}
                 onChange={(e) => setArtistName(e.target.value)}
                 placeholder="Artist or band name"
-                disabled={submitted || loading}
+                disabled={loading}
               />
 
               <label>Contact Name</label>
@@ -193,7 +198,7 @@ export default function RegisterPage() {
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
                 placeholder="Your name"
-                disabled={submitted || loading}
+                disabled={loading}
               />
 
               <label>Email</label>
@@ -202,7 +207,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
-                disabled={submitted || loading}
+                disabled={loading}
               />
 
               <label>Phone</label>
@@ -210,14 +215,14 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Phone number"
-                disabled={submitted || loading}
+                disabled={loading}
               />
 
               <label>Artist Type</label>
               <select
                 value={artistType}
                 onChange={(e) => setArtistType(e.target.value)}
-                disabled={submitted || loading}
+                disabled={loading}
               >
                 <option>Solo Artist</option>
                 <option>Duo</option>
@@ -231,7 +236,7 @@ export default function RegisterPage() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Tell us where you play, how often you gig, or anything else we should know."
-                disabled={submitted || loading}
+                disabled={loading}
               />
 
               <div
@@ -264,61 +269,27 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              {message && !submitted && (
+              {message && (
                 <div className="message" style={{ marginBottom: 20 }}>
                   <p>{message}</p>
                 </div>
               )}
 
-              {!submitted && requiredFieldsComplete && (
+              {requiredFieldsComplete ? (
                 <button
                   className="btn"
                   type="button"
                   onClick={submitRegistration}
                   disabled={loading}
                 >
-                  {loading ? "Preparing Secure Checkout..." : "Submit Registration"}
+                  {loading
+                    ? "Preparing Secure Checkout..."
+                    : "Continue to Secure Checkout"}
                 </button>
-              )}
-
-              {!submitted && !requiredFieldsComplete && (
+              ) : (
                 <p style={{ marginTop: 14, opacity: 0.75, fontSize: 13 }}>
                   Enter artist name, contact name, and email to continue.
                 </p>
-              )}
-
-              {submitted && (
-                <div
-                  style={{
-                    marginTop: 20,
-                    padding: 20,
-                    border: "1px solid rgba(34,197,94,0.45)",
-                    borderRadius: 12,
-                    background: "rgba(34,197,94,0.12)"
-                  }}
-                >
-                  <h3 style={{ marginBottom: 10 }}>
-                    Registration Saved
-                  </h3>
-
-                  <p style={{ marginBottom: 16 }}>
-                    Your registration has been received. Stripe checkout is not
-                    connected yet. Once Stripe is ready, this step will send
-                    artists directly to secure checkout.
-                  </p>
-
-                  <button
-                    className="btn"
-                    type="button"
-                    disabled
-                    style={{
-                      opacity: 0.75,
-                      cursor: "not-allowed"
-                    }}
-                  >
-                    Activate My Artist Page – $99
-                  </button>
-                </div>
               )}
 
               <div className="actions" style={{ marginTop: 20 }}>
