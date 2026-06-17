@@ -68,8 +68,11 @@ export default function DynamicRequestSongPage() {
     );
   }, [query, songs]);
 
+  const hasSearch = query.trim().length > 0;
+  const hasMatches = matches.length > 0;
+
   const showFutureSuggestion =
-    query.trim().length > 0 && !songsLoading && matches.length === 0;
+    hasSearch && !songsLoading && matches.length === 0;
 
   function resetToCatalog() {
     setSelectedSong(null);
@@ -117,26 +120,26 @@ export default function DynamicRequestSongPage() {
 
     try {
       const response = await fetch("/api/song-request", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    song: title,
-    artist,
-    requester_name: name.trim() || null,
-    dedication: dedication.trim() || null,
-    request_type: mode
-  })
-});
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          song: title,
+          artist,
+          requester_name: name.trim() || null,
+          dedication: dedication.trim() || null,
+          request_type: mode
+        })
+      });
 
-const data = await response.json();
+      const data = await response.json();
 
-if (!response.ok) {
-  alert("Request did not send: " + data.error);
-  setLoading(false);
-  return;
-}
+      if (!response.ok) {
+        alert("Request did not send: " + data.error);
+        setLoading(false);
+        return;
+      }
 
       setSuccessMode(mode);
     } catch (err) {
@@ -237,6 +240,44 @@ if (!response.ok) {
                 <span>{song.artist}</span>
               </button>
             ))
+          )}
+
+          {hasSearch && hasMatches && !songsLoading && (
+            <div
+              style={{
+                background: "#181818",
+                padding: 18,
+                borderRadius: 12,
+                border: "1px solid #333",
+                marginTop: 10,
+                marginBottom: 10
+              }}
+            >
+              <p style={{ fontWeight: "bold", marginBottom: 8 }}>
+                Can&apos;t find the version you&apos;re looking for?
+              </p>
+
+              <p style={{ opacity: 0.85, marginBottom: 14 }}>
+                Want the artist to consider a different artist, version, or
+                arrangement?
+              </p>
+
+              <button
+                onClick={openFutureSuggestion}
+                style={{
+                  padding: "14px 20px",
+                  fontSize: 17,
+                  borderRadius: 8,
+                  border: 0,
+                  background: "#ffd84d",
+                  color: "#000",
+                  cursor: "pointer",
+                  fontWeight: "bold"
+                }}
+              >
+                Suggest for Future Performance
+              </button>
+            </div>
           )}
 
           {showFutureSuggestion && (
@@ -366,7 +407,7 @@ if (!response.ok) {
                     <input
                       value={futureArtist}
                       onChange={(e) => setFutureArtist(e.target.value)}
-                      placeholder="Artist name optional"
+                      placeholder="Artist / version optional"
                       style={{
                         width: "100%",
                         padding: 14,
