@@ -116,20 +116,27 @@ export default function DynamicRequestSongPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.from("song_requests").insert({
-        song: title,
-        artist,
-        requester_name: name.trim() || null,
-        dedication: dedication.trim() || null,
-        status: "pending",
-        request_type: mode
-      });
+      const response = await fetch("/api/song-request", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    song: title,
+    artist,
+    requester_name: name.trim() || null,
+    dedication: dedication.trim() || null,
+    request_type: mode
+  })
+});
 
-      if (error) {
-        alert("Request did not send: " + error.message);
-        setLoading(false);
-        return;
-      }
+const data = await response.json();
+
+if (!response.ok) {
+  alert("Request did not send: " + data.error);
+  setLoading(false);
+  return;
+}
 
       setSuccessMode(mode);
     } catch (err) {
