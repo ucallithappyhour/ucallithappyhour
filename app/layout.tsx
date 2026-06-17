@@ -1,8 +1,23 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'U Call It Happy Hour',
+  title: "U Call It Happy Hour",
   description: "Request tonight's songs. Influence tomorrow's setlist.",
+  openGraph: {
+    title: "U Call It Happy Hour",
+    description: "Request tonight's songs. Influence tomorrow's setlist.",
+    url: "https://www.ucallithappyhour.com",
+    siteName: "U Call It Happy Hour",
+    images: [
+      {
+        url: "/ucallit-logo.png.png",
+        width: 1200,
+        height: 630,
+        alt: "U Call It Happy Hour",
+      },
+    ],
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
