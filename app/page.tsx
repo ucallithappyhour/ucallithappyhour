@@ -415,7 +415,27 @@ export default function Home() {
       maxWidth: "70vw",
       height: "auto"
     }}
-  />
+  /><div style={{ textAlign: "center", marginTop: 8 }}>
+  <p
+    style={{
+      fontWeight: 700,
+      color: "#d4af37",
+      marginBottom: 4
+    }}
+  >
+    🐾 Happy, Chief Happiness Officer
+  </p>
+
+  <p
+    style={{
+      fontSize: 14,
+      opacity: 0.8,
+      fontStyle: "italic"
+    }}
+  >
+    "Powered by requests. Approved by Happy."
+  </p>
+</div>
 </div>
       </div>
     </main>
