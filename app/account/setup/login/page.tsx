@@ -167,6 +167,7 @@ export default function SetupLoginPage() {
               <label>Password</label>
               <input
                 type="password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create password"
@@ -175,6 +176,7 @@ export default function SetupLoginPage() {
               <label>Confirm Password</label>
               <input
                 type="password"
+                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm password"
