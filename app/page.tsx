@@ -39,7 +39,7 @@ function formatGigDate(dateValue: string | null) {
   return date.toLocaleDateString([], {
     weekday: "short",
     month: "short",
-    day: "numeric"
+    day: "numeric",
   });
 }
 
@@ -51,7 +51,7 @@ function formatTime(time: string | null) {
 
   return new Date(2000, 0, 1, hour, Number(minutes)).toLocaleTimeString([], {
     hour: "numeric",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 }
 
@@ -197,7 +197,7 @@ export default function Home() {
                 style={{
                   marginBottom: 28,
                   border: "1px solid rgba(255, 209, 102, 0.7)",
-                  boxShadow: "0 0 35px rgba(255, 209, 102, 0.12)"
+                  boxShadow: "0 0 35px rgba(255, 209, 102, 0.12)",
                 }}
               >
                 <div
@@ -236,7 +236,7 @@ export default function Home() {
                   fontSize: 18,
                   borderRadius: 10,
                   border: "1px solid rgba(255,255,255,0.25)",
-                  marginBottom: 22
+                  marginBottom: 22,
                 }}
               />
 
@@ -266,12 +266,10 @@ export default function Home() {
                       style={{
                         position: "relative",
                         minHeight: 190,
-                        paddingRight: 230
+                        paddingRight: 230,
                       }}
                     >
                       <p className="performer">{name}</p>
-
-
 
                       <div className="details">{gigDetails(nextGig)}</div>
 
@@ -295,7 +293,7 @@ export default function Home() {
                             height: 140,
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "center"
+                            justifyContent: "center",
                           }}
                         >
                           <img
@@ -305,7 +303,7 @@ export default function Home() {
                               width: "100%",
                               height: "100%",
                               objectFit: "contain",
-                              display: "block"
+                              display: "block",
                             }}
                           />
                         </div>
@@ -328,7 +326,7 @@ export default function Home() {
                   style={{
                     fontSize: "1.1rem",
                     fontWeight: 800,
-                    marginTop: 12
+                    marginTop: 12,
                   }}
                 >
                   Turn your crowd into part of the show.
@@ -346,7 +344,7 @@ export default function Home() {
                     marginTop: 18,
                     lineHeight: 1.9,
                     fontSize: 14,
-                    fontWeight: 700
+                    fontWeight: 700,
                   }}
                 >
                   <div>✓ Let fans request songs from their phones</div>
@@ -370,7 +368,7 @@ export default function Home() {
                   style={{
                     marginTop: 18,
                     fontStyle: "italic",
-                    opacity: 0.9
+                    opacity: 0.9,
                   }}
                 >
                   Venues love artists who keep crowds engaged and customers
@@ -381,7 +379,7 @@ export default function Home() {
                   style={{
                     marginTop: 16,
                     fontWeight: 900,
-                    fontSize: "1.05rem"
+                    fontSize: "1.05rem",
                   }}
                 >
                   One extra booking pays for itself.
@@ -400,43 +398,48 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div
-  style={{
-    textAlign: "center",
-    marginTop: 40,
-    marginBottom: 0
-  }}
->
-  <img
-    src="/happy.png"
-    alt="Happy"
-    style={{
-      width: 250,
-      maxWidth: "70vw",
-      height: "auto"
-    }}
-  /><div style={{ textAlign: "center", marginTop: 8 }}>
-  <p
-    style={{
-      fontWeight: 700,
-      color: "#d4af37",
-      marginBottom: 4
-    }}
-  >
-    🐾 Happy, Chief Happiness Officer
-  </p>
 
-  <p
-    style={{
-      fontSize: 14,
-      opacity: 0.8,
-      fontStyle: "italic"
-    }}
-  >
-    "Powered by requests. Approved by Happy."
-  </p>
-</div>
-</div>
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: 40,
+            marginBottom: 0,
+          }}
+        >
+          <img
+            src="/happy.png"
+            alt="Happy"
+            style={{
+              width: "100%",
+              maxWidth: "180px",
+              height: "auto",
+              margin: "0 auto",
+              display: "block",
+            }}
+          />
+
+          <div style={{ textAlign: "center", marginTop: 8 }}>
+            <p
+              style={{
+                fontWeight: 700,
+                color: "#d4af37",
+                marginBottom: 4,
+              }}
+            >
+              🐾 Happy, Chief Happiness Officer
+            </p>
+
+            <p
+              style={{
+                fontSize: 14,
+                opacity: 0.8,
+                fontStyle: "italic",
+              }}
+            >
+              &quot;Powered by requests. Approved by Happy.&quot;
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );
