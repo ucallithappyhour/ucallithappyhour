@@ -53,61 +53,7 @@ export async function POST(request: Request) {
 
     const registrationId = registration[0].id;
 
-    await resend.emails.send({
-      from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
-      to: email,
-      subject: "Next step: complete your U Call It Happy Hour artist setup",
-      html: `
-        <div style="text-align:center; margin-bottom:24px;">
-          <img
-            src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
-            alt="U Call It Happy Hour"
-            width="200"
-            style="display:block; margin:0 auto;"
-          />
-        </div>
-
-        <h2>You're almost there, ${contactName}!</h2>
-
-        <p>
-          We received your artist registration for
-          <strong>${artistName}</strong>.
-        </p>
-
-        <p>
-          The final step is completing your one-time artist setup payment.
-          Once payment is complete, your U Call It Happy Hour artist setup can be activated.
-        </p>
-
-        <p><strong>Artist Type:</strong> ${artistType || "Not provided"}</p>
-        <p><strong>Setup Fee:</strong> $99</p>
-
-        <hr style="margin:24px 0;" />
-
-        <h3>🎵 Give $20, Get $20 Referral Program</h3>
-
-        <p>
-          Once your setup is complete, you'll receive your own personal referral link.
-        </p>
-
-        <p>
-          Invite other musicians to U Call It Happy Hour and earn
-          <strong> $20 </strong>
-          every time an artist you refer completes setup.
-        </p>
-
-        <p>They'll save <strong>$20</strong> on their setup fee, too.</p>
-
-        <p>Because great musicians know great musicians.</p>
-
-        <br />
-
-        <p>
-          Cheers,<br />
-          The U Call It Happy Hour Team
-        </p>
-      `
-    });
+    
 
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
