@@ -1,81 +1,112 @@
-import Link from "next/link";
+"use client";
 
-export default function RegisterSuccessPage() {
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+export default function SuccessPage() {
+  const [setupUrl, setSetupUrl] = useState("/account");
+  const [loadingSetupLink, setLoadingSetupLink] = useState(true);
+
+  useEffect(() => {
+    async function loadSetupLink() {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get("session_id");
+
+      if (!sessionId) {
+        setLoadingSetupLink(false);
+        return;
+      }
+
+      const response = await fetch("/api/get-setup-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ sessionId })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.setupUrl) {
+        setSetupUrl(result.setupUrl);
+      }
+
+      setLoadingSetupLink(false);
+    }
+
+    loadSetupLink();
+  }, []);
+
   return (
     <main className="page">
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <div className="brand">U Call It Happy Hour</div>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <img
+                src="/ucallit-logo.png.png"
+                alt="U Call It Happy Hour"
+                style={{
+                  width: 120,
+                  height: "auto",
+                  display: "inline-block"
+                }}
+              />
+            </div>
 
             <section
               className="accountCard"
-              style={{ maxWidth: 720, margin: "0 auto" }}
+              style={{ maxWidth: 700, margin: "0 auto" }}
             >
-              <h1 className="title">Welcome to U Call It Happy Hour 🎉</h1>
+              <div className="brand">U CALL IT HAPPY HOUR</div>
 
-              <p className="tagline">
-                Your artist setup payment has been received.
+              <h1 className="title">Payment Received 🎉</h1>
+
+              <p
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  marginBottom: 20
+                }}
+              >
+                One more step: complete your artist setup.
               </p>
 
-              <div className="details" style={{ marginTop: 24 }}>
-                We&apos;ll begin preparing your artist experience, including your
-                personalized request page, QR starter kit, dashboard access, and
-                referral link.
-              </div>
+              <p style={{ lineHeight: 1.7 }}>
+                Your artist page has been created. Now finish setting up your
+                profile so fans can request songs, tip you, and stay connected
+                to your shows.
+              </p>
 
               <div
                 style={{
-                  marginTop: 28,
-                  padding: 20,
+                  marginTop: 30,
+                  padding: 24,
                   border: "1px solid rgba(212,175,55,0.35)",
                   borderRadius: 12,
                   background: "rgba(212,175,55,0.08)"
                 }}
               >
-                <h2>What happens next?</h2>
+                <h2 style={{ marginBottom: 16 }}>Complete your setup</h2>
 
-                <div
-                  style={{
-                    marginTop: 14,
-                    lineHeight: 1.9,
-                    fontSize: 14,
-                    fontWeight: 700
-                  }}
-                >
-                  <div>✓ Your artist profile is created</div>
-                  <div>✓ Your song request page is prepared</div>
-                  <div>✓ Your QR code starter kit is generated</div>
-                  <div>✓ Your referral link is assigned</div>
-                  <div>✓ You&apos;ll receive setup details by email</div>
+                <div style={{ lineHeight: 2 }}>
+                  <div>✓ Add your bio and genres</div>
+                  <div>✓ Connect your tip link</div>
+                  <div>✓ Add social links</div>
+                  <div>✓ Add gigs, logo, and songs next</div>
+                  <div>✓ Receive your referral link</div>
                 </div>
               </div>
 
-              <div
-                style={{
-                  marginTop: 28,
-                  padding: 20,
-                  border: "1px solid rgba(34,197,94,0.45)",
-                  borderRadius: 12,
-                  background: "rgba(34,197,94,0.12)"
-                }}
-              >
-                <h2>Give $20, Get $20</h2>
-
-                <p style={{ marginTop: 12, lineHeight: 1.7 }}>
-                  Once your setup is complete, you&apos;ll receive your personal
-                  referral link. Share it with other artists and earn $20 when
-                  they complete setup. They&apos;ll save $20, too.
-                </p>
-              </div>
-
-              <div className="actions" style={{ marginTop: 28 }}>
-                <Link className="btn" href="/">
-                  Back to Home
+              <div className="actions" style={{ marginTop: 32 }}>
+                <Link className="btn" href={setupUrl}>
+                  {loadingSetupLink
+                    ? "Preparing Setup Link..."
+                    : "Finish Setting Up My Artist Page"}
                 </Link>
 
-                <Link className="btn secondary" href="/account">
-                  Complete Your Setup
+                <Link className="btn secondary" href="/">
+                  Back to Home
                 </Link>
               </div>
             </section>
