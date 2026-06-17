@@ -44,28 +44,30 @@ export default function ArtworkPage() {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("artists")
-      .select("artist_slug, artist_name, logo_url")
-      .eq("is_active", true)
-      .order("artist_name", { ascending: true });
+    const {
+  data: { user }
+} = await supabase.auth.getUser();
 
-    if (error) {
-      setMessage("Could not load artists: " + error.message);
-      return;
-    }
+if (!user?.email) {
+  setMessage("Please log in first.");
+  return;
+}
 
-    const loadedArtists = data || [];
-    setArtists(loadedArtists);
+const { data, error } = await supabase
+  .from("artists")
+  .select("artist_slug, artist_name, logo_url")
+  .eq("owner_email", user.email)
+  .maybeSingle();
 
-    const selected =
-      loadedArtists.find((artist) => artist.artist_slug === artistSlug) ||
-      loadedArtists[0];
+if (error || !data) {
+  setMessage("Could not find your artist profile.");
+  return;
+}
 
-    if (selected) {
-      setArtistSlug(selected.artist_slug);
-      setLogoUrl(selected.logo_url || "");
-    }
+setLockedArtist(data);
+setArtists([data]);
+setArtistSlug(data.artist_slug);
+setLogoUrl(data.logo_url || "");
   }
 
   useEffect(() => {
