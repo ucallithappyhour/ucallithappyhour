@@ -282,8 +282,9 @@ body {
   }
 
   .siteLogo {
-    width: 320px;
-  }
+  width: 95vw;
+  max-width: 430px;
+}
 
   .event-card {
     padding-right: 20px !important;
