@@ -253,12 +253,6 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              {message && (
-                <div className="message" style={{ marginBottom: 20 }}>
-                  <p>{message}</p>
-                </div>
-              )}
-
               {!submitted && requiredFieldsComplete && (
                 <button
                   className="btn"

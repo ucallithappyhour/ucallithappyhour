@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         notes,
         referred_by: referredBy || null,
         setup_fee: 99,
-        status: "pending"
+        status: "unpaid"
       });
 
     if (error) {
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
       to: email,
-      subject: "Your U Call It Happy Hour registration was received",
+      subject: "Next step: complete your U Call It Happy Hour artist setup",
       html: `
         <div style="text-align:center; margin-bottom:24px;">
           <img
@@ -62,15 +62,16 @@ export async function POST(request: Request) {
           />
         </div>
 
-        <h2>Thanks for registering, ${contactName}!</h2>
+        <h2>You're almost there, ${contactName}!</h2>
 
         <p>
-          We received your artist setup request for
+          We received your artist registration for
           <strong>${artistName}</strong>.
         </p>
 
         <p>
-          We'll review your registration and contact you within 24-48 hours to complete setup and payment.
+          The final step is completing your one-time artist setup payment.
+          Once payment is complete, your U Call It Happy Hour artist setup can be activated.
         </p>
 
         <p>
@@ -81,12 +82,16 @@ export async function POST(request: Request) {
           <strong>Setup Fee:</strong> $99
         </p>
 
+        <p>
+          Tomorrow, the payment button on the registration page will be connected to Stripe checkout.
+        </p>
+
         <hr style="margin:24px 0;" />
 
         <h3>🎵 Give $20, Get $20 Referral Program</h3>
 
         <p>
-          Once approved, you'll receive your own personal referral link.
+          Once your setup is complete, you'll receive your own personal referral link.
         </p>
 
         <p>
@@ -115,7 +120,7 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
       to: "u.call.it.happy.hour@gmail.com",
-      subject: `🎤 New Artist Registration: ${artistName}`,
+      subject: `🎤 New unpaid artist registration: ${artistName}`,
       html: `
         <div style="text-align:center; margin-bottom:24px;">
           <img
@@ -128,6 +133,7 @@ export async function POST(request: Request) {
 
         <h2>New Artist Registration</h2>
 
+        <p><strong>Status:</strong> unpaid</p>
         <p><strong>Artist Name:</strong> ${artistName}</p>
         <p><strong>Contact Name:</strong> ${contactName}</p>
         <p><strong>Email:</strong> ${email}</p>
@@ -135,6 +141,7 @@ export async function POST(request: Request) {
         <p><strong>Artist Type:</strong> ${artistType || "Not provided"}</p>
         <p><strong>Notes:</strong> ${notes || "None"}</p>
         <p><strong>Referred By:</strong> ${referredBy || "None"}</p>
+        <p><strong>Setup Fee:</strong> $99</p>
 
         <br />
 
@@ -151,7 +158,7 @@ export async function POST(request: Request) {
               font-weight:bold;
             "
           >
-            Review &amp; Approve Registration &rarr;
+            View Registration &rarr;
           </a>
         </p>
       `
