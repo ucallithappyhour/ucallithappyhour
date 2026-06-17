@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 
@@ -12,12 +13,37 @@ type Artist = {
 export default function ArtworkPage() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [artistSlug, setArtistSlug] = useState("brian-quinn");
+  const [lockedArtist, setLockedArtist] = useState<Artist | null>(null);
+  const [setupToken, setSetupToken] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
 
   async function loadArtists() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") || "";
+    setSetupToken(token);
+
+    if (token) {
+      const { data, error } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name, logo_url")
+        .eq("setup_token", token)
+        .maybeSingle();
+
+      if (error || !data) {
+        setMessage("Could not find your artist setup.");
+        return;
+      }
+
+      setLockedArtist(data);
+      setArtists([data]);
+      setArtistSlug(data.artist_slug);
+      setLogoUrl(data.logo_url || "");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("artists")
       .select("artist_slug, artist_name, logo_url")
@@ -142,10 +168,12 @@ export default function ArtworkPage() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
+            <div className="brand">U CALL IT HAPPY HOUR</div>
+
             <h1 className="title">Artwork</h1>
 
             <p className="tagline">
-              Manage the logo shown on artist pages.
+              Upload the logo or image shown on your artist page.
             </p>
 
             {message && <div className="message">{message}</div>}
@@ -153,22 +181,37 @@ export default function ArtworkPage() {
             <div className="section">
               <h2>Artist</h2>
 
-              <select
-                value={artistSlug}
-                onChange={(e) => handleArtistChange(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: 14,
-                  borderRadius: 10,
-                  marginBottom: 18
-                }}
-              >
-                {artists.map((artist) => (
-                  <option key={artist.artist_slug} value={artist.artist_slug}>
-                    {artist.artist_name || artist.artist_slug}
-                  </option>
-                ))}
-              </select>
+              {lockedArtist ? (
+                <div
+                  style={{
+                    padding: 14,
+                    borderRadius: 10,
+                    marginBottom: 18,
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    background: "rgba(255,255,255,0.08)",
+                    fontWeight: 800
+                  }}
+                >
+                  {lockedArtist.artist_name || lockedArtist.artist_slug}
+                </div>
+              ) : (
+                <select
+                  value={artistSlug}
+                  onChange={(e) => handleArtistChange(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: 14,
+                    borderRadius: 10,
+                    marginBottom: 18
+                  }}
+                >
+                  {artists.map((artist) => (
+                    <option key={artist.artist_slug} value={artist.artist_slug}>
+                      {artist.artist_name || artist.artist_slug}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             <div className="section">
@@ -247,6 +290,17 @@ export default function ArtworkPage() {
                 <p className="empty">No logo set yet.</p>
               )}
             </div>
+
+            {setupToken && (
+              <div className="actions" style={{ marginTop: 24 }}>
+                <Link
+                  className="btn"
+                  href={`/account/setup/next?token=${setupToken}`}
+                >
+                  Back to Setup Steps
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
