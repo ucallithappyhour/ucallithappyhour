@@ -280,8 +280,9 @@ const songs = [
   { title: "Miss You", artist: "Rolling Stones" },
   { title: "Honky Tonk Women", artist: "Rolling Stones" },
   { title: "Emotional Rescue", artist: "Rolling Stones" },
-  { title: "Monkey Man", artist: "Rolling Stones" },
+  { title: "Monkey Man", artist: "Rolling Stones" }
 ];
+
 type Song = {
   title: string;
   artist: string;
@@ -298,20 +299,21 @@ export default function RequestSongPage() {
   const [loading, setLoading] = useState(false);
   const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(null);
 
-const matches = useMemo(() => {
-  const normalize = (text: string) =>
-    text.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const matches = useMemo(() => {
+    const normalize = (text: string) =>
+      text.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-  const q = normalize(query.trim());
+    const q = normalize(query.trim());
 
-  if (!q) return songs;
+    if (!q) return songs;
 
-  return songs.filter((song) =>
-    normalize(`${song.title} ${song.artist}`).includes(q)
-  );
-}, [query]);
+    return songs.filter((song) =>
+      normalize(`${song.title} ${song.artist}`).includes(q)
+    );
+  }, [query]);
 
-  const showFutureSuggestion = query.trim().length > 0 && matches.length === 0;
+  const hasSearch = query.trim().length > 0;
+  const hasMatches = matches.length > 0;
 
   function resetToCatalog() {
     setSelectedSong(null);
@@ -381,8 +383,23 @@ const matches = useMemo(() => {
   }
 
   return (
-    <main style={{ minHeight: "100vh", padding: 40, background: "#000", color: "#fff", fontFamily: "Arial, sans-serif" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(320px, 550px) 1fr", gap: 40, alignItems: "start" }}>
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: 40,
+        background: "#000",
+        color: "#fff",
+        fontFamily: "Arial, sans-serif"
+      }}
+    >
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "minmax(320px, 550px) 1fr",
+          gap: 40,
+          alignItems: "start"
+        }}
+      >
         <div>
           <h1>Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.</h1>
           <p>Search by song or artist.</p>
@@ -391,7 +408,14 @@ const matches = useMemo(() => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by song or artist..."
-            style={{ width: "100%", maxWidth: 500, padding: 14, fontSize: 18, borderRadius: 8, marginTop: 20 }}
+            style={{
+              width: "100%",
+              maxWidth: 500,
+              padding: 14,
+              fontSize: 18,
+              borderRadius: 8,
+              marginTop: 20
+            }}
           />
 
           <div style={{ marginTop: 25, maxWidth: 500 }}>
@@ -399,7 +423,18 @@ const matches = useMemo(() => {
               <button
                 key={`${song.title}-${song.artist}`}
                 onClick={() => openTonightRequest(song)}
-                style={{ display: "block", width: "100%", textAlign: "left", padding: 14, marginBottom: 10, fontSize: 17, borderRadius: 8, background: "#f3f3f3", color: "#000", cursor: "pointer" }}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  textAlign: "left",
+                  padding: 14,
+                  marginBottom: 10,
+                  fontSize: 17,
+                  borderRadius: 8,
+                  background: "#f3f3f3",
+                  color: "#000",
+                  cursor: "pointer"
+                }}
               >
                 <strong>{song.title}</strong>
                 <br />
@@ -407,14 +442,63 @@ const matches = useMemo(() => {
               </button>
             ))}
 
-            {showFutureSuggestion && (
-              <div style={{ background: "#181818", padding: 18, borderRadius: 12, border: "1px solid #333" }}>
+            {hasSearch && hasMatches && (
+              <div
+                style={{
+                  background: "#181818",
+                  padding: 18,
+                  borderRadius: 12,
+                  border: "1px solid #333",
+                  marginTop: 18
+                }}
+              >
+                <p style={{ fontWeight: 700, marginBottom: 6 }}>
+                  Can&apos;t find the version you&apos;re looking for?
+                </p>
+
+                <p style={{ opacity: 0.85, marginBottom: 14 }}>
+                  Want Brian to consider a different artist, arrangement, or
+                  version for a future show?
+                </p>
+
+                <button
+                  onClick={openFutureSuggestion}
+                  style={{
+                    padding: "14px 20px",
+                    fontSize: 17,
+                    borderRadius: 8,
+                    background: "#ffd84d",
+                    color: "#000",
+                    cursor: "pointer"
+                  }}
+                >
+                  Suggest for Future Performance
+                </button>
+              </div>
+            )}
+
+            {hasSearch && !hasMatches && (
+              <div
+                style={{
+                  background: "#181818",
+                  padding: 18,
+                  borderRadius: 12,
+                  border: "1px solid #333"
+                }}
+              >
                 <p>No matching songs found.</p>
                 <p>Want Brian to consider this for a future show?</p>
 
                 <button
                   onClick={openFutureSuggestion}
-                  style={{ padding: "14px 20px", fontSize: 17, borderRadius: 8, background: "#ffd84d", color: "#000", cursor: "pointer" }}
+                  style={{
+                    padding: "14px 20px",
+                    fontSize: 17,
+                    borderRadius: 8,
+                    background: "#ffd84d",
+                    color: "#000",
+                    cursor: "pointer"
+                  }}
                 >
                   Suggest for Future Performance
                 </button>
@@ -423,7 +507,16 @@ const matches = useMemo(() => {
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 500, textAlign: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: 500,
+            textAlign: "center"
+          }}
+        >
           <img
             src="/brian-logo.jpg"
             alt="Brian Quinn Logo"
@@ -446,7 +539,13 @@ const matches = useMemo(() => {
             href="https://venmo.com/Brian-Quinn-41"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "#ffd84d", fontSize: 20, textDecoration: "none", fontWeight: "bold", marginTop: 18 }}
+            style={{
+              color: "#ffd84d",
+              fontSize: 20,
+              textDecoration: "none",
+              fontWeight: "bold",
+              marginTop: 18
+            }}
           >
             💵 Tip Brian
           </a>
@@ -454,18 +553,50 @@ const matches = useMemo(() => {
       </div>
 
       {(selectedSong || mode === "future") && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.82)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, zIndex: 9999 }}>
-          <div style={{ width: "100%", maxWidth: 520, background: "#181818", color: "#fff", padding: 24, borderRadius: 16, border: "1px solid #333" }}>
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.82)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+            zIndex: 9999
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 520,
+              background: "#181818",
+              color: "#fff",
+              padding: 24,
+              borderRadius: 16,
+              border: "1px solid #333"
+            }}
+          >
             <button
               onClick={resetToCatalog}
-              style={{ float: "right", fontSize: 22, background: "transparent", color: "#fff", border: 0, cursor: "pointer" }}
+              style={{
+                float: "right",
+                fontSize: 22,
+                background: "transparent",
+                color: "#fff",
+                border: 0,
+                cursor: "pointer"
+              }}
             >
               ×
             </button>
 
             {successMode ? (
               <>
-                <h2>{successMode === "tonight" ? "Request sent!" : "Suggestion sent!"}</h2>
+                <h2>
+                  {successMode === "tonight"
+                    ? "Request sent!"
+                    : "Suggestion sent!"}
+                </h2>
 
                 <p>
                   {successMode === "tonight"
@@ -487,14 +618,23 @@ const matches = useMemo(() => {
 
                 <button
                   onClick={resetToCatalog}
-                  style={{ padding: "12px 18px", fontSize: 16, borderRadius: 8, cursor: "pointer" }}
+                  style={{
+                    padding: "12px 18px",
+                    fontSize: 16,
+                    borderRadius: 8,
+                    cursor: "pointer"
+                  }}
                 >
                   Back to Catalog
                 </button>
               </>
             ) : (
               <>
-                <h2>{mode === "tonight" ? "Request for Tonight" : "Suggest for Future Show"}</h2>
+                <h2>
+                  {mode === "tonight"
+                    ? "Request for Tonight"
+                    : "Suggest for Future Show"}
+                </h2>
 
                 {mode === "tonight" && selectedSong ? (
                   <>
@@ -507,14 +647,26 @@ const matches = useMemo(() => {
                       value={futureTitle}
                       onChange={(e) => setFutureTitle(e.target.value)}
                       placeholder="Song title"
-                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                      style={{
+                        width: "100%",
+                        padding: 14,
+                        fontSize: 18,
+                        borderRadius: 8,
+                        marginBottom: 12
+                      }}
                     />
 
                     <input
                       value={futureArtist}
                       onChange={(e) => setFutureArtist(e.target.value)}
-                      placeholder="Artist name optional"
-                      style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                      placeholder="Artist / version optional"
+                      style={{
+                        width: "100%",
+                        padding: 14,
+                        fontSize: 18,
+                        borderRadius: 8,
+                        marginBottom: 12
+                      }}
                     />
                   </>
                 )}
@@ -523,7 +675,13 @@ const matches = useMemo(() => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your first name optional"
-                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                  style={{
+                    width: "100%",
+                    padding: 14,
+                    fontSize: 18,
+                    borderRadius: 8,
+                    marginBottom: 12
+                  }}
                 />
 
                 <textarea
@@ -531,13 +689,24 @@ const matches = useMemo(() => {
                   onChange={(e) => setDedication(e.target.value)}
                   placeholder="Dedication or message optional"
                   rows={4}
-                  style={{ width: "100%", padding: 14, fontSize: 18, borderRadius: 8, marginBottom: 12 }}
+                  style={{
+                    width: "100%",
+                    padding: 14,
+                    fontSize: 18,
+                    borderRadius: 8,
+                    marginBottom: 12
+                  }}
                 />
 
                 <button
                   onClick={submitRequest}
                   disabled={loading}
-                  style={{ padding: "14px 22px", fontSize: 18, borderRadius: 8, cursor: loading ? "not-allowed" : "pointer" }}
+                  style={{
+                    padding: "14px 22px",
+                    fontSize: 18,
+                    borderRadius: 8,
+                    cursor: loading ? "not-allowed" : "pointer"
+                  }}
                 >
                   {loading
                     ? "Sending..."
