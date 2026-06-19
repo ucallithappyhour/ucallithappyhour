@@ -14,6 +14,9 @@ export default function RegisterPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const hasReferral = referredBy.trim() !== "";
+  const setupFee = hasReferral ? 79 : 99;
+
   const requiredFieldsComplete =
     artistName.trim() !== "" &&
     contactName.trim() !== "" &&
@@ -115,21 +118,22 @@ export default function RegisterPage() {
                 Everything you need to launch.
               </p>
 
-              <div
+              <ul
                 style={{
                   marginTop: 18,
                   lineHeight: 1.9,
                   fontSize: 14,
-                  fontWeight: 700
+                  fontWeight: 700,
+                  paddingLeft: 24
                 }}
               >
-                <div>Γ£ô Personalized artist page for your fans</div>
-                <div>Γ£ô QR starter kit for tables, flyers, and signs</div>
-                <div>Γ£ô Fan song request dashboard</div>
-                <div>Γ£ô Future setlist insights</div>
-                <div>Γ£ô Venmo or Cash App tip integration</div>
-                <div>Γ£ô Ongoing platform updates and improvements</div>
-              </div>
+                <li>Personalized artist page for your fans</li>
+                <li>QR starter kit for tables, flyers, and signs</li>
+                <li>Fan song request dashboard</li>
+                <li>Future setlist insights</li>
+                <li>Venmo or Cash App tip integration</li>
+                <li>Ongoing platform updates and improvements</li>
+              </ul>
 
               <div className="details" style={{ marginTop: 20 }}>
                 Your page gives fans one simple place to request songs, support
@@ -140,20 +144,21 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Why Artists Use It</h2>
 
-              <div
+              <ul
                 style={{
                   marginTop: 16,
                   lineHeight: 1.9,
                   fontSize: 14,
-                  fontWeight: 700
+                  fontWeight: 700,
+                  paddingLeft: 24
                 }}
               >
-                <div>Γ£ô Engage your crowd in a new way</div>
-                <div>Γ£ô Discover what fans actually want to hear</div>
-                <div>Γ£ô Create a more memorable venue experience</div>
-                <div>Γ£ô Encourage repeat attendance</div>
-                <div>Γ£ô Increase tip opportunities</div>
-              </div>
+                <li>Engage your crowd in a new way</li>
+                <li>Discover what fans actually want to hear</li>
+                <li>Create a more memorable venue experience</li>
+                <li>Encourage repeat attendance</li>
+                <li>Increase tip opportunities</li>
+              </ul>
 
               <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
                 One extra booking pays for itself.
@@ -163,9 +168,51 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Investment</h2>
 
-              <p style={{ fontSize: "1.35rem", fontWeight: 900, marginTop: 12 }}>
-                One-time artist setup fee: $99
-              </p>
+              {hasReferral ? (
+                <>
+                  <p
+                    style={{
+                      color: "#4ade80",
+                      fontWeight: 800,
+                      marginTop: 12
+                    }}
+                  >
+                    🎉 Referred by another artist
+                  </p>
+
+                  <p
+                    style={{
+                      fontSize: "1.35rem",
+                      fontWeight: 900,
+                      marginTop: 8
+                    }}
+                  >
+                    One-time artist setup fee:{" "}
+                    <span style={{ textDecoration: "line-through", opacity: 0.65 }}>
+                      $99
+                    </span>{" "}
+                    ${setupFee}
+                  </p>
+
+                  <p style={{ color: "#4ade80", marginTop: 8 }}>
+                    You save $20 today.
+                  </p>
+
+                  <p style={{ marginTop: 8, opacity: 0.85 }}>
+                    Referral code: <strong>{referredBy}</strong>
+                  </p>
+                </>
+              ) : (
+                <p
+                  style={{
+                    fontSize: "1.35rem",
+                    fontWeight: 900,
+                    marginTop: 12
+                  }}
+                >
+                  One-time artist setup fee: $99
+                </p>
+              )}
 
               <p style={{ marginTop: 12, lineHeight: 1.7 }}>
                 This covers your personalized artist page, request dashboard, QR
@@ -184,6 +231,23 @@ export default function RegisterPage() {
                 Fill out the short form below. Artist name, contact name, and
                 email are required. Notes are optional.
               </p>
+
+              {hasReferral && (
+                <div
+                  style={{
+                    marginTop: 18,
+                    marginBottom: 18,
+                    padding: 16,
+                    border: "1px solid rgba(74,222,128,0.45)",
+                    borderRadius: 12,
+                    background: "rgba(74,222,128,0.1)"
+                  }}
+                >
+                  <strong>Referral discount applied.</strong>
+                  <br />
+                  You save $20 today. Your setup fee will be ${setupFee}.
+                </div>
+              )}
 
               <label>Artist / Band Name</label>
               <input
@@ -250,11 +314,11 @@ export default function RegisterPage() {
                 }}
               >
                 <h3 style={{ marginBottom: 10 }}>
-                  ≡ƒÄ╡ Give $20, Get $20 Referral Program
+                  💰 Give $20, Get $20 Referral Program
                 </h3>
 
                 <p style={{ marginBottom: 10 }}>
-                  Once your setup is complete, you{"'"}ll receive your own
+                  Once your setup is complete, you&apos;ll receive your own
                   referral link.
                 </p>
 
@@ -284,7 +348,7 @@ export default function RegisterPage() {
                 >
                   {loading
                     ? "Preparing Secure Checkout..."
-                    : "Continue to Secure Checkout"}
+                    : `Continue to Secure Checkout - $${setupFee}`}
                 </button>
               ) : (
                 <p style={{ marginTop: 14, opacity: 0.75, fontSize: 13 }}>
