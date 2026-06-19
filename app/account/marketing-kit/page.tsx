@@ -120,13 +120,41 @@ export default function MarketingKitPage() {
 
                 <p>Fans scan this to request songs.</p>
 
-                <img
-                  src={artistQrUrl}
-                  alt="Artist QR Code"
-                  width="260"
-                  height="260"
-                  style={{ maxWidth: "100%", height: "auto" }}
-                />
+              <div
+  style={{
+    position: "relative",
+    width: 260,
+    height: 260,
+    margin: "0 auto"
+  }}
+>
+  <img
+    src={artistQrUrl}
+    alt="Artist QR Code"
+    width="260"
+    height="260"
+    style={{
+      maxWidth: "100%",
+      height: "auto"
+    }}
+  />
+
+  <img
+    src="/ucallit-qr-logo.png"
+    alt="U Call It Happy Hour"
+    style={{
+      position: "absolute",
+      width: 54,
+      height: 54,
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      background: "#fff",
+      borderRadius: "50%",
+      padding: 3
+    }}
+  />
+</div>
 
                 <p style={{ wordBreak: "break-all", fontSize: 14 }}>
                   {artistPageUrl}
@@ -155,13 +183,41 @@ export default function MarketingKitPage() {
 
                 <p>Other artists scan this to join with your referral.</p>
 
-                <img
-                  src={referralQrUrl}
-                  alt="Referral QR Code"
-                  width="260"
-                  height="260"
-                  style={{ maxWidth: "100%", height: "auto" }}
-                />
+              <div
+  style={{
+    position: "relative",
+    width: 260,
+    height: 260,
+    margin: "0 auto"
+  }}
+>
+  <img
+    src={artistQrUrl}
+    alt="Artist QR Code"
+    width="260"
+    height="260"
+    style={{
+      maxWidth: "100%",
+      height: "auto"
+    }}
+  />
+
+  <img
+    src="/ucallit-qr-logo.png"
+    alt="U Call It Happy Hour"
+    style={{
+      position: "absolute",
+      width: 54,
+      height: 54,
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      background: "#fff",
+      borderRadius: "50%",
+      padding: 3
+    }}
+  />
+</div>
 
                 <p style={{ wordBreak: "break-all", fontSize: 14 }}>
                   {referralUrl}
