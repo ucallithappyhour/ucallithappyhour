@@ -292,15 +292,17 @@ export default function DynamicArtistPage() {
                     {gig.recurring_type || "One-Time"}
                   </p>
 
-<p
-  style={{
-    marginTop: 8,
-    color: "red",
-    fontWeight: 900
-  }}
->
-  NOTE TEST: {gig.special_note || "EMPTY"}
-</p>
+                    {gig.special_note && (
+                      <p
+                        style={{
+                          marginTop: 8,
+                          color: "#d4af37",
+                          fontStyle: "italic"
+                        }}
+                      >
+                        {gig.special_note}
+                      </p>
+                    )}
 
                 </div>
               ))
