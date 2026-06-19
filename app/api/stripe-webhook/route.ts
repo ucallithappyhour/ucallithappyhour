@@ -100,6 +100,11 @@ export async function POST(request: Request) {
       const slug = makeSlug(artistName);
       const referralCode = makeReferralCode(artistName);
 
+      const artistPageUrl = `https://www.ucallithappyhour.com/${slug}`;
+      const marketingKitUrl = `https://www.ucallithappyhour.com/account/marketing-kit`;
+      const referralUrl = `https://www.ucallithappyhour.com/register?ref=${referralCode}`;
+      const loginUrl = `https://www.ucallithappyhour.com/login`;
+
       const { error: paidError } = await supabaseAdmin
         .from("artist_registrations")
         .update({
@@ -205,83 +210,159 @@ export async function POST(request: Request) {
           to: email,
           subject: "🎉 Welcome to U Call It Happy Hour!",
           html: `
-            <div style="text-align:center; margin-bottom:24px;">
-              <img
-                src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
-                alt="U Call It Happy Hour"
-                width="200"
-                style="display:block; margin:0 auto;"
-              />
+            <div style="font-family:Arial, Helvetica, sans-serif; color:#222; line-height:1.5;">
+              <div style="text-align:center; margin-bottom:24px;">
+                <img
+                  src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
+                  alt="U Call It Happy Hour"
+                  width="200"
+                  style="display:block; margin:0 auto;"
+                />
+              </div>
+
+              <h2>Welcome to U Call It Happy Hour${contactName ? `, ${contactName}` : ""}!</h2>
+
+              <p>
+                Your artist setup payment has been received and your artist page is now live.
+              </p>
+
+              <h3>🎵 Your Artist Page</h3>
+
+              <p>
+                <a
+                  href="${artistPageUrl}"
+                  style="
+                    display:inline-block;
+                    background:#d4af37;
+                    color:#000000;
+                    padding:12px 20px;
+                    text-decoration:none;
+                    border-radius:6px;
+                    font-weight:bold;
+                  "
+                >
+                  View My Artist Page
+                </a>
+              </p>
+
+              <p>
+                ${artistPageUrl}
+              </p>
+
+              <h3>📲 Your Marketing Kit</h3>
+
+              <p>
+                Your Artist QR Code and Referral QR Code are ready in your Marketing Kit.
+                Print or save them so fans can request songs and other artists can join through your referral link.
+              </p>
+
+              <p>
+                <a
+                  href="${marketingKitUrl}"
+                  style="
+                    display:inline-block;
+                    background:#000000;
+                    color:#ffffff;
+                    padding:12px 20px;
+                    text-decoration:none;
+                    border-radius:6px;
+                    font-weight:bold;
+                  "
+                >
+                  Open My Marketing Kit
+                </a>
+              </p>
+
+              <h3>💰 Earn $20 Per Referral</h3>
+
+              <p>
+                Know another artist who performs live? Share your referral link or Referral QR Code.
+              </p>
+
+              <p>
+                When another artist completes setup:
+              </p>
+
+              <ul>
+                <li>They save <strong>$20</strong></li>
+                <li>You earn <strong>$20</strong></li>
+              </ul>
+
+              <p>
+                <strong>Your Referral Link:</strong><br />
+                <a href="${referralUrl}">${referralUrl}</a>
+              </p>
+
+              <h3>🎤 Get Gig-Ready</h3>
+
+              <p><strong>If you haven't already done so:</strong></p>
+
+              <ul>
+                <li>Upload your logo</li>
+                <li>Add your upcoming gigs</li>
+                <li>Upload your song library</li>
+              </ul>
+
+              <p><strong>Then:</strong></p>
+
+              <ul>
+                <li>Print or save your Artist QR Code</li>
+                <li>Display it at your next performance</li>
+                <li>Mention it to the audience at least twice during your set</li>
+              </ul>
+
+              <p>
+                <strong>Pro Tip:</strong> The artists receiving the most requests mention their QR code
+                at least twice during each performance.
+              </p>
+
+              <h3>Included With Your Setup</h3>
+
+              <ul>
+                <li>Personalized artist request page</li>
+                <li>Fan request dashboard</li>
+                <li>Marketing Kit with QR codes</li>
+                <li>Tip integration</li>
+                <li>Future setlist insights</li>
+                <li>Give $20, Get $20 referral program</li>
+              </ul>
+
+              <p>
+                <a href="${loginUrl}">Log in to manage your account</a>
+              </p>
+
+              <p>
+                Cheers,<br />
+                The U Call It Happy Hour Team
+              </p>
+
+              <div style="text-align:center; margin-top:30px;">
+                <img
+                  src="https://www.ucallithappyhour.com/happy.png"
+                  alt="Happy, Chief Happiness Officer"
+                  width="140"
+                  style="display:block; margin:0 auto;"
+                />
+
+                <p style="
+                  margin:10px 0 4px 0;
+                  font-weight:bold;
+                  color:#d4af37;
+                  font-size:16px;
+                ">
+                  🐾 Happy, Chief Happiness Officer
+                </p>
+
+                <p style="
+                  margin:0;
+                  color:#666;
+                  font-style:italic;
+                  font-size:14px;
+                ">
+                  Powered by requests. Approved by Happy.
+                </p>
+              </div>
             </div>
-
-            <h2>Welcome to U Call It Happy Hour${contactName ? `, ${contactName}` : ""}!</h2>
-
-            <p>
-              Your artist setup payment has been received and your artist page has been activated.
-            </p>
-
-            <h3>What's included:</h3>
-
-            <ul>
-              <li>Personalized artist request page</li>
-              <li>Fan request dashboard</li>
-              <li>QR starter kit for tables, signs, and flyers</li>
-              <li>Tip integration</li>
-              <li>Future setlist insights</li>
-              <li>Give $20, Get $20 referral program</li>
-            </ul>
-
-            <h3>Your Artist Page</h3>
-
-            <p>
-              <a href="https://www.ucallithappyhour.com/${slug}">
-                https://www.ucallithappyhour.com/${slug}
-              </a>
-            </p>
-
-            <h3>Your Referral Link</h3>
-
-            <p>
-              <a href="https://www.ucallithappyhour.com/register?ref=${referralCode}">
-                https://www.ucallithappyhour.com/register?ref=${referralCode}
-              </a>
-            </p>
-
-            <p>
-              Earn <strong>$20</strong> every time another artist completes setup using your link.
-              They save <strong>$20</strong>, too.
-            </p>
-
-            <p>
-              Cheers,<br />
-              The U Call It Happy Hour Team
-            </p>
-            <div style="text-align:center; margin-top:30px;">
-  <img
-    src="https://www.ucallithappyhour.com/happy.png"
-    alt="Happy, Chief Happiness Officer"
-    width="140"
-    style="display:block; margin:0 auto;"
-  />
-
-  <p style="
-    margin:10px 0 4px 0;
-    font-weight:bold;
-    color:#d4af37;
-    font-size:16px;
-  ">
-    🐾 Happy, Chief Happiness Officer
-  </p>
-
-  <p style="
-    margin:0;
-    color:#666;
-    font-style:italic;
-    font-size:14px;
-  ">
-    Powered by requests. Approved by Happy.
-  </p>
-</div>
           `
         });
 
@@ -297,8 +378,10 @@ export async function POST(request: Request) {
 
           <p><strong>Artist:</strong> ${artistName}</p>
           <p><strong>Email:</strong> ${email || "Not provided"}</p>
-          <p><strong>Artist URL:</strong> https://www.ucallithappyhour.com/${slug}</p>
+          <p><strong>Artist URL:</strong> ${artistPageUrl}</p>
+          <p><strong>Marketing Kit:</strong> ${marketingKitUrl}</p>
           <p><strong>Referral Code:</strong> ${referralCode}</p>
+          <p><strong>Referral Link:</strong> ${referralUrl}</p>
           <p><strong>Referred By:</strong> ${referredBy || "None"}</p>
           <p><strong>Stripe Session:</strong> ${session.id}</p>
         `
