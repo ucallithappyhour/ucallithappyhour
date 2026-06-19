@@ -27,6 +27,8 @@ type Gig = {
   start_time: string | null;
   end_time: string | null;
   recurring_type: string | null;
+  special_note: string | null;
+
 };
 
 function normalizeExternalUrl(url: string | null) {
@@ -289,6 +291,19 @@ export default function DynamicArtistPage() {
                     {gig.venue_address || "Address TBD"} •{" "}
                     {gig.recurring_type || "One-Time"}
                   </p>
+
+                  {gig.special_note && (
+                    <p
+                      style={{
+                        marginTop: 8,
+                        color: "#d4af37",
+                        fontStyle: "italic"
+                      }}
+                    >
+                      {gig.special_note}
+                    </p>
+                  )}
+
                 </div>
               ))
             )}
