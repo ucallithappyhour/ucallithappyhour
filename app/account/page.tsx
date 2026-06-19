@@ -350,7 +350,7 @@ export default function AccountPage() {
     loadGigs();
   }
 
-    function startEditGig(gig: Gig) {
+      function startEditGig(gig: Gig) {
     setEditingGigId(gig.id);
 
     setNewGig({
@@ -362,10 +362,8 @@ export default function AccountPage() {
       recurring_type: gig.recurring_type || "One-Time"
     });
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
     setMessage("Editing gig. Make changes below, then save.");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function cancelEditGig() {
