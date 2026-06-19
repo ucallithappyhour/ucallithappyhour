@@ -72,11 +72,19 @@ function gigDetails(gig: Gig | undefined) {
 
   return `${venue} • ${date} • ${time}`;
 }
+function getLocalDateString() {
+  const now = new Date();
 
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 function isToday(dateValue: string | null) {
   if (!dateValue) return false;
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDateString();
 
   return dateValue === today;
 }
@@ -119,7 +127,7 @@ export default function Home() {
     setArtists(activeArtists);
 
     const activeArtistSlugs = activeArtists.map((artist) => artist.artist_slug);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getLocalDateString();
 
     const { data: gigData, error: gigError } = await supabase
       .from("gigs")
