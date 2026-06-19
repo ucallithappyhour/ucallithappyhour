@@ -24,6 +24,8 @@ export default function GigsPage() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [setupToken, setSetupToken] = useState("");
   const [gigs, setGigs] = useState<Gig[]>([]);
+  const [editingGigId, setEditingGigId] = useState<number | null>(null);
+
   const [venueName, setVenueName] = useState("");
   const [venueAddress, setVenueAddress] = useState("");
   const [gigDate, setGigDate] = useState("");
@@ -78,7 +80,29 @@ export default function GigsPage() {
     setGigs(data || []);
   }
 
-  async function addGig() {
+  function resetForm() {
+    setEditingGigId(null);
+    setVenueName("");
+    setVenueAddress("");
+    setGigDate("");
+    setStartTime("");
+    setEndTime("");
+    setRecurringType("One-Time");
+  }
+
+  function editGig(gig: Gig) {
+    setEditingGigId(gig.id);
+    setVenueName(gig.venue_name || "");
+    setVenueAddress(gig.venue_address || "");
+    setGigDate(gig.gig_date || "");
+    setStartTime(gig.start_time || "");
+    setEndTime(gig.end_time || "");
+    setRecurringType(gig.recurring_type || "One-Time");
+    setMessage("Editing gig. Make changes, then save.");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function saveGig() {
     if (!artist) return;
 
     if (!venueName.trim()) {
@@ -86,28 +110,46 @@ export default function GigsPage() {
       return;
     }
 
-    const { error } = await supabase.from("gigs").insert({
-      artist_slug: artist.artist_slug,
-      venue_name: venueName.trim(),
-      venue_address: venueAddress.trim() || null,
-      gig_date: gigDate || null,
-      start_time: startTime || null,
-      end_time: endTime || null,
-      recurring_type: recurringType
-    });
+    if (editingGigId) {
+      const { error } = await supabase
+        .from("gigs")
+        .update({
+          venue_name: venueName.trim(),
+          venue_address: venueAddress.trim() || null,
+          gig_date: gigDate || null,
+          start_time: startTime || null,
+          end_time: endTime || null,
+          recurring_type: recurringType
+        })
+        .eq("id", editingGigId)
+        .eq("artist_slug", artist.artist_slug);
 
-    if (error) {
-      setMessage("Could not add gig: " + error.message);
-      return;
+      if (error) {
+        setMessage("Could not update gig: " + error.message);
+        return;
+      }
+
+      setMessage("Gig updated.");
+    } else {
+      const { error } = await supabase.from("gigs").insert({
+        artist_slug: artist.artist_slug,
+        venue_name: venueName.trim(),
+        venue_address: venueAddress.trim() || null,
+        gig_date: gigDate || null,
+        start_time: startTime || null,
+        end_time: endTime || null,
+        recurring_type: recurringType
+      });
+
+      if (error) {
+        setMessage("Could not add gig: " + error.message);
+        return;
+      }
+
+      setMessage("Gig added.");
     }
 
-    setVenueName("");
-    setVenueAddress("");
-    setGigDate("");
-    setStartTime("");
-    setEndTime("");
-    setRecurringType("One-Time");
-    setMessage("Gig added.");
+    resetForm();
     loadGigs(artist.artist_slug);
   }
 
@@ -175,7 +217,7 @@ export default function GigsPage() {
             </div>
 
             <div className="section">
-              <h2>Add Upcoming Show</h2>
+              <h2>{editingGigId ? "Edit Upcoming Show" : "Add Upcoming Show"}</h2>
 
               <label>Venue Name</label>
               <input
@@ -222,9 +264,20 @@ export default function GigsPage() {
                 <option>Monthly</option>
               </select>
 
-              <button className="btn" type="button" onClick={addGig}>
-                Save Gig
+              <button className="btn" type="button" onClick={saveGig}>
+                {editingGigId ? "Save Changes" : "Save Gig"}
               </button>
+
+              {editingGigId && (
+                <button
+                  className="btn secondary"
+                  type="button"
+                  onClick={resetForm}
+                  style={{ marginLeft: 10 }}
+                >
+                  Cancel Edit
+                </button>
+              )}
             </div>
 
             <div className="section">
@@ -235,9 +288,7 @@ export default function GigsPage() {
               ) : (
                 gigs.map((gig) => (
                   <div key={gig.id} className="event-card">
-                    <p className="performer">
-                      {gig.venue_name || "Venue TBD"}
-                    </p>
+                    <p className="performer">{gig.venue_name || "Venue TBD"}</p>
 
                     <p className="details">{formatGig(gig)}</p>
 
@@ -250,9 +301,18 @@ export default function GigsPage() {
                     </p>
 
                     <button
+                      className="btn"
+                      type="button"
+                      onClick={() => editGig(gig)}
+                    >
+                      Edit
+                    </button>
+
+                    <button
                       className="btn secondary"
                       type="button"
                       onClick={() => deleteGig(gig)}
+                      style={{ marginLeft: 10 }}
                     >
                       Delete
                     </button>
