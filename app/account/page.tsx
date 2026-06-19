@@ -948,17 +948,38 @@ export default function AccountPage() {
   {profile.referral_code && (
     <>
       <div
-        style={{
-          marginTop: 14,
-          padding: 12,
-          borderRadius: 8,
-          background: "rgba(255,255,255,0.06)",
-          wordBreak: "break-all",
-          fontSize: 14
-        }}
-      >
-        https://www.ucallithappyhour.com/register?ref={profile.referral_code}
-      </div>
+  style={{
+    marginTop: 14,
+    padding: 12,
+    borderRadius: 8,
+    background: "rgba(255,255,255,0.06)"
+  }}
+>
+  <input
+    readOnly
+    value={`https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`}
+    style={{
+      width: "100%",
+      background: "transparent",
+      border: "none",
+      color: "#fff",
+      fontSize: 14,
+      marginBottom: 10
+    }}
+  />
+
+  <button
+    className="btn secondary"
+    type="button"
+    onClick={() =>
+      navigator.clipboard.writeText(
+        `https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`
+      )
+    }
+  >
+    Copy Referral Link
+  </button>
+</div>
 
       <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
         <Link className="btn" href="/account/marketing-kit">
