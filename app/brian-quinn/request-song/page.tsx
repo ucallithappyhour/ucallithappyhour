@@ -63,10 +63,9 @@ export default function RequestSongPage() {
   }, [query, songs]);
 
   const hasSearch = query.trim().length > 0;
-const hasMatches = matches.length > 0;
-
-const showFutureSuggestion =
-  hasSearch && !songsLoading && matches.length === 0;
+  const hasMatches = matches.length > 0;
+  const showFutureSuggestion =
+    hasSearch && !songsLoading && matches.length === 0;
 
   function resetToCatalog() {
     setSelectedSong(null);
@@ -113,17 +112,24 @@ const showFutureSuggestion =
     setLoading(true);
 
     try {
-      const { error } = await supabase.from("song_requests").insert({
-        song: title,
-        artist,
-        requester_name: name.trim() || null,
-        dedication: dedication.trim() || null,
-        status: "pending",
-        request_type: mode
+      const response = await fetch("/api/song-request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          song: title,
+          artist,
+          requester_name: name.trim() || null,
+          dedication: dedication.trim() || null,
+          request_type: mode
+        })
       });
 
-      if (error) {
-        alert("Request did not send: " + error.message);
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert("Request did not send: " + data.error);
         setLoading(false);
         return;
       }
@@ -146,13 +152,7 @@ const showFutureSuggestion =
         fontFamily: "Arial, sans-serif"
       }}
     >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 760,
-          margin: "0 auto"
-        }}
-      >
+      <div style={{ width: "100%", maxWidth: 760, margin: "0 auto" }}>
         <h1
           style={{
             fontSize: "clamp(30px, 7vw, 56px)",
@@ -204,69 +204,70 @@ const showFutureSuggestion =
               <p>No songs are currently loaded for this artist.</p>
             </div>
           ) : (
-  <>
-    {matches.map((song) => (
-      <button
-        key={`${song.title}-${song.artist}`}
-        onClick={() => openTonightRequest(song)}
-        style={{
-          display: "block",
-          width: "100%",
-          textAlign: "left",
-          padding: 16,
-          marginBottom: 10,
-          fontSize: 17,
-          borderRadius: 10,
-          border: "1px solid #ddd",
-          background: "#f3f3f3",
-          color: "#000",
-          cursor: "pointer"
-        }}
-      >
-        <strong>{song.title}</strong>
-        <br />
-        <span>{song.artist}</span>
-      </button>
-    ))}
+            <>
+              {matches.map((song) => (
+                <button
+                  key={`${song.title}-${song.artist}`}
+                  onClick={() => openTonightRequest(song)}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    textAlign: "left",
+                    padding: 16,
+                    marginBottom: 10,
+                    fontSize: 17,
+                    borderRadius: 10,
+                    border: "1px solid #ddd",
+                    background: "#f3f3f3",
+                    color: "#000",
+                    cursor: "pointer"
+                  }}
+                >
+                  <strong>{song.title}</strong>
+                  <br />
+                  <span>{song.artist}</span>
+                </button>
+              ))}
 
-    {hasSearch && hasMatches && !songsLoading && (
-      <div
-        style={{
-          background: "#181818",
-          padding: 18,
-          borderRadius: 12,
-          border: "1px solid #333",
-          marginTop: 10,
-          marginBottom: 10
-        }}
-      >
-        <p style={{ fontWeight: "bold", marginBottom: 8 }}>
-          Can't find the version you're looking for?
-        </p>
+              {hasSearch && hasMatches && !songsLoading && (
+                <div
+                  style={{
+                    background: "#181818",
+                    padding: 18,
+                    borderRadius: 12,
+                    border: "1px solid #333",
+                    marginTop: 10,
+                    marginBottom: 10
+                  }}
+                >
+                  <p style={{ fontWeight: "bold", marginBottom: 8 }}>
+                    Can&apos;t find the version you&apos;re looking for?
+                  </p>
 
-        <p style={{ opacity: 0.85, marginBottom: 14 }}>
-          Want Brian to consider a different artist, version, or arrangement?
-        </p>
+                  <p style={{ opacity: 0.85, marginBottom: 14 }}>
+                    Want Brian to consider a different artist, version, or
+                    arrangement?
+                  </p>
 
-        <button
-          onClick={openFutureSuggestion}
-          style={{
-            padding: "14px 20px",
-            fontSize: 17,
-            borderRadius: 8,
-            border: 0,
-            background: "#ffd84d",
-            color: "#000",
-            cursor: "pointer",
-            fontWeight: "bold"
-          }}
-        >
-          Suggest for Future Performance
-        </button>
-      </div>
-    )}
-  </>
-)}
+                  <button
+                    onClick={openFutureSuggestion}
+                    style={{
+                      padding: "14px 20px",
+                      fontSize: 17,
+                      borderRadius: 8,
+                      border: 0,
+                      background: "#ffd84d",
+                      color: "#000",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    Suggest for Future Performance
+                  </button>
+                </div>
+              )}
+            </>
+          )}
 
           {showFutureSuggestion && (
             <div
