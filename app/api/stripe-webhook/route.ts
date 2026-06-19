@@ -230,6 +230,10 @@ export async function POST(request: Request) {
                 <h3 style="margin-top:0;">🎵 Your Artist Page</h3>
 
                 <p>
+                  Fans can now request songs, leave dedications, and support you directly from your live music page.
+                </p>
+
+                <p>
                   <a href="${artistPageUrl}" style="color:#0066cc;">
                     ${artistPageUrl}
                   </a>
@@ -238,7 +242,7 @@ export async function POST(request: Request) {
                 <p>
                   <a
                     href="${artistPageUrl}"
-                    style="display:inline-block; background-color:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
+                    style="display:inline-block; background:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
                   >
                     View My Artist Page
                   </a>
@@ -255,7 +259,7 @@ export async function POST(request: Request) {
                 <p>
                   <a
                     href="${marketingKitUrl}"
-                    style="display:inline-block; background-color:#000000; color:#ffffff; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
+                    style="display:inline-block; background:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
                   >
                     Open My Marketing Kit
                   </a>
@@ -307,9 +311,9 @@ export async function POST(request: Request) {
               <p>
                 <a
                   href="${loginUrl}"
-                  style="display:inline-block; background-color:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
+                  style="display:inline-block; background:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
                 >
-                  Log In To Manage My Account
+                  Open Artist Dashboard
                 </a>
               </p>
 
