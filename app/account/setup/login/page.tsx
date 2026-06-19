@@ -140,7 +140,7 @@ export default function SetupLoginPage() {
                 </div>
 
                 <div className="actions" style={{ marginTop: 28 }}>
-                  <Link className="btn" href="/account/login">
+                  <Link className="btn" href="/account">
                     Log In Now →
                   </Link>
 

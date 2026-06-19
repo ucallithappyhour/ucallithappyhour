@@ -48,14 +48,17 @@ export default function MarketingKitPage() {
       <main className="page">
         <div className="overlay">
           <div className="container">
-            <section className="accountCard" style={{ maxWidth: 760, margin: "0 auto" }}>
+            <section
+              className="accountCard"
+              style={{ maxWidth: 760, margin: "0 auto" }}
+            >
               <div className="brand">U CALL IT HAPPY HOUR</div>
               <h1 className="title">Marketing Kit</h1>
               <p className="tagline">{message}</p>
 
               {message.includes("log in") && (
                 <div className="actions" style={{ marginTop: 24 }}>
-                  <Link className="btn" href="/account/login">
+                  <Link className="btn" href="/account">
                     Log In →
                   </Link>
                 </div>
@@ -68,7 +71,9 @@ export default function MarketingKitPage() {
   }
 
   const artistPageUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
-  const referralUrl = `https://www.ucallithappyhour.com/register?ref=${artist.referral_code || ""}`;
+  const referralUrl = `https://www.ucallithappyhour.com/register?ref=${
+    artist.referral_code || ""
+  }`;
 
   const artistQrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistPageUrl
@@ -82,7 +87,10 @@ export default function MarketingKitPage() {
     <main className="page">
       <div className="overlay">
         <div className="container">
-          <section className="accountCard" style={{ maxWidth: 900, margin: "0 auto" }}>
+          <section
+            className="accountCard"
+            style={{ maxWidth: 900, margin: "0 auto" }}
+          >
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
             <h1 className="title">Marketing Kit</h1>
@@ -124,7 +132,12 @@ export default function MarketingKitPage() {
                   {artistPageUrl}
                 </p>
 
-                <a className="btn" href={artistQrUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  className="btn"
+                  href={artistQrUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Open / Print QR →
                 </a>
               </div>
@@ -154,7 +167,12 @@ export default function MarketingKitPage() {
                   {referralUrl}
                 </p>
 
-                <a className="btn" href={referralQrUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  className="btn"
+                  href={referralQrUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Open / Print QR →
                 </a>
               </div>
