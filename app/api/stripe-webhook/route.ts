@@ -256,6 +256,32 @@ export async function POST(request: Request) {
               Cheers,<br />
               The U Call It Happy Hour Team
             </p>
+            <div style="text-align:center; margin-top:30px;">
+  <img
+    src="https://www.ucallithappyhour.com/happy.png"
+    alt="Happy, Chief Happiness Officer"
+    width="140"
+    style="display:block; margin:0 auto;"
+  />
+
+  <p style="
+    margin:10px 0 4px 0;
+    font-weight:bold;
+    color:#d4af37;
+    font-size:16px;
+  ">
+    🐾 Happy, Chief Happiness Officer
+  </p>
+
+  <p style="
+    margin:0;
+    color:#666;
+    font-style:italic;
+    font-size:14px;
+  ">
+    Powered by requests. Approved by Happy.
+  </p>
+</div>
           `
         });
 
