@@ -21,7 +21,24 @@
     "afterFiles": [],
     "fallback": []
   },
-  "dynamicRoutes": [],
+  "dynamicRoutes": [
+    {
+      "page": "/[artistSlug]",
+      "regex": "^/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPartistSlug": "nxtPartistSlug"
+      },
+      "namedRegex": "^/(?<nxtPartistSlug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/[artistSlug]/request-song",
+      "regex": "^/([^/]+?)/request\\-song(?:/)?$",
+      "routeKeys": {
+        "nxtPartistSlug": "nxtPartistSlug"
+      },
+      "namedRegex": "^/(?<nxtPartistSlug>[^/]+?)/request\\-song(?:/)?$"
+    }
+  ],
   "staticRoutes": [
     {
       "page": "/",
@@ -46,6 +63,90 @@
       "regex": "^/account(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/account(?:/)?$"
+    },
+    {
+      "page": "/account/artwork",
+      "regex": "^/account/artwork(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/artwork(?:/)?$"
+    },
+    {
+      "page": "/account/gigs",
+      "regex": "^/account/gigs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/gigs(?:/)?$"
+    },
+    {
+      "page": "/account/library",
+      "regex": "^/account/library(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/library(?:/)?$"
+    },
+    {
+      "page": "/account/marketing",
+      "regex": "^/account/marketing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/marketing(?:/)?$"
+    },
+    {
+      "page": "/account/marketing-kit",
+      "regex": "^/account/marketing\\-kit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/marketing\\-kit(?:/)?$"
+    },
+    {
+      "page": "/account/setup",
+      "regex": "^/account/setup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/setup(?:/)?$"
+    },
+    {
+      "page": "/account/setup/login",
+      "regex": "^/account/setup/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/setup/login(?:/)?$"
+    },
+    {
+      "page": "/account/setup/next",
+      "regex": "^/account/setup/next(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/setup/next(?:/)?$"
+    },
+    {
+      "page": "/admin/registrations",
+      "regex": "^/admin/registrations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/registrations(?:/)?$"
+    },
+    {
+      "page": "/api/create-checkout-session",
+      "regex": "^/api/create\\-checkout\\-session(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/create\\-checkout\\-session(?:/)?$"
+    },
+    {
+      "page": "/api/get-setup-link",
+      "regex": "^/api/get\\-setup\\-link(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/get\\-setup\\-link(?:/)?$"
+    },
+    {
+      "page": "/api/register",
+      "regex": "^/api/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/register(?:/)?$"
+    },
+    {
+      "page": "/api/song-request",
+      "regex": "^/api/song\\-request(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/song\\-request(?:/)?$"
+    },
+    {
+      "page": "/api/stripe-webhook",
+      "regex": "^/api/stripe\\-webhook(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/stripe\\-webhook(?:/)?$"
     },
     {
       "page": "/brian-quinn",
@@ -76,6 +177,24 @@
       "regex": "^/dashboard(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
+    },
+    {
+      "page": "/register/success",
+      "regex": "^/register/success(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register/success(?:/)?$"
+    },
+    {
+      "page": "/registrations",
+      "regex": "^/registrations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/registrations(?:/)?$"
     },
     {
       "page": "/request-song",

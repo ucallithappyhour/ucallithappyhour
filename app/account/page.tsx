@@ -23,6 +23,9 @@ type ArtistProfile = {
   instagram: string;
   youtube: string;
   website: string;
+  referral_code: string;
+  referral_count: number;
+  referral_earnings: number;
 };
 
 type Gig = {
@@ -62,7 +65,10 @@ const emptyProfile: ArtistProfile = {
   facebook: "",
   instagram: "",
   youtube: "",
-  website: ""
+  website: "",
+  referral_code: "",
+  referral_count: 0,
+  referral_earnings: 0
 };
 
 const emptyGig: NewGig = {
@@ -147,7 +153,7 @@ export default function AccountPage() {
         return;
       }
 
-      setMessage("Account created. Check your email to confirm it, then log in.");
+      setMessage("Account created. You can log in now.");
       return;
     }
 
@@ -267,7 +273,10 @@ export default function AccountPage() {
       facebook: data.facebook || "",
       instagram: data.instagram || "",
       youtube: data.youtube || "",
-      website: data.website || ""
+      website: data.website || "",
+      referral_code: data.referral_code || "",
+      referral_count: data.referral_count || 0,
+      referral_earnings: Number(data.referral_earnings || 0)
     });
   }
 
@@ -917,11 +926,49 @@ export default function AccountPage() {
   </p>
 
   <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
-    <Link className="btn" href="/account/marketing">
+    <Link className="btn" href="/account/marketing-kit">
       🎨 Open Marketing Kit
     </Link>
   </div>
 </section>
+
+<section className="accountCard">
+  <h2>Referral Program</h2>
+
+  <p className="empty">
+    Share your referral link with other artists. They save $20 and you earn $20 when they complete setup.
+  </p>
+
+  <div style={{ marginTop: 16, lineHeight: 1.9 }}>
+    <p><strong>Referral Code:</strong> {profile.referral_code || "Not Available"}</p>
+    <p><strong>Successful Referrals:</strong> {profile.referral_count || 0}</p>
+    <p><strong>Referral Earnings:</strong> ${Number(profile.referral_earnings || 0).toFixed(0)}</p>
+  </div>
+
+  {profile.referral_code && (
+    <>
+      <div
+        style={{
+          marginTop: 14,
+          padding: 12,
+          borderRadius: 8,
+          background: "rgba(255,255,255,0.06)",
+          wordBreak: "break-all",
+          fontSize: 14
+        }}
+      >
+        https://www.ucallithappyhour.com/register?ref={profile.referral_code}
+      </div>
+
+      <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
+        <Link className="btn" href="/account/marketing-kit">
+          Open Marketing Kit
+        </Link>
+      </div>
+    </>
+  )}
+</section>
+
 <section className="accountCard">
   <h2>Artwork</h2>
 
