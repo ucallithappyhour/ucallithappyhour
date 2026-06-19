@@ -204,137 +204,138 @@ export async function POST(request: Request) {
         }
       }
 
-      if (email) {
+            if (email) {
         const welcomeEmail = await resend.emails.send({
           from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
           to: email,
           subject: "🎉 Welcome to U Call It Happy Hour!",
           html: `
-                 <div style="font-family:Arial, Helvetica, sans-serif; color:#222; line-height:1.5; max-width:680px; margin:0 auto;">
-        <div style="text-align:center; margin-bottom:24px;">
-          <img
-            src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
-            alt="U Call It Happy Hour"
-            width="180"
-            style="display:block; margin:0 auto;"
-          />
-        </div>
+            <div style="font-family:Arial, Helvetica, sans-serif; color:#222; line-height:1.5; max-width:680px; margin:0 auto;">
+              <div style="text-align:center; margin-bottom:24px;">
+                <img
+                  src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
+                  alt="U Call It Happy Hour"
+                  width="180"
+                  style="display:block; margin:0 auto;"
+                />
+              </div>
 
-        <h2>Welcome to U Call It Happy Hour${contactName ? `, ${contactName}` : ""}!</h2>
+              <h2>Welcome to U Call It Happy Hour${contactName ? `, ${contactName}` : ""}!</h2>
 
-        <p>
-          Your artist setup payment has been received and your artist page is now live.
-        </p>
+              <p>
+                Your artist setup payment has been received and your artist page is now live.
+              </p>
 
-        <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
-          <h3 style="margin-top:0;">🎵 Your Artist Page</h3>
+              <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
+                <h3 style="margin-top:0;">🎵 Your Artist Page</h3>
 
-          <p>
-            <a href="${artistPageUrl}" style="color:#0066cc;">
-              ${artistPageUrl}
-            </a>
-          </p>
+                <p>
+                  <a href="${artistPageUrl}" style="color:#0066cc;">
+                    ${artistPageUrl}
+                  </a>
+                </p>
 
-          <p>
-            <a
-              href="${artistPageUrl}"
-              style="display:inline-block; background:#d4af37; color:#000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
-            >
-              View My Artist Page
-            </a>
-          </p>
-        </div>
+                <p>
+                  <a
+                    href="${artistPageUrl}"
+                    style="display:inline-block; background-color:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
+                  >
+                    View My Artist Page
+                  </a>
+                </p>
+              </div>
 
-        <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
-          <h3 style="margin-top:0;">📲 Your Marketing Kit</h3>
+              <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
+                <h3 style="margin-top:0;">📲 Your Marketing Kit</h3>
 
-          <p>
-            Your Artist QR Code, Referral QR Code, table tent, flyer, and social graphic are ready.
-          </p>
+                <p>
+                  Your Artist QR Code, Referral QR Code, table tent, flyer, and social graphic are ready.
+                </p>
 
-          <p>
-            <a
-              href="${marketingKitUrl}"
-              style="display:inline-block; background:#000; color:#fff; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
-            >
-              Open My Marketing Kit
-            </a>
-          </p>
-        </div>
+                <p>
+                  <a
+                    href="${marketingKitUrl}"
+                    style="display:inline-block; background-color:#000000; color:#ffffff; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
+                  >
+                    Open My Marketing Kit
+                  </a>
+                </p>
+              </div>
 
-        <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
-          <h3 style="margin-top:0;">💰 Earn $20 Per Referral</h3>
+              <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
+                <h3 style="margin-top:0;">💰 Earn $20 Per Referral</h3>
 
-          <p>
-            Share your referral link or Referral QR Code with another live artist.
-          </p>
+                <p>
+                  Share your referral link or Referral QR Code with another live artist.
+                </p>
 
-          <ul>
-            <li>They save <strong>$20</strong></li>
-            <li>You earn <strong>$20</strong> after they complete setup</li>
-          </ul>
+                <ul>
+                  <li>They save <strong>$20</strong></li>
+                  <li>You earn <strong>$20</strong> after they complete setup</li>
+                </ul>
 
-          <p>
-            <strong>Your Referral Link:</strong><br />
-            <a href="${referralUrl}" style="color:#0066cc;">${referralUrl}</a>
-          </p>
-        </div>
+                <p>
+                  <strong>Your Referral Link:</strong><br />
+                  <a href="${referralUrl}" style="color:#0066cc;">${referralUrl}</a>
+                </p>
+              </div>
 
-        <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
-          <h3 style="margin-top:0;">🎤 Get Gig-Ready</h3>
+              <div style="margin:24px 0; padding:18px; border:1px solid #e5e5e5; border-radius:10px;">
+                <h3 style="margin-top:0;">🎤 Get Gig-Ready</h3>
 
-          <p><strong>If you haven't already done so:</strong></p>
+                <p><strong>If you haven't already done so:</strong></p>
 
-          <ul>
-            <li>Upload your logo</li>
-            <li>Add your upcoming gigs</li>
-            <li>Upload your song library</li>
-          </ul>
+                <ul>
+                  <li>Upload your logo</li>
+                  <li>Add your upcoming gigs</li>
+                  <li>Upload your song library</li>
+                </ul>
 
-          <p><strong>Then:</strong></p>
+                <p><strong>Then:</strong></p>
 
-          <ul>
-            <li>Print or save your Artist QR Code</li>
-            <li>Display it at your next performance</li>
-            <li>Mention it to the audience at least twice during your set</li>
-          </ul>
+                <ul>
+                  <li>Print or save your Artist QR Code</li>
+                  <li>Display it at your next performance</li>
+                  <li>Mention it to the audience at least twice during your set</li>
+                </ul>
 
-          <p>
-            <strong>Pro Tip:</strong> Artists get more requests when they mention their QR code at least twice during each performance.
-          </p>
-        </div>
+                <p>
+                  <strong>Pro Tip:</strong> Artists get more requests when they mention their QR code at least twice during each performance.
+                </p>
+              </div>
 
-        <p>
-          <a
-            href="${loginUrl}"
-            style="display:inline-block; background:#d4af37; color:#000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
-          >
-            Log In To Manage My Account
-          </a>
-        </p>
+              <p>
+                <a
+                  href="${loginUrl}"
+                  style="display:inline-block; background-color:#d4af37; color:#000000; padding:12px 18px; text-decoration:none; border-radius:8px; font-weight:bold;"
+                >
+                  Log In To Manage My Account
+                </a>
+              </p>
 
-        <p>
-          Cheers,<br />
-          The U Call It Happy Hour Team
-        </p>
+              <p>
+                Cheers,<br />
+                The U Call It Happy Hour Team
+              </p>
 
-        <div style="text-align:center; margin-top:30px;">
-          <img
-            src="https://www.ucallithappyhour.com/happy.png"
-            alt="Happy, Chief Happiness Officer"
-            width="140"
-            style="display:block; margin:0 auto;"
-          />
+              <div style="text-align:center; margin-top:30px;">
+                <img
+                  src="https://www.ucallithappyhour.com/happy.png"
+                  alt="Happy, Chief Happiness Officer"
+                  width="140"
+                  style="display:block; margin:0 auto;"
+                />
 
-          <p style="margin:10px 0 4px 0; font-weight:bold; color:#d4af37; font-size:16px;">
-            🐾 Happy, Chief Happiness Officer
-          </p>
+                <p style="margin:10px 0 4px 0; font-weight:bold; color:#d4af37; font-size:16px;">
+                  🐾 Happy, Chief Happiness Officer
+                </p>
 
-          <p style="margin:0; color:#666; font-style:italic; font-size:14px;">
-            Powered by requests. Approved by Happy.
-          </p>
-        </div>
-      </div>
+                <p style="margin:0; color:#666; font-style:italic; font-size:14px;">
+                  Powered by requests. Approved by Happy.
+                </p>
+              </div>
+            </div>
+          `
         });
 
         console.log("Welcome email result:", welcomeEmail);
