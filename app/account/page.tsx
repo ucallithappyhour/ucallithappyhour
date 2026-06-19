@@ -99,11 +99,11 @@ export default function AccountPage() {
   const [profile, setProfile] = useState<ArtistProfile>(emptyProfile);
   const [gigs, setGigs] = useState<Gig[]>([]);
   const [newGig, setNewGig] = useState<NewGig>(emptyGig);
+  const [editingGigId, setEditingGigId] = useState<number | null>(null);
   const [newArtist, setNewArtist] = useState<NewArtist>(emptyArtist);
   const [message, setMessage] = useState("");
 
-  const isAdmin =
-    user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 
   function makeSlug(name: string) {
     return name
@@ -350,6 +350,63 @@ export default function AccountPage() {
     loadGigs();
   }
 
+  function startEditGig(gig: Gig) {
+    setEditingGigId(gig.id);
+
+    setNewGig({
+      venue_name: gig.venue_name || "",
+      venue_address: gig.venue_address || "",
+      gig_date: gig.gig_date || "",
+      start_time: gig.start_time || "",
+      end_time: gig.end_time || "",
+      recurring_type: gig.recurring_type || "One-Time"
+    });
+
+    setMessage("Editing gig. Make changes below, then save.");
+  }
+
+  function cancelEditGig() {
+    setEditingGigId(null);
+    setNewGig(emptyGig);
+    setMessage("");
+  }
+
+  async function saveGig() {
+    if (editingGigId) {
+      if (!newGig.venue_name.trim()) {
+        setMessage("Venue name is required.");
+        return;
+      }
+
+      setMessage("Updating gig...");
+
+      const { error } = await supabase
+        .from("gigs")
+        .update({
+          venue_name: newGig.venue_name,
+          venue_address: newGig.venue_address,
+          gig_date: newGig.gig_date || null,
+          start_time: newGig.start_time,
+          end_time: newGig.end_time,
+          recurring_type: newGig.recurring_type
+        })
+        .eq("id", editingGigId);
+
+      if (error) {
+        setMessage("Could not update gig.");
+        return;
+      }
+
+      setEditingGigId(null);
+      setNewGig(emptyGig);
+      setMessage("Gig updated.");
+      loadGigs();
+      return;
+    }
+
+    addGig();
+  }
+
   async function deleteGig(id: number) {
     setMessage("Deleting gig...");
 
@@ -358,6 +415,10 @@ export default function AccountPage() {
     if (error) {
       setMessage("Could not delete gig.");
       return;
+    }
+
+    if (editingGigId === id) {
+      cancelEditGig();
     }
 
     setMessage("Gig deleted.");
@@ -473,6 +534,7 @@ export default function AccountPage() {
       loadProfile();
       loadGigs();
       setNewGig(emptyGig);
+      setEditingGigId(null);
     }
   }, [selectedArtist]);
 
@@ -805,6 +867,15 @@ export default function AccountPage() {
                           <button
                             className="smallbtn"
                             type="button"
+                            onClick={() => startEditGig(gig)}
+                            style={{ marginRight: 10 }}
+                          >
+                            Edit Gig
+                          </button>
+
+                          <button
+                            className="smallbtn"
+                            type="button"
                             onClick={() => deleteGig(gig.id)}
                           >
                             Delete Gig
@@ -815,7 +886,7 @@ export default function AccountPage() {
 
                     <hr style={{ margin: "22px 0", borderColor: "#333" }} />
 
-                    <h3>Add New Gig</h3>
+                    <h3>{editingGigId ? "Edit Gig" : "Add New Gig"}</h3>
 
                     <label>Venue Name</label>
                     <input
@@ -868,9 +939,20 @@ export default function AccountPage() {
                       <option value="Monthly">Monthly</option>
                     </select>
 
-                    <button className="btn" type="button" onClick={addGig}>
-                      Save Gig
+                    <button className="btn" type="button" onClick={saveGig}>
+                      {editingGigId ? "Save Changes" : "Save Gig"}
                     </button>
+
+                    {editingGigId && (
+                      <button
+                        className="btn secondary"
+                        type="button"
+                        onClick={cancelEditGig}
+                        style={{ marginLeft: 10 }}
+                      >
+                        Cancel Edit
+                      </button>
+                    )}
                   </section>
 
                   <section className="accountCard">
@@ -906,101 +988,109 @@ export default function AccountPage() {
                   </section>
 
                   <section className="accountCard">
-  <h2>Song Library</h2>
+                    <h2>Song Library</h2>
 
-  <p className="empty">
-    Manage the songs your audience can request. Add, remove,
-    organize, and feature songs from your catalog.
-  </p>
+                    <p className="empty">
+                      Manage the songs your audience can request. Add, remove,
+                      organize, and feature songs from your catalog.
+                    </p>
 
-  <a className="btn secondary" href="/account/library" style={{ marginTop: 12 }}>
-  Manage Library
-</a>
-</section>
+                    <a
+                      className="btn secondary"
+                      href="/account/library"
+                      style={{ marginTop: 12 }}
+                    >
+                      Manage Library
+                    </a>
+                  </section>
 
-<section className="accountCard">
-  <p className="performer">Marketing Tools</p>
+                  <section className="accountCard">
+                    <p className="performer">Marketing Tools</p>
 
-  <p className="empty" style={{ marginTop: 10 }}>
-    Download your QR code, table tent, flyer, and social media graphics.
-  </p>
+                    <p className="empty" style={{ marginTop: 10 }}>
+                      Download your QR code, table tent, flyer, and social media graphics.
+                    </p>
 
-  <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
-    <Link className="btn" href="/account/marketing-kit">
-      🎨 Open Marketing Kit
-    </Link>
-  </div>
-</section>
+                    <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
+                      <Link className="btn" href="/account/marketing-kit">
+                        🎨 Open Marketing Kit
+                      </Link>
+                    </div>
+                  </section>
 
-<section className="accountCard">
-  <h2>Referral Program</h2>
+                  <section className="accountCard">
+                    <h2>Referral Program</h2>
 
-  <p className="empty">
-    Share your referral link with other artists. They save $20 and you earn $20 when they complete setup.
-  </p>
+                    <p className="empty">
+                      Share your referral link with other artists. They save $20 and you earn $20 when they complete setup.
+                    </p>
 
-  <div style={{ marginTop: 16, lineHeight: 1.9 }}>
-    <p><strong>Referral Code:</strong> {profile.referral_code || "Not Available"}</p>
-    <p><strong>Successful Referrals:</strong> {profile.referral_count || 0}</p>
-    <p><strong>Referral Earnings:</strong> ${Number(profile.referral_earnings || 0).toFixed(0)}</p>
-  </div>
+                    <div style={{ marginTop: 16, lineHeight: 1.9 }}>
+                      <p><strong>Referral Code:</strong> {profile.referral_code || "Not Available"}</p>
+                      <p><strong>Successful Referrals:</strong> {profile.referral_count || 0}</p>
+                      <p><strong>Referral Earnings:</strong> ${Number(profile.referral_earnings || 0).toFixed(0)}</p>
+                    </div>
 
-  {profile.referral_code && (
-    <>
-      <div
-  style={{
-    marginTop: 14,
-    padding: 12,
-    borderRadius: 8,
-    background: "rgba(255,255,255,0.06)"
-  }}
->
-  <input
-    readOnly
-    value={`https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`}
-    style={{
-      width: "100%",
-      background: "transparent",
-      border: "none",
-      color: "#fff",
-      fontSize: 14,
-      marginBottom: 10
-    }}
-  />
+                    {profile.referral_code && (
+                      <>
+                        <div
+                          style={{
+                            marginTop: 14,
+                            padding: 12,
+                            borderRadius: 8,
+                            background: "rgba(255,255,255,0.06)"
+                          }}
+                        >
+                          <input
+                            readOnly
+                            value={`https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`}
+                            style={{
+                              width: "100%",
+                              background: "transparent",
+                              border: "none",
+                              color: "#fff",
+                              fontSize: 14,
+                              marginBottom: 10
+                            }}
+                          />
 
-  <button
-    className="btn secondary"
-    type="button"
-    onClick={() =>
-      navigator.clipboard.writeText(
-        `https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`
-      )
-    }
-  >
-    Copy Referral Link
-  </button>
-</div>
+                          <button
+                            className="btn secondary"
+                            type="button"
+                            onClick={() =>
+                              navigator.clipboard.writeText(
+                                `https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`
+                              )
+                            }
+                          >
+                            Copy Referral Link
+                          </button>
+                        </div>
 
-      <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
-        <Link className="btn" href="/account/marketing-kit">
-          Open Marketing Kit
-        </Link>
-      </div>
-    </>
-  )}
-</section>
+                        <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
+                          <Link className="btn" href="/account/marketing-kit">
+                            Open Marketing Kit
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </section>
 
-<section className="accountCard">
-  <h2>Artwork</h2>
+                  <section className="accountCard">
+                    <h2>Artwork</h2>
 
-  <p className="empty">
-    Manage the logo or image shown on the artist page.
-  </p>
+                    <p className="empty">
+                      Manage the logo or image shown on the artist page.
+                    </p>
 
-  <a className="btn secondary" href="/account/artwork" style={{ marginTop: 12 }}>
-    Manage Artwork
-  </a>
-</section>
+                    <a
+                      className="btn secondary"
+                      href="/account/artwork"
+                      style={{ marginTop: 12 }}
+                    >
+                      Manage Artwork
+                    </a>
+                  </section>
                 </div>
 
                 <div className="actions" style={{ marginTop: 28 }}>
