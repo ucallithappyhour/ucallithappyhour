@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       const artistPageUrl = `https://www.ucallithappyhour.com/${slug}`;
       const marketingKitUrl = `https://www.ucallithappyhour.com/account/marketing-kit`;
       const referralUrl = `https://www.ucallithappyhour.com/register?ref=${referralCode}`;
-      const loginUrl = `https://www.ucallithappyhour.com/account/`;
+      const loginUrl = `https://www.ucallithappyhour.com/account`;
 
       const { error: paidError } = await supabaseAdmin
         .from("artist_registrations")
@@ -160,12 +160,15 @@ export async function POST(request: Request) {
         }
       }
 
-      const { error: artistCreatedStatusError } = await supabaseAdmin
-        .from("artist_registrations")
-        .update({
-          status: "artist_created"
-        })
-        .eq("id", Number(registrationId));
+      const actualSetupFee = referredBy ? 79 : 99;
+
+const { error: artistCreatedStatusError } = await supabaseAdmin
+  .from("artist_registrations")
+  .update({
+    status: "artist_created",
+    setup_fee: actualSetupFee
+  })
+  .eq("id", Number(registrationId));
 
       if (artistCreatedStatusError) {
         console.error(
