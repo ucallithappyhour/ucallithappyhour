@@ -73,10 +73,7 @@ export default function SetupLoginPage() {
 
     const { error: signUpError } = await supabase.auth.signUp({
       email: email.trim(),
-      password,
-      options: {
-        emailRedirectTo: "https://www.ucallithappyhour.com/account"
-      }
+      password
     });
 
     if (signUpError) {
@@ -115,10 +112,10 @@ export default function SetupLoginPage() {
               >
                 <div className="brand">U CALL IT HAPPY HOUR</div>
 
-                <h1 className="title">📧 Check Your Email</h1>
+                <h1 className="title">✅ Account Created</h1>
 
                 <p className="tagline">
-                  Your login has been created. One final step remains.
+                  Your login is ready. You can sign in now.
                 </p>
 
                 <div
@@ -131,31 +128,21 @@ export default function SetupLoginPage() {
                   }}
                 >
                   <p style={{ lineHeight: 1.8 }}>
-                    We sent a confirmation email to:
+                    Your artist account was created for:
                     <br />
                     <strong>{email}</strong>
                   </p>
 
                   <p style={{ marginTop: 16, lineHeight: 1.8 }}>
-                    Please click the confirmation link in that email before
-                    signing in.
-                  </p>
-
-                  <p style={{ marginTop: 16, lineHeight: 1.8 }}>
-                    After confirming, you'll be able to manage your songs, gigs,
-                    artwork, requests, and referral program.
+                    You can now log in to manage your songs, gigs, artwork,
+                    requests, marketing kit, and referral program.
                   </p>
                 </div>
 
                 <div className="actions" style={{ marginTop: 28 }}>
-                  <a
-                    className="btn"
-                    href="https://mail.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open Gmail →
-                  </a>
+                  <Link className="btn" href="/account/login">
+                    Log In Now →
+                  </Link>
 
                   <Link
                     className="btn secondary"
@@ -187,7 +174,7 @@ export default function SetupLoginPage() {
 
               <p className="tagline">
                 Create your login so you can come back anytime to manage gigs,
-                songs, artwork, and requests.
+                songs, artwork, requests, marketing kit, and referrals.
               </p>
 
               {artist && (
