@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -123,12 +123,12 @@ export default function RegisterPage() {
                   fontWeight: 700
                 }}
               >
-                <div>✓ Personalized artist page for your fans</div>
-                <div>✓ QR starter kit for tables, flyers, and signs</div>
-                <div>✓ Fan song request dashboard</div>
-                <div>✓ Future setlist insights</div>
-                <div>✓ Venmo or Cash App tip integration</div>
-                <div>✓ Ongoing platform updates and improvements</div>
+                <div>Γ£ô Personalized artist page for your fans</div>
+                <div>Γ£ô QR starter kit for tables, flyers, and signs</div>
+                <div>Γ£ô Fan song request dashboard</div>
+                <div>Γ£ô Future setlist insights</div>
+                <div>Γ£ô Venmo or Cash App tip integration</div>
+                <div>Γ£ô Ongoing platform updates and improvements</div>
               </div>
 
               <div className="details" style={{ marginTop: 20 }}>
@@ -148,11 +148,11 @@ export default function RegisterPage() {
                   fontWeight: 700
                 }}
               >
-                <div>✓ Engage your crowd in a new way</div>
-                <div>✓ Discover what fans actually want to hear</div>
-                <div>✓ Create a more memorable venue experience</div>
-                <div>✓ Encourage repeat attendance</div>
-                <div>✓ Increase tip opportunities</div>
+                <div>Γ£ô Engage your crowd in a new way</div>
+                <div>Γ£ô Discover what fans actually want to hear</div>
+                <div>Γ£ô Create a more memorable venue experience</div>
+                <div>Γ£ô Encourage repeat attendance</div>
+                <div>Γ£ô Increase tip opportunities</div>
               </div>
 
               <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
@@ -250,7 +250,7 @@ export default function RegisterPage() {
                 }}
               >
                 <h3 style={{ marginBottom: 10 }}>
-                  🎵 Give $20, Get $20 Referral Program
+                  ≡ƒÄ╡ Give $20, Get $20 Referral Program
                 </h3>
 
                 <p style={{ marginBottom: 10 }}>

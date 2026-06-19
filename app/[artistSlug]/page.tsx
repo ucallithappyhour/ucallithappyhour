@@ -29,6 +29,20 @@ type Gig = {
   recurring_type: string | null;
 };
 
+function normalizeExternalUrl(url: string | null) {
+  if (!url) return "";
+
+  const trimmed = url.trim();
+
+  if (!trimmed) return "";
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}
+
 export default function DynamicArtistPage() {
   const params = useParams();
   const artistSlug = String(params.artistSlug || "");
@@ -137,6 +151,11 @@ export default function DynamicArtistPage() {
 
   const artistName = artist.artist_name || "Artist";
   const logo = artist.logo_url || "";
+  const tipUrl = normalizeExternalUrl(artist.tip_link);
+  const websiteUrl = normalizeExternalUrl(artist.website);
+  const facebookUrl = normalizeExternalUrl(artist.facebook);
+  const instagramUrl = normalizeExternalUrl(artist.instagram);
+  const youtubeUrl = normalizeExternalUrl(artist.youtube);
 
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
@@ -218,7 +237,7 @@ export default function DynamicArtistPage() {
             </div>
           </div>
 
-          {artist.tip_link && (
+          {tipUrl && (
             <div className="section">
               <p>
                 <strong>Enjoying the music?</strong>
@@ -233,7 +252,7 @@ export default function DynamicArtistPage() {
 
               <a
                 className="btn secondary"
-                href={artist.tip_link}
+                href={tipUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -280,18 +299,15 @@ export default function DynamicArtistPage() {
             <p>{artist.bio || "Artist bio coming soon."}</p>
           </div>
 
-          {(artist.website ||
-            artist.facebook ||
-            artist.instagram ||
-            artist.youtube) && (
+          {(websiteUrl || facebookUrl || instagramUrl || youtubeUrl) && (
             <div className="section">
               <h2>Connect</h2>
 
               <div className="actions">
-                {artist.website && (
+                {websiteUrl && (
                   <a
                     className="btn secondary"
-                    href={artist.website}
+                    href={websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -299,10 +315,10 @@ export default function DynamicArtistPage() {
                   </a>
                 )}
 
-                {artist.facebook && (
+                {facebookUrl && (
                   <a
                     className="btn secondary"
-                    href={artist.facebook}
+                    href={facebookUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -310,10 +326,10 @@ export default function DynamicArtistPage() {
                   </a>
                 )}
 
-                {artist.instagram && (
+                {instagramUrl && (
                   <a
                     className="btn secondary"
-                    href={artist.instagram}
+                    href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -321,10 +337,10 @@ export default function DynamicArtistPage() {
                   </a>
                 )}
 
-                {artist.youtube && (
+                {youtubeUrl && (
                   <a
                     className="btn secondary"
-                    href={artist.youtube}
+                    href={youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
