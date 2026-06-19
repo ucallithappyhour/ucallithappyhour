@@ -37,6 +37,7 @@ type Gig = {
   start_time: string | null;
   end_time: string | null;
   recurring_type: string | null;
+  special_note: string | null;
 };
 
 type NewGig = {
@@ -46,6 +47,8 @@ type NewGig = {
   start_time: string;
   end_time: string;
   recurring_type: string;
+  special_note: string;
+
 };
 
 type NewArtist = {
@@ -77,7 +80,8 @@ const emptyGig: NewGig = {
   gig_date: "",
   start_time: "",
   end_time: "",
-  recurring_type: "One-Time"
+  recurring_type: "One-Time",
+  special_note: ""
 };
 
 const emptyArtist: NewArtist = {
@@ -337,7 +341,8 @@ export default function AccountPage() {
       gig_date: newGig.gig_date || null,
       start_time: newGig.start_time,
       end_time: newGig.end_time,
-      recurring_type: newGig.recurring_type
+      recurring_type: newGig.recurring_type,
+        special_note: newGig.special_note || null
     });
 
     if (error) {
@@ -359,7 +364,8 @@ export default function AccountPage() {
       gig_date: gig.gig_date || "",
       start_time: gig.start_time || "",
       end_time: gig.end_time || "",
-      recurring_type: gig.recurring_type || "One-Time"
+      recurring_type: gig.recurring_type || "One-Time",
+        special_note: gig.special_note || ""
     });
 
     setMessage("Editing gig. Make changes below, then save.");
@@ -389,7 +395,8 @@ export default function AccountPage() {
           gig_date: newGig.gig_date || null,
           start_time: newGig.start_time,
           end_time: newGig.end_time,
-          recurring_type: newGig.recurring_type
+          recurring_type: newGig.recurring_type,
+          special_note: newGig.special_note || null
         })
         .eq("id", editingGigId);
 
@@ -939,6 +946,15 @@ export default function AccountPage() {
                       <option value="Weekly">Weekly</option>
                       <option value="Monthly">Monthly</option>
                     </select>
+<label>Special Note</label>
+
+<textarea
+  value={newGig.special_note}
+  onChange={(e) =>
+    updateGigField("special_note", e.target.value)
+  }
+  placeholder="Patio show, birthday party, Eagles game after-party, special guest appearance..."
+/>
 
                     <button className="btn" type="button" onClick={saveGig}>
                       {editingGigId ? "Save Changes" : "Save Gig"}
