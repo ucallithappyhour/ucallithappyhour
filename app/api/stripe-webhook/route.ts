@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       const artistPageUrl = `https://www.ucallithappyhour.com/${slug}`;
       const marketingKitUrl = `https://www.ucallithappyhour.com/account/marketing-kit`;
       const referralUrl = `https://www.ucallithappyhour.com/register?ref=${referralCode}`;
-      const loginUrl = `https://www.ucallithappyhour.com/login`;
+      const loginUrl = `https://www.ucallithappyhour.com/account/login`;
 
       const { error: paidError } = await supabaseAdmin
         .from("artist_registrations")
