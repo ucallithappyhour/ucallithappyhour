@@ -14,25 +14,35 @@ export async function GET(req: NextRequest) {
   const artistSlug = searchParams.get("artist");
 
   if (!artistSlug) {
-    return NextResponse.json({ error: "Artist required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Artist required" },
+      { status: 400 }
+    );
   }
 
-  const { data: artist, error } = await supabase
+  const { data: artist } = await supabase
     .from("artists")
     .select("*")
     .eq("artist_slug", artistSlug)
     .single();
 
-  if (error || !artist) {
-    return NextResponse.json({ error: "Artist not found" }, { status: 404 });
+  if (!artist) {
+    return NextResponse.json(
+      { error: "Artist not found" },
+      { status: 404 }
+    );
   }
 
-  const artistName = artist.artist_name || artist.artist_slug;
-  const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
+  const artistName =
+    artist.artist_name || artist.artist_slug;
 
-  const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
-    artistUrl
-  )}&size=1000&margin=2`;
+  const artistUrl =
+    `https://www.ucallithappyhour.com/${artist.artist_slug}`;
+
+  const qrUrl =
+    `https://quickchart.io/qr?text=${encodeURIComponent(
+      artistUrl
+    )}&size=1200&margin=2`;
 
   return new ImageResponse(
     (
@@ -40,23 +50,23 @@ export async function GET(req: NextRequest) {
         style={{
           width: "1080px",
           height: "1350px",
-          background: "#090909",
+          background: "#050505",
           color: "white",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: "58px 72px 52px",
-          fontFamily: "Arial, Helvetica, sans-serif",
-          textAlign: "center"
+          padding: "50px 70px",
+          fontFamily: "Arial, Helvetica, sans-serif"
         }}
       >
+        {/* LOGO / BAND NAME */}
         <div
           style={{
-            height: "245px",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            marginBottom: "16px"
+            alignItems: "center",
+            width: "100%",
+            height: "340px"
           }}
         >
           {artist.logo_url ? (
@@ -64,18 +74,18 @@ export async function GET(req: NextRequest) {
               src={artist.logo_url}
               alt={artistName}
               style={{
-                width: "460px",
-                maxHeight: "235px",
+                maxWidth: "900px",
+                maxHeight: "320px",
                 objectFit: "contain"
               }}
             />
           ) : (
             <div
               style={{
-                fontSize: 66,
+                fontSize: 90,
                 fontWeight: 900,
-                lineHeight: 1.05,
-                maxWidth: "900px"
+                textAlign: "center",
+                lineHeight: 1
               }}
             >
               {artistName.toUpperCase()}
@@ -83,70 +93,82 @@ export async function GET(req: NextRequest) {
           )}
         </div>
 
+        {/* LIVE TONIGHT */}
         <div
           style={{
             color: "#f2c14e",
-            fontSize: 60,
-            fontWeight: 900,
-            letterSpacing: "1px",
-            marginBottom: "26px"
-          }}
-        >
-          REQUEST A SONG TONIGHT
-        </div>
-
-        <div
-          style={{
-            color: "#ffffff",
             fontSize: 72,
             fontWeight: 900,
-            lineHeight: 1.05,
-            maxWidth: "920px",
-            marginBottom: "30px"
+            marginTop: 10
           }}
         >
-          {artistName.toUpperCase()}
+          LIVE TONIGHT
         </div>
 
+        {/* REQUEST SONGS */}
+        <div
+          style={{
+            fontSize: 56,
+            fontWeight: 700,
+            marginTop: 15,
+            marginBottom: 30
+          }}
+        >
+          REQUEST SONGS LIVE
+        </div>
+
+        {/* QR */}
         <div
           style={{
             background: "white",
             border: "12px solid #f2c14e",
-            borderRadius: "28px",
-            padding: "30px",
-            display: "flex",
-            marginBottom: "28px"
+            borderRadius: "30px",
+            padding: "25px",
+            display: "flex"
           }}
         >
           <img
             src={qrUrl}
-            alt="QR Code"
+            alt="QR"
             style={{
-              width: "545px",
-              height: "545px"
+              width: "500px",
+              height: "500px"
             }}
           />
+        </div>
+
+        {/* SCAN MESSAGE */}
+        <div
+          style={{
+            marginTop: 35,
+            fontSize: 34,
+            textAlign: "center",
+            lineHeight: 1.25,
+            color: "#f3f3f3"
+          }}
+        >
+          Scan to browse tonight's setlist
         </div>
 
         <div
           style={{
             fontSize: 34,
-            lineHeight: 1.2,
-            maxWidth: "850px",
-            color: "#eeeeee",
-            marginBottom: "32px"
+            textAlign: "center",
+            lineHeight: 1.25,
+            color: "#f3f3f3",
+            marginBottom: 25
           }}
         >
-          Scan to browse tonight&apos;s setlist and request songs live.
+          and request songs instantly.
         </div>
 
+        {/* NO APP */}
         <div
           style={{
             color: "#f2c14e",
-            fontSize: 36,
+            fontSize: 34,
             fontWeight: 900,
-            letterSpacing: "1px",
-            marginBottom: "34px"
+            textAlign: "center"
           }}
         >
           NO APP • NO LOGIN • INSTANT REQUESTS
@@ -154,30 +176,41 @@ export async function GET(req: NextRequest) {
 
         <div
           style={{
-            width: "780px",
+            width: "850px",
             height: "2px",
             background: "#f2c14e",
-            marginBottom: "30px"
+            marginTop: 25,
+            marginBottom: 25
           }}
         />
 
+        {/* TAGLINE */}
         <div
           style={{
-            color: "#f2c14e",
-            fontSize: 42,
-            fontWeight: 900,
-            letterSpacing: "1px",
-            marginBottom: "22px"
+            fontSize: 28,
+            textAlign: "center",
+            color: "#ffffff"
           }}
         >
-          REQUEST SONGS LIVE
+          Request tonight's songs.
         </div>
 
         <div
           style={{
+            fontSize: 28,
+            textAlign: "center",
+            color: "#ffffff"
+          }}
+        >
+          Influence tomorrow's setlist.
+        </div>
+
+        <div
+          style={{
+            marginTop: 25,
             color: "#f2c14e",
-            fontSize: 22,
-            fontWeight: 900,
+            fontSize: 20,
+            fontWeight: 800,
             letterSpacing: "1px"
           }}
         >
@@ -190,7 +223,8 @@ export async function GET(req: NextRequest) {
       height: 1350,
       headers: {
         "Content-Type": "image/png",
-        "Content-Disposition": `attachment; filename="${artist.artist_slug}-flyer.png"`
+        "Content-Disposition":
+          `attachment; filename="${artist.artist_slug}-flyer.png"`
       }
     }
   );
