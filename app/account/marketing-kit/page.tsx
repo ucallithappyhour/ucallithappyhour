@@ -65,7 +65,6 @@ export default function MarketingKitPage() {
               className="accountCard"
               style={{ maxWidth: 760, margin: "0 auto" }}
             >
-              <div className="brand">U CALL IT HAPPY HOUR</div>
               <h1 className="title">Marketing Kit</h1>
               <p className="tagline">{message}</p>
 
@@ -109,6 +108,14 @@ ${referralUrl}`;
     await copyText("Referral Message", referralMessage);
   }
 
+  const cardStyle = {
+    padding: 20,
+    borderRadius: 14,
+    background: "#fff",
+    color: "#000",
+    textAlign: "center" as const
+  };
+
   return (
     <main className="page">
       <div className="overlay">
@@ -117,60 +124,60 @@ ${referralUrl}`;
             className="accountCard"
             style={{ maxWidth: 760, margin: "0 auto" }}
           >
-            <div className="brand">U CALL IT HAPPY HOUR</div>
-
             <h1
-  style={{
-    textAlign: "center",
-    fontSize: 42,
-    fontWeight: 900,
-    color: "#fff",
-    marginBottom: 6
-  }}
->
-  {artistName}
-</h1>
+              style={{
+                textAlign: "center",
+                fontSize: 52,
+                fontWeight: 900,
+                color: "#fff",
+                marginBottom: 6,
+                lineHeight: 1.05
+              }}
+            >
+              {artistName}
+            </h1>
 
-<div
-  style={{
-    textAlign: "center",
-    fontSize: 24,
-    fontWeight: 700,
-    color: "#d4af37",
-    marginBottom: 22
-  }}
->
-  Marketing Kit
-</div>
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: 26,
+                fontWeight: 700,
+                color: "#d4af37",
+                marginBottom: 22
+              }}
+            >
+              Marketing Kit
+            </div>
 
-{artist.logo_url && (
-  <div
-    style={{
-      textAlign: "center",
-      marginBottom: 24
-    }}
-  >
-    <img
-      src={artist.logo_url}
-      alt={artistName}
-      style={{
-        maxWidth: 180,
-        maxHeight: 180,
-        objectFit: "contain"
-      }}
-    />
-  </div>
-)}
+            {artist.logo_url && (
+              <div
+                style={{
+                  textAlign: "center",
+                  marginBottom: 32
+                }}
+              >
+                <img
+                  src={artist.logo_url}
+                  alt={artistName}
+                  style={{
+                    maxWidth: 240,
+                    maxHeight: 240,
+                    objectFit: "contain"
+                  }}
+                />
+              </div>
+            )}
 
-<p
-  style={{
-    textAlign: "center",
-    fontSize: 18,
-    marginBottom: 10
-  }}
->
-  Everything you need to promote your shows.
-</p>
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: 18,
+                marginBottom: 10,
+                fontWeight: 700
+              }}
+            >
+              Everything you need to promote your shows.
+            </p>
 
             {copied && (
               <div
@@ -181,7 +188,8 @@ ${referralUrl}`;
                   background: "#12351f",
                   border: "1px solid #2f8f4e",
                   color: "#fff",
-                  fontWeight: 700
+                  fontWeight: 700,
+                  textAlign: "center"
                 }}
               >
                 {copied === "Copy failed" ? "Copy failed." : `Copied ${copied}.`}
@@ -197,15 +205,7 @@ ${referralUrl}`;
                 margin: "30px auto 0"
               }}
             >
-              <div
-                style={{
-                  padding: 20,
-                  borderRadius: 14,
-                  background: "#fff",
-                  color: "#000",
-                  textAlign: "center"
-                }}
-              >
+              <div style={cardStyle}>
                 <h2>🎵 Artist QR Code</h2>
                 <p>Fans scan this to request songs.</p>
 
@@ -256,6 +256,17 @@ ${referralUrl}`;
                     Open / Print QR →
                   </a>
 
+                  <Link className="btn secondary" href={`/${artist.artist_slug}`}>
+                    View Artist Page →
+                  </Link>
+
+                  <Link
+                    className="btn secondary"
+                    href={`/${artist.artist_slug}/request-song`}
+                  >
+                    View Request Page →
+                  </Link>
+
                   <button
                     className="btn"
                     type="button"
@@ -274,29 +285,21 @@ ${referralUrl}`;
                 </div>
               </div>
 
-              <div
-                style={{
-                  padding: 20,
-                  borderRadius: 14,
-                  background: "#fff",
-                  color: "#000",
-                  textAlign: "center"
-                }}
-              >
-                <h2>💰 Earn $20 For Every Artist You Refer</h2>
+              <div style={cardStyle}>
+                <h2>💰 Earn $20 Per Artist</h2>
 
                 <div
                   style={{
                     background: "#f4f4f4",
                     borderRadius: 12,
-                    padding: 12,
-                    marginBottom: 16
+                    padding: 14,
+                    marginBottom: 16,
+                    fontWeight: 700
                   }}
                 >
-                  <div style={{ fontWeight: 700 }}>Referral Potential</div>
-                  <div style={{ marginTop: 6 }}>1 referral = $20</div>
-                  <div>5 referrals = $100</div>
-                  <div>10 referrals = $200</div>
+                  <div>🎸 1 Artist = $20</div>
+                  <div>🎸 5 Artists = $100</div>
+                  <div>🎸 10 Artists = $200</div>
                 </div>
 
                 <p style={{ lineHeight: 1.5, marginBottom: 16 }}>
@@ -368,62 +371,70 @@ ${referralUrl}`;
                   </button>
                 </div>
               </div>
-            </div>
 
-            <div style={{ marginTop: 34 }}>
-              <h2>🎤 Marketing Materials</h2>
+              <div style={cardStyle}>
+                <h2>📦 Marketing Materials</h2>
 
-              <p className="tagline" style={{ marginTop: 6 }}>
-                Print these for shows or share them online.
-              </p>
+                <p style={{ lineHeight: 1.5, marginBottom: 18 }}>
+                  Print these for shows or share them online.
+                </p>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr",
-                  gap: 16,
-                  margin: "18px auto 0",
-                  maxWidth: 420
-                }}
-              >
-                <a
-                  className="btn"
-                  href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr",
+                    gap: 14,
+                    maxWidth: 420,
+                    margin: "0 auto"
+                  }}
                 >
-                  🖨 Download Table Tent
-                </a>
+                  <a
+                    className="btn"
+                    href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    🖨 Download Table Tent
+                  </a>
 
-                <a
-                  className="btn"
-                  href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  📄 Download Flyer
-                </a>
+                  <a
+                    className="btn"
+                    href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    📄 Download Flyer
+                  </a>
 
-                <a
-                  className="btn"
-                  href={`/api/marketing/social?artist=${artist.artist_slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  📱 Download Social Graphic
-                </a>
+                  <a
+                    className="btn"
+                    href={`/api/marketing/social?artist=${artist.artist_slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    📱 Download Social Graphic
+                  </a>
+                </div>
               </div>
-            </div>
 
-            <div style={{ marginTop: 32 }}>
-              <h2>🎤 Quick Use</h2>
+              <div style={cardStyle}>
+                <h2>🎤 Quick Start Guide</h2>
 
-              <ul style={{ fontSize: 16, lineHeight: 1.8 }}>
-                <li>Print or save your Artist QR Code.</li>
-                <li>Display it at your next performance.</li>
-                <li>Mention it to the audience at least twice during your set.</li>
-                <li>Share your Referral QR Code with other artists.</li>
-              </ul>
+                <div
+                  style={{
+                    textAlign: "left",
+                    lineHeight: 1.8,
+                    maxWidth: 420,
+                    margin: "0 auto",
+                    fontSize: 16
+                  }}
+                >
+                  <p>1. Print or save your Artist QR Code.</p>
+                  <p>2. Display it at your next performance.</p>
+                  <p>3. Mention it to the audience during your set.</p>
+                  <p>4. Share your Referral QR Code with other artists.</p>
+                </div>
+              </div>
             </div>
 
             <div className="actions" style={{ marginTop: 28 }}>
