@@ -233,9 +233,22 @@ export default function MarketingKitPage() {
                   textAlign: "center"
                 }}
               >
-                <h2>💰 Referral QR Code</h2>
+                <h2>🎵 Give $20, Get $20</h2>
 
-                <p>Other artists scan this to join with your referral.</p>
+                <p
+                    style={{
+                        fontWeight: 700,
+                        lineHeight: 1.5,
+                        marginBottom: 16
+                    }}
+                    >
+                    🎵 Give $20, Get $20
+                    <br />
+                    <span style={{ fontWeight: 400 }}>
+                        When another artist joins using your referral link,
+                        they save $20 and you earn a $20 referral reward.
+                    </span>
+                    </p>
 
                 <div
                   style={{
