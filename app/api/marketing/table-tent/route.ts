@@ -243,7 +243,7 @@ export async function GET(req: NextRequest) {
     color: softWhite
   });
 
-  page.drawText("Scan now →", {
+  page.drawText("Scan now", {
     x: 545,
     y: 82,
     size: 18,
