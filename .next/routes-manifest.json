@@ -131,6 +131,24 @@
       "namedRegex": "^/api/get\\-setup\\-link(?:/)?$"
     },
     {
+      "page": "/api/marketing/flyer",
+      "regex": "^/api/marketing/flyer(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/marketing/flyer(?:/)?$"
+    },
+    {
+      "page": "/api/marketing/social",
+      "regex": "^/api/marketing/social(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/marketing/social(?:/)?$"
+    },
+    {
+      "page": "/api/marketing/table-tent",
+      "regex": "^/api/marketing/table\\-tent(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/marketing/table\\-tent(?:/)?$"
+    },
+    {
       "page": "/api/register",
       "regex": "^/api/register(?:/)?$",
       "routeKeys": {},
@@ -147,30 +165,6 @@
       "regex": "^/api/stripe\\-webhook(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/stripe\\-webhook(?:/)?$"
-    },
-    {
-      "page": "/brian-quinn",
-      "regex": "^/brian\\-quinn(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/brian\\-quinn(?:/)?$"
-    },
-    {
-      "page": "/brian-quinn/request-song",
-      "regex": "^/brian\\-quinn/request\\-song(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/brian\\-quinn/request\\-song(?:/)?$"
-    },
-    {
-      "page": "/corey-and-friends",
-      "regex": "^/corey\\-and\\-friends(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/corey\\-and\\-friends(?:/)?$"
-    },
-    {
-      "page": "/corey-and-friends/request-song",
-      "regex": "^/corey\\-and\\-friends/request\\-song(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/corey\\-and\\-friends/request\\-song(?:/)?$"
     },
     {
       "page": "/dashboard",

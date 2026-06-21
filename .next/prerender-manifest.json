@@ -314,102 +314,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/brian-quinn": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/brian-quinn",
-      "dataRoute": "/brian-quinn.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/brian-quinn/request-song": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/brian-quinn/request-song",
-      "dataRoute": "/brian-quinn/request-song.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/corey-and-friends": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/corey-and-friends",
-      "dataRoute": "/corey-and-friends.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/corey-and-friends/request-song": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/corey-and-friends/request-song",
-      "dataRoute": "/corey-and-friends/request-song.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/dashboard": {
       "experimentalBypassFor": [
         {
@@ -534,8 +438,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "bd6a5cf92afac8a0b1568eb6b5225769",
-    "previewModeSigningKey": "fdbfb33b217adedd92d225c65cf8d14554119e25607b8c756f497d7d69493b70",
-    "previewModeEncryptionKey": "e6345fd8c3e8d7fefcbf07024c64504173fc06d3c3948de69ac2748f7b103c4c"
+    "previewModeId": "f68bae21f3bf23639edcba0b454d0698",
+    "previewModeSigningKey": "e2f60b0fe5b52470a414b86518bd8ee60bb59946df91589438e25d56316fd154",
+    "previewModeEncryptionKey": "135376329035a07eccca3abb2427bdaa9707da868ca676c523cf2b4217143012"
   }
 }
