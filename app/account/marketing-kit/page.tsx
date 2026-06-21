@@ -115,26 +115,20 @@ ${referralUrl}`;
         <div className="container">
           <section
             className="accountCard"
-            style={{ maxWidth: 940, margin: "0 auto" }}
+            style={{ maxWidth: 760, margin: "0 auto" }}
           >
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
             <h1 className="title">{artistName} Marketing Kit</h1>
 
             {artist.logo_url && (
-              <div
-                style={{
-                  textAlign: "center",
-                  marginTop: 12,
-                  marginBottom: 16
-                }}
-              >
+              <div style={{ textAlign: "center", margin: "14px 0 16px" }}>
                 <img
                   src={artist.logo_url}
                   alt={artistName}
                   style={{
                     maxWidth: 180,
-                    maxHeight: 180,
+                    maxHeight: 160,
                     objectFit: "contain"
                   }}
                 />
@@ -164,9 +158,10 @@ ${referralUrl}`;
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gridTemplateColumns: "1fr",
                 gap: 24,
-                marginTop: 30
+                maxWidth: 520,
+                margin: "30px auto 0"
               }}
             >
               <div
@@ -179,14 +174,13 @@ ${referralUrl}`;
                 }}
               >
                 <h2>🎵 Artist QR Code</h2>
-
                 <p>Fans scan this to request songs.</p>
 
                 <div
                   style={{
                     position: "relative",
                     width: 260,
-                    height: 260,
+                    maxWidth: "100%",
                     margin: "0 auto"
                   }}
                 >
@@ -195,10 +189,7 @@ ${referralUrl}`;
                     alt="Artist QR Code"
                     width="260"
                     height="260"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto"
-                    }}
+                    style={{ maxWidth: "100%", height: "auto" }}
                   />
 
                   <img
@@ -218,23 +209,11 @@ ${referralUrl}`;
                   />
                 </div>
 
-                <p
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    marginTop: 10
-                  }}
-                >
+                <p style={{ fontSize: 13, fontWeight: 700, marginTop: 10 }}>
                   Scan to Request Songs
                 </p>
 
-                <div
-                  style={{
-                    display: "grid",
-                    gap: 10,
-                    marginTop: 14
-                  }}
-                >
+                <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
                   <a
                     className="btn"
                     href={artistQrUrl}
@@ -281,17 +260,13 @@ ${referralUrl}`;
                     marginBottom: 16
                   }}
                 >
-                  <div style={{ fontWeight: 700 }}>Referral Earnings</div>
-                  <div style={{ marginTop: 6 }}>$0 earned</div>
-                  <div>0 artists referred</div>
+                  <div style={{ fontWeight: 700 }}>Referral Potential</div>
+                  <div style={{ marginTop: 6 }}>1 referral = $20</div>
+                  <div>5 referrals = $100</div>
+                  <div>10 referrals = $200</div>
                 </div>
 
-                <p
-                  style={{
-                    lineHeight: 1.5,
-                    marginBottom: 16
-                  }}
-                >
+                <p style={{ lineHeight: 1.5, marginBottom: 16 }}>
                   When another artist joins using your referral link, they save
                   $20 and you earn a $20 referral reward.
                 </p>
@@ -300,7 +275,7 @@ ${referralUrl}`;
                   style={{
                     position: "relative",
                     width: 260,
-                    height: 260,
+                    maxWidth: "100%",
                     margin: "0 auto"
                   }}
                 >
@@ -309,10 +284,7 @@ ${referralUrl}`;
                     alt="Referral QR Code"
                     width="260"
                     height="260"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto"
-                    }}
+                    style={{ maxWidth: "100%", height: "auto" }}
                   />
 
                   <img
@@ -332,23 +304,11 @@ ${referralUrl}`;
                   />
                 </div>
 
-                <p
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    marginTop: 10
-                  }}
-                >
+                <p style={{ fontSize: 13, fontWeight: 700, marginTop: 10 }}>
                   Scan to Join & Save $20
                 </p>
 
-                <div
-                  style={{
-                    display: "grid",
-                    gap: 10,
-                    marginTop: 14
-                  }}
-                >
+                <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
                   <a
                     className="btn"
                     href={referralQrUrl}
@@ -390,7 +350,7 @@ ${referralUrl}`;
                   gridTemplateColumns: "1fr",
                   gap: 16,
                   margin: "18px auto 0",
-                  maxWidth: 500
+                  maxWidth: 420
                 }}
               >
                 <a
@@ -425,7 +385,7 @@ ${referralUrl}`;
             <div style={{ marginTop: 32 }}>
               <h2>🎤 Quick Use</h2>
 
-              <ul>
+              <ul style={{ fontSize: 16, lineHeight: 1.8 }}>
                 <li>Print or save your Artist QR Code.</li>
                 <li>Display it at your next performance.</li>
                 <li>Mention it to the audience at least twice during your set.</li>
