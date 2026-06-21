@@ -37,7 +37,9 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const artistName = (artist.artist_name || artist.artist_slug).toUpperCase();
+  const artistName =
+    (artist.artist_name || artist.artist_slug).toUpperCase();
+
   const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
@@ -54,7 +56,7 @@ export async function GET(req: NextRequest) {
   }
 
   const pdf = await PDFDocument.create();
-  const page = pdf.addPage([792, 612]); // Landscape
+  const page = pdf.addPage([792, 612]);
 
   const titleFont = await pdf.embedFont(StandardFonts.HelveticaBold);
   const bodyFont = await pdf.embedFont(StandardFonts.Helvetica);
@@ -79,19 +81,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  let centerLogoImage: any = null;
-
-  const centerLogoUrl = `${new URL(req.url).origin}/ucallit-qr-logo.png`;
-  const centerLogoBytes = await fetchImageBytes(centerLogoUrl);
-
-  if (centerLogoBytes) {
-    try {
-      centerLogoImage = await pdf.embedPng(centerLogoBytes);
-    } catch {
-      centerLogoImage = null;
-    }
-  }
-
   const black = rgb(0.04, 0.04, 0.04);
   const gold = rgb(0.95, 0.76, 0.32);
   const white = rgb(1, 1, 1);
@@ -105,39 +94,47 @@ export async function GET(req: NextRequest) {
     color: black
   });
 
-  // Fold line
+  // Fold Line
+
   page.drawLine({
-    start: { x: 396, y: 25 },
-    end: { x: 396, y: 587 },
+    start: { x: 396, y: 20 },
+    end: { x: 396, y: 592 },
     thickness: 1,
     color: rgb(0.25, 0.25, 0.25)
   });
 
-  // =====================
+  // ==================================
   // LEFT PANEL
-  // =====================
+  // ==================================
 
   page.drawText("REQUEST A SONG TONIGHT", {
-    x: 40,
-    y: 520,
-    size: 28,
+    x: 38,
+    y: 525,
+    size: 27,
     font: titleFont,
     color: gold
   });
 
   page.drawText(artistName, {
-    x: 70,
+    x: 65,
     y: 475,
-    size: 30,
+    size: 28,
     font: titleFont,
     color: white
   });
 
-
+  if (artistLogoImage) {
+    page.drawImage(artistLogoImage, {
+      x: 85,
+      y: 305,
+      width: 230,
+      height: 130
+    });
+  }
 
   page.drawText("Scan the QR code to browse", {
     x: 55,
-    y: 255,
+    y: 250,
     size: 18,
     font: bodyFont,
     color: softWhite
@@ -145,31 +142,31 @@ export async function GET(req: NextRequest) {
 
   page.drawText("tonight's setlist and send a request.", {
     x: 55,
-    y: 228,
+    y: 223,
     size: 18,
     font: bodyFont,
     color: softWhite
   });
 
-  page.drawText("~ NO APP", {
+  page.drawText("- NO APP", {
     x: 55,
-    y: 170,
+    y: 165,
     size: 22,
     font: titleFont,
     color: gold
   });
 
-  page.drawText("~ NO LOGIN", {
+  page.drawText("- NO LOGIN", {
     x: 55,
-    y: 130,
+    y: 125,
     size: 22,
     font: titleFont,
     color: gold
   });
 
-  page.drawText("~ INSTANT REQUESTS", {
+  page.drawText("- INSTANT REQUESTS", {
     x: 55,
-    y: 90,
+    y: 85,
     size: 22,
     font: titleFont,
     color: gold
@@ -177,35 +174,35 @@ export async function GET(req: NextRequest) {
 
   page.drawText("Powered by U Call It Happy Hour", {
     x: 55,
-    y: 40,
+    y: 38,
     size: 12,
     font: bodyFont,
     color: softWhite
   });
 
-  // =====================
+  // ==================================
   // RIGHT PANEL
-  // =====================
+  // ==================================
 
   page.drawText("SCAN TO REQUEST", {
-    x: 465,
-    y: 520,
+    x: 455,
+    y: 525,
     size: 28,
     font: titleFont,
     color: gold
   });
 
-  page.drawText("SCAN NOW", {
-    x: 535,
-    y: 478,
+  page.drawText("A SONG", {
+    x: 545,
+    y: 485,
     size: 28,
     font: titleFont,
     color: white
   });
 
-  const qrX = 490;
-  const qrY = 210;
-  const qrSize = 230;
+  const qrX = 485;
+  const qrY = 205;
+  const qrSize = 235;
 
   page.drawRectangle({
     x: qrX - 12,
@@ -224,28 +221,25 @@ export async function GET(req: NextRequest) {
     height: qrSize
   });
 
-
-  
-
   page.drawText("Request tonight's songs.", {
     x: 485,
-    y: 155,
+    y: 150,
     size: 18,
     font: bodyFont,
     color: softWhite
   });
 
   page.drawText("Influence tomorrow's setlist.", {
-    x: 465,
-    y: 130,
+    x: 462,
+    y: 125,
     size: 18,
     font: bodyFont,
     color: softWhite
   });
 
-  page.drawText("Scan now", {
-    x: 545,
-    y: 82,
+  page.drawText("SCAN NOW", {
+    x: 535,
+    y: 78,
     size: 18,
     font: titleFont,
     color: gold
