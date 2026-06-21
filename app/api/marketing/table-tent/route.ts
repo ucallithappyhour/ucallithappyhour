@@ -224,20 +224,7 @@ export async function GET(req: NextRequest) {
     height: qrSize
   });
 
-  if (centerLogoImage) {
-    page.drawCircle({
-      x: qrX + qrSize / 2,
-      y: qrY + qrSize / 2,
-      size: 23,
-      color: white
-    });
 
-    page.drawImage(centerLogoImage, {
-      x: qrX + qrSize / 2 - 18,
-      y: qrY + qrSize / 2 - 18,
-      width: 36,
-      height: 36
-    });
   }
 
   page.drawText("Request tonight's songs.", {
