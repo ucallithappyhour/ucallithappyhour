@@ -40,180 +40,141 @@ export async function GET(req: NextRequest) {
         style={{
           width: "1080px",
           height: "1350px",
-          background: "#070707",
+          background: "#050505",
           color: "#ffffff",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: "44px",
           fontFamily: "Arial, Helvetica, sans-serif",
+          padding: "54px 64px",
           textAlign: "center"
         }}
       >
         <div
           style={{
             width: "100%",
-            height: "100%",
-            border: "6px solid #f2c14e",
+            height: "245px",
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
-            padding: "34px 46px"
+            justifyContent: "center",
+            marginBottom: "22px"
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              borderTop: "3px solid #f2c14e",
-              borderBottom: "3px solid #f2c14e",
-              padding: "18px 0",
-              marginBottom: "34px",
-              display: "flex",
-              justifyContent: "center"
-            }}
-          >
-            <div
+          {artist.logo_url ? (
+            <img
+              src={artist.logo_url}
+              alt={artistName}
               style={{
-                color: "#f2c14e",
-                fontSize: 44,
-                fontWeight: 900,
-                letterSpacing: "8px"
+                maxWidth: "780px",
+                maxHeight: "230px",
+                objectFit: "contain"
               }}
-            >
-              LIVE MUSIC TONIGHT
-            </div>
-          </div>
-
-          <div
-            style={{
-              width: "100%",
-              height: "365px",
-              background: "#111111",
-              border: "3px solid #333333",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "34px",
-              padding: "22px"
-            }}
-          >
-            {artist.logo_url ? (
-              <img
-                src={artist.logo_url}
-                alt={artistName}
-                style={{
-                  maxWidth: "760px",
-                  maxHeight: "230px",
-                  objectFit: "contain",
-                  marginBottom: "22px"
-                }}
-              />
-            ) : null}
-
+            />
+          ) : (
             <div
               style={{
-                fontSize: artistName.length > 18 ? 58 : 74,
+                fontSize: artistName.length > 18 ? 64 : 84,
                 fontWeight: 900,
-                lineHeight: 1,
-                letterSpacing: "2px",
-                maxWidth: "900px"
+                lineHeight: 1
               }}
             >
               {artistName.toUpperCase()}
             </div>
-          </div>
+          )}
+        </div>
 
-          <div
-            style={{
-              color: "#f2c14e",
-              fontSize: 58,
-              fontWeight: 900,
-              letterSpacing: "3px",
-              marginBottom: "20px"
-            }}
-          >
-            REQUEST SONGS LIVE
-          </div>
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 34,
+            fontWeight: 900,
+            letterSpacing: "8px",
+            marginBottom: "18px"
+          }}
+        >
+          LIVE TONIGHT
+        </div>
 
-          <div
-            style={{
-              fontSize: 30,
-              color: "#eeeeee",
-              marginBottom: "28px"
-            }}
-          >
-            Scan the code. Pick a song. Send it to the artist.
-          </div>
+        <div
+          style={{
+            fontSize: artistName.length > 18 ? 48 : 64,
+            fontWeight: 900,
+            lineHeight: 1,
+            maxWidth: "920px",
+            marginBottom: "34px"
+          }}
+        >
+          {artistName.toUpperCase()}
+        </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#ffffff",
-              border: "12px solid #f2c14e",
-              padding: "24px",
-              marginBottom: "30px"
-            }}
-          >
-            <img
-              src={qrUrl}
-              alt="QR Code"
-              style={{
-                width: "430px",
-                height: "430px"
-              }}
-            />
-          </div>
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 52,
+            fontWeight: 900,
+            letterSpacing: "1px",
+            marginBottom: "26px"
+          }}
+        >
+          SCAN TO REQUEST SONGS
+        </div>
 
-          <div
+        <div
+          style={{
+            background: "#ffffff",
+            border: "12px solid #f2c14e",
+            borderRadius: "34px",
+            padding: "26px",
+            display: "flex",
+            marginBottom: "34px"
+          }}
+        >
+          <img
+            src={qrUrl}
+            alt="QR Code"
             style={{
-              width: "100%",
-              background: "#f2c14e",
-              color: "#070707",
-              fontSize: 34,
-              fontWeight: 900,
-              letterSpacing: "2px",
-              padding: "18px 0",
-              marginBottom: "26px",
-              display: "flex",
-              justifyContent: "center"
+              width: "500px",
+              height: "500px"
             }}
-          >
-            NO APP • NO LOGIN • INSTANT REQUESTS
-          </div>
+          />
+        </div>
 
-          <div
-            style={{
-              fontSize: 24,
-              color: "#dddddd",
-              marginBottom: "auto"
-            }}
-          >
-            Browse tonight&apos;s setlist and request songs in real time.
-          </div>
+        <div
+          style={{
+            fontSize: 32,
+            lineHeight: 1.2,
+            color: "#eeeeee",
+            maxWidth: "820px",
+            marginBottom: "28px"
+          }}
+        >
+          Browse tonight&apos;s setlist and send your request live.
+        </div>
 
-          <div
-            style={{
-              width: "100%",
-              borderTop: "2px solid #f2c14e",
-              paddingTop: "20px",
-              display: "flex",
-              justifyContent: "center"
-            }}
-          >
-            <div
-              style={{
-                color: "#f2c14e",
-                fontSize: 20,
-                fontWeight: 900,
-                letterSpacing: "3px"
-              }}
-            >
-              POWERED BY U CALL IT HAPPY HOUR
-            </div>
-          </div>
+        <div
+          style={{
+            background: "#f2c14e",
+            color: "#050505",
+            fontSize: 30,
+            fontWeight: 900,
+            letterSpacing: "1px",
+            padding: "16px 34px",
+            borderRadius: "999px",
+            marginBottom: "auto"
+          }}
+        >
+          NO APP • NO LOGIN
+        </div>
+
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 20,
+            fontWeight: 900,
+            letterSpacing: "2px"
+          }}
+        >
+          POWERED BY U CALL IT HAPPY HOUR
         </div>
       </div>
     ),
