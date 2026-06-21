@@ -40,147 +40,180 @@ export async function GET(req: NextRequest) {
         style={{
           width: "1080px",
           height: "1350px",
-          background: "#050505",
-          color: "white",
+          background: "#070707",
+          color: "#ffffff",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          padding: "44px",
           fontFamily: "Arial, Helvetica, sans-serif",
-          padding: "40px 60px",
           textAlign: "center"
         }}
       >
         <div
           style={{
-            height: "280px",
             width: "100%",
+            height: "100%",
+            border: "6px solid #f2c14e",
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
+            flexDirection: "column",
+            alignItems: "center",
+            padding: "34px 46px"
           }}
         >
-          {artist.logo_url ? (
-            <img
-              src={artist.logo_url}
-              alt={artistName}
-              style={{
-                maxWidth: "900px",
-                maxHeight: "240px",
-                objectFit: "contain"
-              }}
-            />
-          ) : (
+          <div
+            style={{
+              width: "100%",
+              borderTop: "3px solid #f2c14e",
+              borderBottom: "3px solid #f2c14e",
+              padding: "18px 0",
+              marginBottom: "34px",
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
             <div
               style={{
-                fontSize: 90,
+                color: "#f2c14e",
+                fontSize: 44,
                 fontWeight: 900,
-                lineHeight: 1
+                letterSpacing: "8px"
+              }}
+            >
+              LIVE MUSIC TONIGHT
+            </div>
+          </div>
+
+          <div
+            style={{
+              width: "100%",
+              height: "365px",
+              background: "#111111",
+              border: "3px solid #333333",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "34px",
+              padding: "22px"
+            }}
+          >
+            {artist.logo_url ? (
+              <img
+                src={artist.logo_url}
+                alt={artistName}
+                style={{
+                  maxWidth: "760px",
+                  maxHeight: "230px",
+                  objectFit: "contain",
+                  marginBottom: "22px"
+                }}
+              />
+            ) : null}
+
+            <div
+              style={{
+                fontSize: artistName.length > 18 ? 58 : 74,
+                fontWeight: 900,
+                lineHeight: 1,
+                letterSpacing: "2px",
+                maxWidth: "900px"
               }}
             >
               {artistName.toUpperCase()}
             </div>
-          )}
-        </div>
+          </div>
 
-        <div
-          style={{
-            color: "#f2c14e",
-            fontSize: 72,
-            fontWeight: 900,
-            marginTop: 10,
-            letterSpacing: "1px"
-          }}
-        >
-          LIVE TONIGHT
-        </div>
-
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            marginTop: 10,
-            marginBottom: 30,
-            lineHeight: 1.05,
-            maxWidth: "940px"
-          }}
-        >
-          {artistName.toUpperCase()}
-        </div>
-
-        <div
-          style={{
-            background: "#ffffff",
-            border: "10px solid #f2c14e",
-            borderRadius: "24px",
-            padding: "20px",
-            display: "flex"
-          }}
-        >
-          <img
-            src={qrUrl}
-            alt="QR"
+          <div
             style={{
-              width: "450px",
-              height: "450px"
+              color: "#f2c14e",
+              fontSize: 58,
+              fontWeight: 900,
+              letterSpacing: "3px",
+              marginBottom: "20px"
             }}
-          />
-        </div>
+          >
+            REQUEST SONGS LIVE
+          </div>
 
-        <div
-          style={{
-            marginTop: 30,
-            color: "#f2c14e",
-            fontSize: 48,
-            fontWeight: 900,
-            letterSpacing: "1px"
-          }}
-        >
-          SCAN TO REQUEST SONGS
-        </div>
+          <div
+            style={{
+              fontSize: 30,
+              color: "#eeeeee",
+              marginBottom: "28px"
+            }}
+          >
+            Scan the code. Pick a song. Send it to the artist.
+          </div>
 
-        <div
-          style={{
-            marginTop: 15,
-            fontSize: 28,
-            color: "#e5e5e5",
-            lineHeight: 1.25,
-            maxWidth: "850px"
-          }}
-        >
-          Browse tonight&apos;s setlist and submit requests live.
-        </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#ffffff",
+              border: "12px solid #f2c14e",
+              padding: "24px",
+              marginBottom: "30px"
+            }}
+          >
+            <img
+              src={qrUrl}
+              alt="QR Code"
+              style={{
+                width: "430px",
+                height: "430px"
+              }}
+            />
+          </div>
 
-        <div
-          style={{
-            marginTop: 30,
-            color: "#f2c14e",
-            fontSize: 30,
-            fontWeight: 700,
-            letterSpacing: "1px"
-          }}
-        >
-          NO APP • NO LOGIN • INSTANT REQUESTS
-        </div>
+          <div
+            style={{
+              width: "100%",
+              background: "#f2c14e",
+              color: "#070707",
+              fontSize: 34,
+              fontWeight: 900,
+              letterSpacing: "2px",
+              padding: "18px 0",
+              marginBottom: "26px",
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
+            NO APP • NO LOGIN • INSTANT REQUESTS
+          </div>
 
-        <div
-          style={{
-            marginTop: "auto",
-            width: "80%",
-            height: "2px",
-            background: "#f2c14e"
-          }}
-        />
+          <div
+            style={{
+              fontSize: 24,
+              color: "#dddddd",
+              marginBottom: "auto"
+            }}
+          >
+            Browse tonight&apos;s setlist and request songs in real time.
+          </div>
 
-        <div
-          style={{
-            marginTop: 25,
-            fontSize: 18,
-            color: "#f2c14e",
-            letterSpacing: "2px",
-            fontWeight: 700
-          }}
-        >
-          POWERED BY U CALL IT HAPPY HOUR
+          <div
+            style={{
+              width: "100%",
+              borderTop: "2px solid #f2c14e",
+              paddingTop: "20px",
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
+            <div
+              style={{
+                color: "#f2c14e",
+                fontSize: 20,
+                fontWeight: 900,
+                letterSpacing: "3px"
+              }}
+            >
+              POWERED BY U CALL IT HAPPY HOUR
+            </div>
+          </div>
         </div>
       </div>
     ),
