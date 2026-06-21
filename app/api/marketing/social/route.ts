@@ -38,52 +38,64 @@ export async function GET(req: NextRequest) {
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=560&margin=1`;
+  )}&size=500&margin=1`;
 
   const svg = `
 <svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="spotlight" cx="50%" cy="20%" r="75%">
+    <radialGradient id="spotlight" cx="50%" cy="20%" r="80%">
       <stop offset="0%" stop-color="#2a2412"/>
-      <stop offset="45%" stop-color="#101010"/>
+      <stop offset="48%" stop-color="#101010"/>
       <stop offset="100%" stop-color="#050505"/>
     </radialGradient>
+
+    <linearGradient id="goldBar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8f6f1f"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8f6f1f"/>
+    </linearGradient>
   </defs>
 
   <rect width="1080" height="1080" fill="url(#spotlight)"/>
 
-  <text x="540" y="64" text-anchor="middle" font-family="Arial" font-size="24" font-weight="800" fill="#d4af37">
-    U CALL IT HAPPY HOUR
-  </text>
+  <rect x="54" y="54" width="972" height="972" rx="34" fill="none" stroke="#d4af37" stroke-width="6"/>
+  <rect x="78" y="78" width="924" height="924" rx="26" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
 
   ${
     logoUrl
       ? `<image href="${escapeSvg(
           logoUrl
-        )}" x="260" y="85" width="560" height="250" preserveAspectRatio="xMidYMid meet"/>`
-      : ""
+        )}" x="180" y="80" width="720" height="320" preserveAspectRatio="xMidYMid meet"/>`
+      : `
+  <text x="540" y="250" text-anchor="middle" font-family="Arial Black, Arial" font-size="76" font-weight="900" fill="#ffffff">
+    ${escapeSvg(artistName).toUpperCase()}
+  </text>`
   }
 
-  <text x="540" y="385" text-anchor="middle" font-family="Arial Black, Arial" font-size="54" font-weight="900" fill="#ffffff">
-    ${escapeSvg(artistName).toUpperCase()}
+  <rect x="130" y="405" width="820" height="86" rx="43" fill="url(#goldBar)"/>
+
+  <text x="540" y="463" text-anchor="middle" font-family="Arial Black, Arial" font-size="50" font-weight="900" fill="#050505">
+    REQUEST SONGS LIVE
   </text>
 
-  <text x="540" y="470" text-anchor="middle" font-family="Arial Black, Arial" font-size="88" font-weight="900" fill="#d4af37">
-    REQUEST A SONG
+  <text x="540" y="545" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#ffffff">
+    Scan to browse the setlist
   </text>
 
-  <text x="540" y="525" text-anchor="middle" font-family="Arial" font-size="30" font-weight="700" fill="#ffffff">
-    Scan to browse the setlist and send a request.
+  <text x="540" y="588" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#ffffff">
+    and send requests instantly
   </text>
 
-  <rect x="300" y="570" width="480" height="480" rx="28" fill="#d4af37"/>
-  <rect x="320" y="590" width="440" height="440" rx="20" fill="#ffffff"/>
+  <rect x="335" y="625" width="410" height="410" rx="24" fill="#d4af37"/>
+  <rect x="355" y="645" width="370" height="370" rx="16" fill="#ffffff"/>
 
-  <image href="${escapeSvg(qrUrl)}" x="350" y="620" width="380" height="380"/>
+  <image href="${escapeSvg(qrUrl)}" x="380" y="670" width="320" height="320"/>
 
-  <rect x="95" y="1000" width="890" height="46" rx="23" fill="#111111" stroke="#d4af37" stroke-width="3"/>
+  <text x="540" y="1048" text-anchor="middle" font-family="Arial" font-size="24" font-weight="900" fill="#d4af37">
+    U CALL IT HAPPY HOUR
+  </text>
 
-  <text x="540" y="1031" text-anchor="middle" font-family="Arial" font-size="25" font-weight="900" fill="#ffffff">
+  <text x="540" y="1012" text-anchor="middle" font-family="Arial" font-size="25" font-weight="900" fill="#ffffff">
     NO APP  |  NO LOGIN  |  INSTANT REQUESTS
   </text>
 </svg>`;
