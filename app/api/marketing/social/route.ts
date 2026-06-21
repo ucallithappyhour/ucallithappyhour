@@ -38,72 +38,53 @@ export async function GET(req: NextRequest) {
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=500&margin=1`;
+  )}&size=460&margin=1`;
 
   const svg = `
 <svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="20%" r="85%">
-      <stop offset="0%" stop-color="#33280f"/>
-      <stop offset="45%" stop-color="#111111"/>
+    <radialGradient id="bg" cx="50%" cy="18%" r="85%">
+      <stop offset="0%" stop-color="#2b220f"/>
+      <stop offset="52%" stop-color="#111111"/>
       <stop offset="100%" stop-color="#050505"/>
     </radialGradient>
-
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#8f6f1f"/>
-      <stop offset="50%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#8f6f1f"/>
-    </linearGradient>
   </defs>
 
   <rect width="1080" height="1080" fill="url(#bg)"/>
+  <rect x="54" y="54" width="972" height="972" rx="34" fill="none" stroke="#d4af37" stroke-width="6"/>
 
-  <rect x="50" y="50" width="980" height="980" rx="36" fill="none" stroke="#d4af37" stroke-width="6"/>
-  <rect x="78" y="78" width="924" height="924" rx="28" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+  <text x="540" y="95" text-anchor="middle" font-family="Arial" font-size="24" font-weight="900" fill="#d4af37">
+    U CALL IT HAPPY HOUR
+  </text>
 
   ${
     logoUrl
-      ? `<image href="${escapeSvg(
-          logoUrl
-        )}" x="190" y="85" width="700" height="270" preserveAspectRatio="xMidYMid meet"/>`
-      : `<text x="540" y="240" text-anchor="middle" font-family="Arial Black, Arial" font-size="74" font-weight="900" fill="#ffffff">${escapeSvg(
-          artistName
-        ).toUpperCase()}</text>`
+      ? `<image href="${escapeSvg(logoUrl)}" x="270" y="125" width="540" height="240" preserveAspectRatio="xMidYMid meet"/>`
+      : ""
   }
 
-  <rect x="120" y="370" width="840" height="92" rx="46" fill="url(#gold)"/>
-  <text x="540" y="432" text-anchor="middle" font-family="Arial Black, Arial" font-size="52" font-weight="900" fill="#060606">
-    REQUEST SONGS LIVE
+  <text x="540" y="405" text-anchor="middle" font-family="Arial Black, Arial" font-size="58" font-weight="900" fill="#ffffff">
+    ${escapeSvg(artistName).toUpperCase()}
   </text>
 
-  <text x="540" y="515" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#ffffff">
-    Scan to browse tonight's setlist
-  </text>
-  <text x="540" y="558" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#ffffff">
-    and send a request instantly
+  <text x="540" y="485" text-anchor="middle" font-family="Arial Black, Arial" font-size="72" font-weight="900" fill="#d4af37">
+    REQUEST A SONG
   </text>
 
-  <rect x="130" y="620" width="405" height="405" rx="26" fill="#d4af37"/>
-  <rect x="150" y="640" width="365" height="365" rx="18" fill="#ffffff"/>
-  <image href="${escapeSvg(qrUrl)}" x="175" y="665" width="315" height="315"/>
-
-  <rect x="575" y="620" width="375" height="405" rx="26" fill="#111111" stroke="#d4af37" stroke-width="5"/>
-
-  <text x="762" y="705" text-anchor="middle" font-family="Arial Black, Arial" font-size="40" font-weight="900" fill="#d4af37">
-    NO APP
-  </text>
-  <text x="762" y="785" text-anchor="middle" font-family="Arial Black, Arial" font-size="40" font-weight="900" fill="#ffffff">
-    NO LOGIN
-  </text>
-  <text x="762" y="865" text-anchor="middle" font-family="Arial Black, Arial" font-size="34" font-weight="900" fill="#d4af37">
-    INSTANT
-  </text>
-  <text x="762" y="915" text-anchor="middle" font-family="Arial Black, Arial" font-size="34" font-weight="900" fill="#d4af37">
-    REQUESTS
+  <text x="540" y="535" text-anchor="middle" font-family="Arial" font-size="28" font-weight="700" fill="#ffffff">
+    Scan to browse the setlist and send a request.
   </text>
 
-  <text x="540" y="1048" text-anchor="middle" font-family="Arial" font-size="24" font-weight="900" fill="#d4af37">
-    U CALL IT HAPPY HOUR
+  <rect x="340" y="575" width="400" height="400" rx="24" fill="#d4af37"/>
+  <rect x="360" y="595" width="360" height="360" rx="16" fill="#ffffff"/>
+  <image href="${escapeSvg(qrUrl)}" x="385" y="620" width="310" height="310"/>
+
+  <text x="540" y="1005" text-anchor="middle" font-family="Arial Black, Arial" font-size="29" font-weight="900" fill="#ffffff">
+    NO APP | NO LOGIN | INSTANT REQUESTS
+  </text>
+
+  <text x="540" y="1048" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#d4af37">
+    Request tonight's songs. Influence tomorrow's setlist.
   </text>
 </svg>`;
 
