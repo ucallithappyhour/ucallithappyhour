@@ -13,6 +13,7 @@ type Artist = {
 export default function MarketingKitPage() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [message, setMessage] = useState("Loading your marketing kit...");
+  const [copied, setCopied] = useState("");
 
   useEffect(() => {
     loadArtist();
@@ -43,6 +44,17 @@ export default function MarketingKitPage() {
     setMessage("");
   }
 
+  async function copyText(label: string, value: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(label);
+      setTimeout(() => setCopied(""), 1800);
+    } catch {
+      setCopied("Copy failed");
+      setTimeout(() => setCopied(""), 1800);
+    }
+  }
+
   if (!artist) {
     return (
       <main className="page">
@@ -71,6 +83,7 @@ export default function MarketingKitPage() {
   }
 
   const artistPageUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
+  const requestSongUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}/request-song`;
   const referralUrl = `https://www.ucallithappyhour.com/register?ref=${
     artist.referral_code || ""
   }`;
@@ -96,8 +109,25 @@ export default function MarketingKitPage() {
             <h1 className="title">Marketing Kit</h1>
 
             <p className="tagline">
-              QR codes and links for {artist.artist_name || artist.artist_slug}.
+              QR codes, links, and downloads for{" "}
+              {artist.artist_name || artist.artist_slug}.
             </p>
+
+            {copied && (
+              <div
+                style={{
+                  marginTop: 16,
+                  padding: "10px 14px",
+                  borderRadius: 12,
+                  background: "#12351f",
+                  border: "1px solid #2f8f4e",
+                  color: "#fff",
+                  fontWeight: 700
+                }}
+              >
+                {copied === "Copy failed" ? "Copy failed." : `Copied ${copied}.`}
+              </div>
+            )}
 
             <div
               style={{
@@ -120,54 +150,78 @@ export default function MarketingKitPage() {
 
                 <p>Fans scan this to request songs.</p>
 
-              <div
-  style={{
-    position: "relative",
-    width: 260,
-    height: 260,
-    margin: "0 auto"
-  }}
->
-  <img
-    src={artistQrUrl}
-    alt="Artist QR Code"
-    width="260"
-    height="260"
-    style={{
-      maxWidth: "100%",
-      height: "auto"
-    }}
-  />
+                <div
+                  style={{
+                    position: "relative",
+                    width: 260,
+                    height: 260,
+                    margin: "0 auto"
+                  }}
+                >
+                  <img
+                    src={artistQrUrl}
+                    alt="Artist QR Code"
+                    width="260"
+                    height="260"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto"
+                    }}
+                  />
 
-  <img
-    src="/ucallit-qr-logo.png"
-    alt="U Call It Happy Hour"
-    style={{
-      position: "absolute",
-      width: 54,
-      height: 54,
-      left: "50%",
-      top: "50%",
-      transform: "translate(-50%, -50%)",
-      background: "#fff",
-      borderRadius: "50%",
-      padding: 3
-    }}
-  />
-</div>
+                  <img
+                    src="/ucallit-qr-logo.png"
+                    alt="U Call It Happy Hour"
+                    style={{
+                      position: "absolute",
+                      width: 54,
+                      height: 54,
+                      left: "50%",
+                      top: "50%",
+                      transform: "translate(-50%, -50%)",
+                      background: "#fff",
+                      borderRadius: "50%",
+                      padding: 3
+                    }}
+                  />
+                </div>
 
-                <p style={{ wordBreak: "break-all", fontSize: 14 }}>
+                <p style={{ wordBreak: "break-all", fontSize: 13 }}>
                   {artistPageUrl}
                 </p>
 
-                <a
-                  className="btn"
-                  href={artistQrUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <div
+                  style={{
+                    display: "grid",
+                    gap: 10,
+                    marginTop: 14
+                  }}
                 >
-                  Open / Print QR →
-                </a>
+                  <a
+                    className="btn"
+                    href={artistQrUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open / Print QR →
+                  </a>
+
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => copyText("Artist Page URL", artistPageUrl)}
+                  >
+                    Copy Artist Page URL
+                  </button>
+
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => copyText("Request Song URL", requestSongUrl)}
+                  >
+                    Copy Request Song URL
+                  </button>
+                </div>
               </div>
 
               <div
@@ -183,91 +237,115 @@ export default function MarketingKitPage() {
 
                 <p>Other artists scan this to join with your referral.</p>
 
-              <div
-  style={{
-    position: "relative",
-    width: 260,
-    height: 260,
-    margin: "0 auto"
-  }}
->
-  <img
-    src={referralQrUrl}
-    alt="Referral QR Code"
-    width="260"
-    height="260"
-    style={{
-      maxWidth: "100%",
-      height: "auto"
-    }}
-  />
+                <div
+                  style={{
+                    position: "relative",
+                    width: 260,
+                    height: 260,
+                    margin: "0 auto"
+                  }}
+                >
+                  <img
+                    src={referralQrUrl}
+                    alt="Referral QR Code"
+                    width="260"
+                    height="260"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto"
+                    }}
+                  />
 
-  <img
-    src="/ucallit-qr-logo.png"
-    alt="U Call It Happy Hour"
-    style={{
-      position: "absolute",
-      width: 54,
-      height: 54,
-      left: "50%",
-      top: "50%",
-      transform: "translate(-50%, -50%)",
-      background: "#fff",
-      borderRadius: "50%",
-      padding: 3
-    }}
-  />
-</div>
+                  <img
+                    src="/ucallit-qr-logo.png"
+                    alt="U Call It Happy Hour"
+                    style={{
+                      position: "absolute",
+                      width: 54,
+                      height: 54,
+                      left: "50%",
+                      top: "50%",
+                      transform: "translate(-50%, -50%)",
+                      background: "#fff",
+                      borderRadius: "50%",
+                      padding: 3
+                    }}
+                  />
+                </div>
 
-                <p style={{ wordBreak: "break-all", fontSize: 14 }}>
+                <p style={{ wordBreak: "break-all", fontSize: 13 }}>
                   {referralUrl}
                 </p>
 
-                <a
-                  className="btn"
-                  href={referralQrUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <div
+                  style={{
+                    display: "grid",
+                    gap: 10,
+                    marginTop: 14
+                  }}
                 >
-                  Open / Print QR →
-                </a>
+                  <a
+                    className="btn"
+                    href={referralQrUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open / Print QR →
+                  </a>
+
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => copyText("Referral URL", referralUrl)}
+                  >
+                    Copy Referral URL
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div
-            style={{
-                marginTop: 30,
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: 16
-            }}
-            >
-            <a
-                className="btn"
-                href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                🖨 Download Table Tent
-            </a>
+            <div style={{ marginTop: 34 }}>
+              <h2>📣 Download Marketing Materials</h2>
 
-            <a
-                className="btn"
-                href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                📄 Download Flyer
-            </a>
+              <p className="tagline" style={{ marginTop: 6 }}>
+                Print these for shows or share them online.
+              </p>
 
-            <a
-                className="btn"
-                href={`/api/marketing/social?artist=${artist.artist_slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                📱 Download Social Graphic
-            </a>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: 16,
+                  marginTop: 18
+                }}
+              >
+                <a
+                  className="btn"
+                  href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  🖨 Download Table Tent
+                </a>
+
+                <a
+                  className="btn"
+                  href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📄 Download Flyer
+                </a>
+
+                <a
+                  className="btn"
+                  href={`/api/marketing/social?artist=${artist.artist_slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📱 Download Social Graphic
+                </a>
+              </div>
             </div>
 
             <div style={{ marginTop: 32 }}>
