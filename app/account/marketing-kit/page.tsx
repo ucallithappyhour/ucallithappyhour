@@ -237,17 +237,12 @@ export default function MarketingKitPage() {
 
                 <p
                     style={{
-                        fontWeight: 700,
                         lineHeight: 1.5,
                         marginBottom: 16
                     }}
                     >
-                    🎵 Give $20, Get $20
-                    <br />
-                    <span style={{ fontWeight: 400 }}>
                         When another artist joins using your referral link,
                         they save $20 and you earn a $20 referral reward.
-                    </span>
                     </p>
 
                 <div
