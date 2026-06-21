@@ -19,11 +19,10 @@ function drawCenteredText(
   y: number,
   size: number,
   font: any,
-  color: any,
-  maxWidth = 540
+  color: any
 ) {
   const width = font.widthOfTextAtSize(text, size);
-  const x = Math.max((612 - width) / 2, 36);
+  const x = Math.max((612 - width) / 2, 24);
 
   page.drawText(text, {
     x,
@@ -62,7 +61,10 @@ export async function GET(req: NextRequest) {
   const qrBytes = await fetchImageBytes(qrUrl);
 
   if (!qrBytes) {
-    return NextResponse.json({ error: "Could not generate QR" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Could not generate QR" },
+      { status: 500 }
+    );
   }
 
   const pdf = await PDFDocument.create();
@@ -74,8 +76,10 @@ export async function GET(req: NextRequest) {
   const qrImage = await pdf.embedPng(qrBytes);
 
   let artistLogoImage: any = null;
+
   if (artist.logo_url) {
     const logoBytes = await fetchImageBytes(artist.logo_url);
+
     if (logoBytes) {
       try {
         artistLogoImage = await pdf.embedPng(logoBytes);
@@ -90,8 +94,10 @@ export async function GET(req: NextRequest) {
   }
 
   let centerLogoImage: any = null;
+
   const centerLogoUrl = `${new URL(req.url).origin}/ucallit-qr-logo.png`;
   const centerLogoBytes = await fetchImageBytes(centerLogoUrl);
+
   if (centerLogoBytes) {
     try {
       centerLogoImage = await pdf.embedPng(centerLogoBytes);
@@ -115,28 +121,28 @@ export async function GET(req: NextRequest) {
 
   if (artistLogoImage) {
     page.drawImage(artistLogoImage, {
-      x: 216,
-      y: 642,
-      width: 180,
-      height: 95
+      x: 206,
+      y: 650,
+      width: 200,
+      height: 105
     });
   } else {
-    drawCenteredText(page, artistName, 675, 38, titleFont, white);
+    drawCenteredText(page, artistName.toUpperCase(), 690, 36, titleFont, white);
   }
 
-  drawCenteredText(page, "REQUEST A SONG TONIGHT", 590, 34, titleFont, gold);
-  drawCenteredText(page, artistName, 540, 34, titleFont, white);
+  drawCenteredText(page, "REQUEST A SONG TONIGHT", 585, 34, titleFont, gold);
+
   drawCenteredText(
     page,
-    "Scan to browse the setlist and send a request.",
-    505,
-    17,
-    bodyFont,
-    softWhite
+    artistName.toUpperCase(),
+    535,
+    40,
+    titleFont,
+    white
   );
 
   const qrX = 171;
-  const qrY = 265;
+  const qrY = 235;
   const qrSize = 270;
 
   page.drawRectangle({
@@ -160,47 +166,53 @@ export async function GET(req: NextRequest) {
     page.drawCircle({
       x: qrX + qrSize / 2,
       y: qrY + qrSize / 2,
-      size: 25,
+      size: 26,
       color: white
     });
 
     page.drawImage(centerLogoImage, {
-      x: qrX + qrSize / 2 - 20,
-      y: qrY + qrSize / 2 - 20,
-      width: 40,
-      height: 40
+      x: qrX + qrSize / 2 - 21,
+      y: qrY + qrSize / 2 - 21,
+      width: 42,
+      height: 42
     });
   }
 
-  const checkY = 205;
-  drawCenteredText(page, "No App   No Login   Request Songs Instantly", checkY, 20, titleFont, gold);
+  drawCenteredText(
+    page,
+    "Scan to browse tonight's setlist and request songs live.",
+    195,
+    17,
+    bodyFont,
+    softWhite
+  );
+
+  drawCenteredText(
+    page,
+    "NO APP  •  NO LOGIN  •  INSTANT REQUESTS",
+    155,
+    20,
+    titleFont,
+    gold
+  );
 
   page.drawLine({
-    start: { x: 82, y: 170 },
-    end: { x: 530, y: 170 },
+    start: { x: 90, y: 118 },
+    end: { x: 522, y: 118 },
     thickness: 1,
     color: gold
   });
 
   drawCenteredText(
     page,
-    "“Request tonight's songs.",
-    130,
-    24,
-    bodyFont,
-    gold
-  );
-
-  drawCenteredText(
-    page,
-    "Influence tomorrow's setlist.”",
-    98,
-    24,
+    "Request tonight's songs. Influence tomorrow's setlist.",
+    82,
+    18,
     bodyFont,
     white
   );
 
-  drawCenteredText(page, "U CALL IT HAPPY HOUR", 45, 12, titleFont, gold);
+  drawCenteredText(page, "POWERED BY U CALL IT HAPPY HOUR", 38, 12, titleFont, gold);
 
   const pdfBytes = await pdf.save();
 
