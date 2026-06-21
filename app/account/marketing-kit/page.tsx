@@ -164,17 +164,19 @@ ${referralUrl}`;
               </div>
             )}
 
-            <div style={{ textAlign: "center", marginBottom: 26 }}>
-              <Link
+                        <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <a
+                className="btn"
                 href={`/${artist.artist_slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
-                  color: "#d4af37",
-                  fontWeight: 800,
+                  display: "inline-block",
                   textDecoration: "none"
                 }}
               >
-                View Public Artist Page →
-              </Link>
+                🎵 View Public Artist Page
+              </a>
             </div>
 
             <p

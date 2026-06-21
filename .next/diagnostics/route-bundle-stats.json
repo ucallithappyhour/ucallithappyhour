@@ -32,11 +32,11 @@
   },
   {
     "route": "/account/marketing-kit",
-    "firstLoadUncompressedJsBytes": 756365,
+    "firstLoadUncompressedJsBytes": 756410,
     "firstLoadChunkPaths": [
       ".next\\static\\chunks\\05-c3ty_6dwfk.js",
       ".next\\static\\chunks\\2rjht1i8j1gsp.js",
-      ".next\\static\\chunks\\37-gud5rgqxa3.js",
+      ".next\\static\\chunks\\2t-1bmqv6qc6w.js",
       ".next\\static\\chunks\\0byta0t64wukb.js",
       ".next\\static\\chunks\\11wm6ylahm3s1.js",
       ".next\\static\\chunks\\3krfs4awckr-k.js",
