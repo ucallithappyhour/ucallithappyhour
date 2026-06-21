@@ -49,7 +49,15 @@ export default function DashboardPage() {
       .eq("owner_email", user.email)
       .maybeSingle();
 
-    if (artistError || !artistData) {
+    if (artistError) {
+      setArtist(null);
+      setRequests([]);
+      setMessage(`Could not load artist profile: ${artistError.message}`);
+      setLoading(false);
+      return;
+    }
+
+    if (!artistData) {
       setArtist(null);
       setRequests([]);
       setMessage("No artist profile is linked to this login.");
@@ -68,7 +76,7 @@ export default function DashboardPage() {
 
     if (error) {
       setRequests([]);
-      setMessage("Could not load song requests.");
+      setMessage(`Could not load song requests: ${error.message}`);
     } else {
       setRequests(data || []);
     }
@@ -84,7 +92,12 @@ export default function DashboardPage() {
       .eq("status", "pending")
       .order("created_at", { ascending: false });
 
-    if (!error) setRequests(data || []);
+    if (error) {
+      setMessage(`Could not refresh requests: ${error.message}`);
+      return;
+    }
+
+    setRequests(data || []);
   }
 
   useEffect(() => {
@@ -126,8 +139,44 @@ export default function DashboardPage() {
 
     if (ids.length === 0) return;
 
-    await supabase.from("song_requests").update({ status }).in("id", ids);
-    loadRequestsOnly(artist.artist_slug);
+    const { error } = await supabase
+      .from("song_requests")
+      .update({ status })
+      .in("id", ids);
+
+    if (error) {
+      setMessage(`Could not update request: ${error.message}`);
+      return;
+    }
+
+    setRequests((current) => current.filter((request) => !ids.includes(request.id)));
+
+    if (artist.artist_slug) {
+      loadRequestsOnly(artist.artist_slug);
+    }
+  }
+
+  async function addGroupToLibrary(group: {
+    song: string;
+    artist: string;
+    requestType: string;
+    items: SongRequest[];
+  }) {
+    if (!artist?.artist_slug) return;
+
+    const { error: songError } = await supabase.from("songs").insert({
+      title: group.song,
+      artist: group.artist || "",
+      artist_slug: artist.artist_slug,
+      is_active: true
+    });
+
+    if (songError) {
+      setMessage(`Could not add song to library: ${songError.message}`);
+      return;
+    }
+
+    await updateGroup(group.song, group.artist, group.requestType, "added_to_library");
   }
 
   function groupRequests(items: SongRequest[]) {
@@ -238,30 +287,45 @@ export default function DashboardPage() {
           </div>
         ))}
 
-        <button
-          onClick={() =>
-            updateGroup(
-              group.song,
-              group.artist,
-              group.requestType,
-              isFuture ? "reviewed" : "played"
-            )
-          }
-          style={{
-            padding: "10px 16px",
-            marginRight: 10,
-            borderRadius: 8,
-            cursor: "pointer"
-          }}
-        >
-          {isFuture ? "Mark Reviewed" : "Played"}
-        </button>
+        {isFuture ? (
+          <button
+            onClick={() => addGroupToLibrary(group)}
+            style={{
+              padding: "10px 16px",
+              marginRight: 10,
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: "bold"
+            }}
+          >
+            Add to Library
+          </button>
+        ) : (
+          <button
+            onClick={() =>
+              updateGroup(group.song, group.artist, group.requestType, "played")
+            }
+            style={{
+              padding: "10px 16px",
+              marginRight: 10,
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: "bold"
+            }}
+          >
+            Played
+          </button>
+        )}
 
         <button
           onClick={() =>
             updateGroup(group.song, group.artist, group.requestType, "skipped")
           }
-          style={{ padding: "10px 16px", borderRadius: 8, cursor: "pointer" }}
+          style={{
+            padding: "10px 16px",
+            borderRadius: 8,
+            cursor: "pointer"
+          }}
         >
           Skip
         </button>
