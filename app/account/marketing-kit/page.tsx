@@ -85,7 +85,6 @@ export default function MarketingKitPage() {
   const artistName = artist.artist_name || artist.artist_slug;
 
   const artistPageUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
-  const requestSongUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}/request-song`;
   const referralUrl = `https://www.ucallithappyhour.com/register?ref=${
     artist.referral_code || ""
   }`;
@@ -114,6 +113,13 @@ ${referralUrl}`;
     background: "#fff",
     color: "#000",
     textAlign: "center" as const
+  };
+
+  const smallDescriptionStyle = {
+    marginTop: 4,
+    marginBottom: 6,
+    fontSize: 14,
+    opacity: 0.8
   };
 
   return (
@@ -164,7 +170,7 @@ ${referralUrl}`;
               </div>
             )}
 
-                        <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
               <a
                 className="btn"
                 href={`/${artist.artist_slug}`}
@@ -218,7 +224,10 @@ ${referralUrl}`;
             >
               <div style={cardStyle}>
                 <h2>🎵 Artist QR Code</h2>
-                <p>Fans scan this to request songs.</p>
+
+                <p style={{ marginBottom: 8 }}>
+                  Fans scan this to request songs.
+                </p>
 
                 <div
                   style={{
@@ -253,11 +262,11 @@ ${referralUrl}`;
                   />
                 </div>
 
-                <p style={{ fontSize: 13, fontWeight: 700, marginTop: 10 }}>
+                <p style={{ fontSize: 13, fontWeight: 700, marginTop: 4 }}>
                   Scan to Request Songs
                 </p>
 
-                <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+                <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
                   <a
                     className="btn"
                     href={artistQrUrl}
@@ -285,7 +294,7 @@ ${referralUrl}`;
                     background: "#f4f4f4",
                     borderRadius: 12,
                     padding: 14,
-                    marginBottom: 16,
+                    marginBottom: 12,
                     fontWeight: 700
                   }}
                 >
@@ -294,7 +303,7 @@ ${referralUrl}`;
                   <div>🎸 10 Artists = $200</div>
                 </div>
 
-                <p style={{ lineHeight: 1.5, marginBottom: 16 }}>
+                <p style={{ lineHeight: 1.5, marginBottom: 8 }}>
                   When another artist joins using your referral link, they save
                   $20 and you earn a $20 referral reward.
                 </p>
@@ -332,11 +341,11 @@ ${referralUrl}`;
                   />
                 </div>
 
-                <p style={{ fontSize: 13, fontWeight: 700, marginTop: 10 }}>
+                <p style={{ fontSize: 13, fontWeight: 700, marginTop: 4 }}>
                   Scan to Join & Save $20
                 </p>
 
-                <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+                <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
                   <a
                     className="btn"
                     href={referralQrUrl}
@@ -370,30 +379,38 @@ ${referralUrl}`;
                 <div
                   style={{
                     textAlign: "left",
-                    lineHeight: 1.8,
+                    lineHeight: 1.4,
                     maxWidth: 420,
                     margin: "0 auto",
                     fontSize: 16
                   }}
                 >
-                  <p>1. Print or save your Artist QR Code.</p>
-                  <p>2. Display it at your next performance.</p>
-                  <p>3. Mention it to the audience during your set.</p>
-                  <p>4. Share your Referral QR Code with other artists.</p>
+                  <p style={{ margin: "6px 0" }}>
+                    1. Print or save your Artist QR Code.
+                  </p>
+                  <p style={{ margin: "6px 0" }}>
+                    2. Display it at your next performance.
+                  </p>
+                  <p style={{ margin: "6px 0" }}>
+                    3. Mention it to the audience during your set.
+                  </p>
+                  <p style={{ margin: "6px 0" }}>
+                    4. Share your Referral QR Code with other artists.
+                  </p>
                 </div>
               </div>
 
               <div style={cardStyle}>
                 <h2>📦 Marketing Materials</h2>
 
-                <p style={{ lineHeight: 1.5, marginBottom: 10 }}>
+                <p style={{ lineHeight: 1.5, marginBottom: 8 }}>
                   Print these for shows or share them online.
                 </p>
 
                 <div
                   style={{
                     display: "grid",
-                    gap: 10,
+                    gap: 4,
                     maxWidth: 420,
                     margin: "0 auto"
                   }}
@@ -408,14 +425,7 @@ ${referralUrl}`;
                       🖨 Download Table Tent
                     </a>
 
-                    <p
-  style={{
-    marginTop: 4,
-    marginBottom: 10,
-    fontSize: 14,
-    opacity: 0.8
-  }}
->
+                    <p style={smallDescriptionStyle}>
                       Perfect for tables and bar tops.
                     </p>
                   </div>
@@ -430,14 +440,7 @@ ${referralUrl}`;
                       📄 Download Flyer
                     </a>
 
-                    <p
-  style={{
-    marginTop: 4,
-    marginBottom: 10,
-    fontSize: 14,
-    opacity: 0.8
-  }}
->
+                    <p style={smallDescriptionStyle}>
                       Hang at venues or share before a show.
                     </p>
                   </div>
@@ -452,14 +455,7 @@ ${referralUrl}`;
                       📱 Download Social Graphic
                     </a>
 
-                    <p
-  style={{
-    marginTop: 4,
-    marginBottom: 10,
-    fontSize: 14,
-    opacity: 0.8
-  }}
->
+                    <p style={smallDescriptionStyle}>
                       Post on Facebook, Instagram, or your story.
                     </p>
                   </div>
@@ -467,7 +463,13 @@ ${referralUrl}`;
               </div>
             </div>
 
-            <div className="actions" style={{ marginTop: 28 }}>
+            <div
+              className="actions"
+              style={{
+                marginTop: 20,
+                justifyContent: "center"
+              }}
+            >
               <Link className="btn" href="/account">
                 ← Back to Account
               </Link>
