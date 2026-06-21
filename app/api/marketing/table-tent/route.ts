@@ -225,7 +225,7 @@ export async function GET(req: NextRequest) {
   });
 
 
-  }
+  
 
   page.drawText("Request tonight's songs.", {
     x: 485,
