@@ -192,8 +192,8 @@ export default function MarketingKitPage() {
   }}
 >
   <img
-    src={artistQrUrl}
-    alt="Artist QR Code"
+    src={referralQrUrl}
+    alt="Referral QR Code"
     width="260"
     height="260"
     style={{
@@ -232,6 +232,42 @@ export default function MarketingKitPage() {
                   Open / Print QR →
                 </a>
               </div>
+            </div>
+
+            <div
+            style={{
+                marginTop: 30,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 16
+            }}
+            >
+            <a
+                className="btn"
+                href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                🖨 Download Table Tent
+            </a>
+
+            <a
+                className="btn"
+                href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                📄 Download Flyer
+            </a>
+
+            <a
+                className="btn"
+                href={`/api/marketing/social?artist=${artist.artist_slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                📱 Download Social Graphic
+            </a>
             </div>
 
             <div style={{ marginTop: 32 }}>
