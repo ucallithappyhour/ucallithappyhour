@@ -82,6 +82,8 @@ export default function MarketingKitPage() {
     );
   }
 
+  const artistName = artist.artist_name || artist.artist_slug;
+
   const artistPageUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
   const requestSongUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}/request-song`;
   const referralUrl = `https://www.ucallithappyhour.com/register?ref=${
@@ -102,15 +104,14 @@ export default function MarketingKitPage() {
         <div className="container">
           <section
             className="accountCard"
-            style={{ maxWidth: 900, margin: "0 auto" }}
+            style={{ maxWidth: 940, margin: "0 auto" }}
           >
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
-            <h1 className="title">Marketing Kit</h1>
+            <h1 className="title">{artistName} Marketing Kit</h1>
 
             <p className="tagline">
-              QR codes, links, and downloads for{" "}
-              {artist.artist_name || artist.artist_slug}.
+              Everything you need to promote your shows.
             </p>
 
             {copied && (
@@ -132,7 +133,7 @@ export default function MarketingKitPage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
                 gap: 24,
                 marginTop: 30
               }}
@@ -186,8 +187,14 @@ export default function MarketingKitPage() {
                   />
                 </div>
 
-                <p style={{ wordBreak: "break-all", fontSize: 13 }}>
-                  {artistPageUrl}
+                <p
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    marginTop: 10
+                  }}
+                >
+                  Scan to Request Songs
                 </p>
 
                 <div
@@ -207,19 +214,19 @@ export default function MarketingKitPage() {
                   </a>
 
                   <button
-                    className="btn secondary"
+                    className="btn"
                     type="button"
                     onClick={() => copyText("Artist Page URL", artistPageUrl)}
                   >
-                    Copy Artist Page URL
+                    📋 Copy Artist URL
                   </button>
 
                   <button
-                    className="btn secondary"
+                    className="btn"
                     type="button"
                     onClick={() => copyText("Request Song URL", requestSongUrl)}
                   >
-                    Copy Request Song URL
+                    📋 Copy Request URL
                   </button>
                 </div>
               </div>
@@ -236,14 +243,14 @@ export default function MarketingKitPage() {
                 <h2>🎵 Give $20, Get $20</h2>
 
                 <p
-                    style={{
-                        lineHeight: 1.5,
-                        marginBottom: 16
-                    }}
-                    >
-                        When another artist joins using your referral link,
-                        they save $20 and you earn a $20 referral reward.
-                    </p>
+                  style={{
+                    lineHeight: 1.5,
+                    marginBottom: 16
+                  }}
+                >
+                  When another artist joins using your referral link, they save
+                  $20 and you earn a $20 referral reward.
+                </p>
 
                 <div
                   style={{
@@ -281,8 +288,14 @@ export default function MarketingKitPage() {
                   />
                 </div>
 
-                <p style={{ wordBreak: "break-all", fontSize: 13 }}>
-                  {referralUrl}
+                <p
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    marginTop: 10
+                  }}
+                >
+                  Scan to Join & Save $20
                 </p>
 
                 <div
@@ -302,18 +315,18 @@ export default function MarketingKitPage() {
                   </a>
 
                   <button
-                    className="btn secondary"
+                    className="btn"
                     type="button"
                     onClick={() => copyText("Referral URL", referralUrl)}
                   >
-                    Copy Referral URL
+                    📋 Copy Referral URL
                   </button>
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: 34 }}>
-              <h2>📣 Download Marketing Materials</h2>
+              <h2>🎤 Marketing Materials</h2>
 
               <p className="tagline" style={{ marginTop: 6 }}>
                 Print these for shows or share them online.
@@ -322,7 +335,7 @@ export default function MarketingKitPage() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
                   gap: 16,
                   marginTop: 18
                 }}
