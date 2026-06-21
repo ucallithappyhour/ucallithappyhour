@@ -43,7 +43,8 @@ export async function GET(req: NextRequest) {
           display: "flex",
           position: "relative",
           overflow: "hidden",
-          background: "#050505",
+          background:
+            "radial-gradient(circle at 50% 28%, #3b2a0d 0%, #111 45%, #050505 100%)",
           color: "white",
           fontFamily: "Arial"
         }}
@@ -51,43 +52,7 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            display: "flex",
-            background:
-              "radial-gradient(circle at 50% 22%, #4a3510 0%, #171717 38%, #050505 78%)"
-          }}
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            left: -150,
-            top: 185,
-            width: 560,
-            height: 740,
-            display: "flex",
-            background:
-              "radial-gradient(circle, rgba(212,175,55,0.26) 0%, rgba(212,175,55,0.08) 38%, rgba(0,0,0,0) 70%)"
-          }}
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            right: -150,
-            top: 185,
-            width: 560,
-            height: 740,
-            display: "flex",
-            background:
-              "radial-gradient(circle, rgba(212,175,55,0.22) 0%, rgba(212,175,55,0.07) 38%, rgba(0,0,0,0) 70%)"
-          }}
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            inset: 36,
+            inset: 42,
             display: "flex",
             border: "7px solid #d4af37",
             borderRadius: 38
@@ -96,187 +61,170 @@ export async function GET(req: NextRequest) {
 
         <div
           style={{
-            position: "relative",
-            zIndex: 2,
-            width: "100%",
-            height: "100%",
+            position: "absolute",
+            top: 70,
+            left: 240,
+            width: 600,
+            height: 180,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          {artist.logo_url ? (
+            <img
+              src={artist.logo_url}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain"
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                fontSize: 70,
+                fontWeight: 900
+              }}
+            >
+              {artistName.toUpperCase()}
+            </div>
+          )}
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: 260,
+            left: 0,
+            width: 1080,
+            display: "flex",
+            justifyContent: "center",
+            fontSize: 58,
+            fontWeight: 900,
+            textShadow: "0 5px 0 #000"
+          }}
+        >
+          {artistName.toUpperCase()}
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: 330,
+            left: 170,
+            width: 740,
+            height: 64,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#d4af37",
+            color: "#050505",
+            borderRadius: 999,
+            fontSize: 30,
+            fontWeight: 900,
+            letterSpacing: 2
+          }}
+        >
+          LIVE MUSIC REQUESTS
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: 420,
+            left: 0,
+            width: 1080,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            padding: "42px 64px 36px",
-            boxSizing: "border-box"
+            color: "#d4af37",
+            fontWeight: 900,
+            textAlign: "center",
+            lineHeight: 0.88,
+            textShadow: "0 6px 0 #000"
+          }}
+        >
+          <div style={{ display: "flex", fontSize: 88 }}>REQUEST A</div>
+          <div style={{ display: "flex", fontSize: 96 }}>SONG TONIGHT</div>
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: 590,
+            left: 0,
+            width: 1080,
+            display: "flex",
+            justifyContent: "center",
+            fontSize: 30,
+            fontWeight: 800
+          }}
+        >
+          Scan to browse the setlist and send a request.
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: 640,
+            left: 345,
+            width: 390,
+            height: 390,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#d4af37",
+            borderRadius: 32,
+            boxShadow: "0 0 55px rgba(212,175,55,0.5)"
           }}
         >
           <div
             style={{
-              width: 700,
-              height: 245,
-              marginTop: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            {artist.logo_url ? (
-              <img
-                src={artist.logo_url}
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "100%",
-                  objectFit: "contain"
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  fontSize: 78,
-                  fontWeight: 900,
-                  textAlign: "center"
-                }}
-              >
-                {artistName.toUpperCase()}
-              </div>
-            )}
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              fontSize: 68,
-              fontWeight: 900,
-              lineHeight: 1,
-              marginTop: 4,
-              textAlign: "center",
-              textShadow: "0 5px 0 #000"
-            }}
-          >
-            {artistName.toUpperCase()}
-          </div>
-
-          <div
-            style={{
-              marginTop: 14,
-              width: 760,
-              height: 58,
+              width: 340,
+              height: 340,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "#d4af37",
-              color: "#050505",
-              borderRadius: 999,
-              fontSize: 28,
-              fontWeight: 900,
-              letterSpacing: 2
+              background: "#ffffff",
+              borderRadius: 20
             }}
           >
-            LIVE MUSIC REQUESTS
+            <img src={qrUrl} style={{ width: 300, height: 300 }} />
           </div>
+        </div>
 
-          <div
-            style={{
-              marginTop: 20,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              color: "#d4af37",
-              fontWeight: 900,
-              textAlign: "center",
-              lineHeight: 0.88,
-              textShadow: "0 6px 0 #000"
-            }}
-          >
-            <div style={{ display: "flex", fontSize: 92 }}>REQUEST A</div>
-            <div style={{ display: "flex", fontSize: 104 }}>SONG TONIGHT</div>
-          </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 58,
+            left: 0,
+            width: 1080,
+            display: "flex",
+            justifyContent: "center",
+            fontSize: 30,
+            fontWeight: 900
+          }}
+        >
+          NO APP | NO LOGIN | INSTANT REQUESTS
+        </div>
 
-          <div
-            style={{
-              marginTop: 18,
-              display: "flex",
-              fontSize: 32,
-              fontWeight: 800,
-              textAlign: "center",
-              color: "#ffffff"
-            }}
-          >
-            Scan to browse the setlist and send a request.
-          </div>
-
-          <div
-            style={{
-              marginTop: 22,
-              width: 430,
-              height: 430,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#d4af37",
-              borderRadius: 34,
-              boxShadow: "0 0 60px rgba(212,175,55,0.5)",
-              padding: 18
-            }}
-          >
-            <div
-              style={{
-                width: 382,
-                height: 382,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#ffffff",
-                borderRadius: 22
-              }}
-            >
-              <img
-                src={qrUrl}
-                style={{
-                  width: 338,
-                  height: 338
-                }}
-              />
-            </div>
-          </div>
-
-          <div
-            style={{
-              marginTop: 22,
-              display: "flex",
-              fontSize: 32,
-              fontWeight: 900,
-              color: "#ffffff",
-              textAlign: "center",
-              letterSpacing: 0.5
-            }}
-          >
-            NO APP | NO LOGIN | INSTANT REQUESTS
-          </div>
-
-          <div
-            style={{
-              marginTop: 8,
-              display: "flex",
-              fontSize: 24,
-              fontWeight: 800,
-              color: "#d4af37",
-              textAlign: "center"
-            }}
-          >
-            Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
-          </div>
-
-          <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              fontSize: 22,
-              fontWeight: 900,
-              color: "#d4af37",
-              letterSpacing: 2
-            }}
-          >
-            U CALL IT HAPPY HOUR
-          </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 26,
+            left: 0,
+            width: 1080,
+            display: "flex",
+            justifyContent: "center",
+            fontSize: 22,
+            fontWeight: 900,
+            color: "#d4af37",
+            letterSpacing: 2
+          }}
+        >
+          U CALL IT HAPPY HOUR
         </div>
       </div>
     ),
