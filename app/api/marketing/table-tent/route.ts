@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -6,12 +7,12 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-function escapeSvg(text: string) {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+async function fetchImageBytes(url: string) {
+  const response = await fetch(url);
+
+  if (!response.ok) return null;
+
+  return response.arrayBuffer();
 }
 
 export async function GET(req: NextRequest) {
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
 
   const { data: artist } = await supabase
     .from("artists")
-    .select("artist_slug, artist_name, logo_url")
+    .select("*")
     .eq("artist_slug", artistSlug)
     .single();
 
@@ -38,155 +39,224 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const artistName = artist.artist_name || artist.artist_slug;
-  const logoUrl = artist.logo_url || "";
+  const artistName =
+    (artist.artist_name || artist.artist_slug).toUpperCase();
 
   const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=520`;
+  )}&size=900&margin=2`;
 
-  const svg = `
-<svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
+  const qrBytes = await fetchImageBytes(qrUrl);
 
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0b0b0b"/>
-      <stop offset="100%" stop-color="#171717"/>
-    </linearGradient>
-
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="10" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <rect width="1080" height="1080" fill="url(#bg)"/>
-
-  <text
-    x="540"
-    y="70"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="26"
-    font-weight="700"
-    fill="#f4c76b"
-  >
-    U CALL IT HAPPY HOUR
-  </text>
-
-  ${
-    logoUrl
-      ? `
-  <image
-    href="${logoUrl}"
-    x="290"
-    y="90"
-    width="500"
-    height="220"
-    preserveAspectRatio="xMidYMid meet"
-  />
-  `
-      : ""
+  if (!qrBytes) {
+    return NextResponse.json(
+      { error: "Could not generate QR" },
+      { status: 500 }
+    );
   }
 
-  <text
-    x="540"
-    y="365"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="92"
-    font-weight="900"
-    fill="#ffffff"
-  >
-    REQUEST A SONG
-  </text>
+  const pdf = await PDFDocument.create();
 
-  <text
-    x="540"
-    y="435"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="48"
-    font-weight="700"
-    fill="#f4c76b"
-  >
-    ${escapeSvg(artistName)}
-  </text>
+  const page = pdf.addPage([792, 612]);
 
-  <rect
-    x="255"
-    y="485"
-    width="570"
-    height="570"
-    rx="28"
-    fill="#f4c76b"
-    opacity="0.18"
-    filter="url(#glow)"
-  />
+  const titleFont = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const bodyFont = await pdf.embedFont(StandardFonts.Helvetica);
 
-  <rect
-    x="285"
-    y="515"
-    width="510"
-    height="510"
-    rx="20"
-    fill="#ffffff"
-  />
+  const qrImage = await pdf.embedPng(qrBytes);
 
-  <image
-    href="${qrUrl}"
-    x="325"
-    y="555"
-    width="430"
-    height="430"
-  />
+  let artistLogoImage: any = null;
 
-  <text
-    x="540"
-    y="935"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="28"
-    font-weight="700"
-    fill="#ffffff"
-  >
-    Scan to browse the setlist and request a song.
-  </text>
+  if (artist.logo_url) {
+    try {
+      const logoBytes = await fetchImageBytes(artist.logo_url);
 
-  <text
-    x="540"
-    y="985"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="26"
-    font-weight="700"
-    fill="#f4c76b"
-  >
-    NO APP • NO LOGIN • INSTANT REQUESTS
-  </text>
+      if (logoBytes) {
+        try {
+          artistLogoImage = await pdf.embedPng(logoBytes);
+        } catch {
+          artistLogoImage = await pdf.embedJpg(logoBytes);
+        }
+      }
+    } catch {
+      artistLogoImage = null;
+    }
+  }
 
-  <text
-    x="540"
-    y="1035"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="22"
-    fill="#ffffff"
-  >
-    Request tonight's songs. Influence tomorrow's setlist.
-  </text>
+  const black = rgb(0.04, 0.04, 0.04);
+  const gold = rgb(0.95, 0.76, 0.32);
+  const white = rgb(1, 1, 1);
+  const softWhite = rgb(0.92, 0.92, 0.92);
 
-</svg>`;
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: 792,
+    height: 612,
+    color: black
+  });
 
-  return new NextResponse(svg, {
+  // subtle fold guide
+  page.drawLine({
+    start: { x: 396, y: 20 },
+    end: { x: 396, y: 592 },
+    thickness: 1,
+    color: rgb(0.12, 0.12, 0.12)
+  });
+
+  // ==================================
+  // LEFT PANEL
+  // ==================================
+
+  page.drawText(artistName, {
+    x: 60,
+    y: 545,
+    size: 32,
+    font: titleFont,
+    color: white
+  });
+
+  if (artistLogoImage) {
+    page.drawImage(artistLogoImage, {
+      x: 80,
+      y: 360,
+      width: 230,
+      height: 130
+    });
+  }
+
+  page.drawText(
+    "Request tonight's songs.",
+    {
+      x: 60,
+      y: 270,
+      size: 22,
+      font: bodyFont,
+      color: gold
+    }
+  );
+
+  page.drawText(
+    "Influence tomorrow's setlist.",
+    {
+      x: 60,
+      y: 235,
+      size: 22,
+      font: bodyFont,
+      color: gold
+    }
+  );
+
+  page.drawText("NO APP", {
+    x: 60,
+    y: 165,
+    size: 26,
+    font: titleFont,
+    color: white
+  });
+
+  page.drawText("NO LOGIN", {
+    x: 60,
+    y: 120,
+    size: 26,
+    font: titleFont,
+    color: white
+  });
+
+  page.drawText("INSTANT REQUESTS", {
+    x: 60,
+    y: 75,
+    size: 26,
+    font: titleFont,
+    color: white
+  });
+
+  page.drawText("Powered by U Call It Happy Hour", {
+    x: 60,
+    y: 30,
+    size: 11,
+    font: bodyFont,
+    color: softWhite
+  });
+
+  // ==================================
+  // RIGHT PANEL
+  // ==================================
+
+  page.drawText("SCAN TO", {
+    x: 500,
+    y: 545,
+    size: 34,
+    font: titleFont,
+    color: gold
+  });
+
+  page.drawText("REQUEST A SONG", {
+    x: 430,
+    y: 500,
+    size: 34,
+    font: titleFont,
+    color: white
+  });
+
+  const qrX = 485;
+  const qrY = 230;
+  const qrSize = 240;
+
+  page.drawRectangle({
+    x: qrX - 10,
+    y: qrY - 10,
+    width: qrSize + 20,
+    height: qrSize + 20,
+    color: white,
+    borderColor: gold,
+    borderWidth: 4
+  });
+
+  page.drawImage(qrImage, {
+    x: qrX,
+    y: qrY,
+    width: qrSize,
+    height: qrSize
+  });
+
+  page.drawText(
+    "Request tonight's songs.",
+    {
+      x: 470,
+      y: 185,
+      size: 18,
+      font: bodyFont,
+      color: softWhite
+    }
+  );
+
+  page.drawText(
+    "Influence tomorrow's setlist.",
+    {
+      x: 450,
+      y: 158,
+      size: 18,
+      font: bodyFont,
+      color: softWhite
+    }
+  );
+
+  page.drawText("SCAN NOW", {
+    x: 525,
+    y: 105,
+    size: 24,
+    font: titleFont,
+    color: gold
+  });
+
+  const pdfBytes = await pdf.save();
+
+  return new NextResponse(Buffer.from(pdfBytes), {
     headers: {
-      "Content-Type": "image/svg+xml",
-      "Content-Disposition": `attachment; filename="${artist.artist_slug}-social.svg"`
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="${artist.artist_slug}-table-tent.pdf"`
     }
   });
 }
