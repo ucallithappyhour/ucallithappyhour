@@ -45,19 +45,34 @@ export async function GET(req: NextRequest) {
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=500`;
+  )}&size=520`;
 
   const svg = `
 <svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
 
-  <rect width="1080" height="1080" fill="#0b0b0b"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0b0b"/>
+      <stop offset="100%" stop-color="#171717"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bg)"/>
 
   <text
     x="540"
     y="70"
     text-anchor="middle"
     font-family="Arial"
-    font-size="28"
+    font-size="26"
     font-weight="700"
     fill="#f4c76b"
   >
@@ -69,9 +84,9 @@ export async function GET(req: NextRequest) {
       ? `
   <image
     href="${logoUrl}"
-    x="315"
+    x="290"
     y="90"
-    width="450"
+    width="500"
     height="220"
     preserveAspectRatio="xMidYMid meet"
   />
@@ -81,10 +96,10 @@ export async function GET(req: NextRequest) {
 
   <text
     x="540"
-    y="360"
+    y="365"
     text-anchor="middle"
     font-family="Arial"
-    font-size="84"
+    font-size="92"
     font-weight="900"
     fill="#ffffff"
   >
@@ -93,10 +108,10 @@ export async function GET(req: NextRequest) {
 
   <text
     x="540"
-    y="430"
+    y="435"
     text-anchor="middle"
     font-family="Arial"
-    font-size="44"
+    font-size="48"
     font-weight="700"
     fill="#f4c76b"
   >
@@ -104,43 +119,64 @@ export async function GET(req: NextRequest) {
   </text>
 
   <rect
-    x="295"
-    y="470"
-    width="490"
-    height="490"
+    x="255"
+    y="485"
+    width="570"
+    height="570"
+    rx="28"
+    fill="#f4c76b"
+    opacity="0.18"
+    filter="url(#glow)"
+  />
+
+  <rect
+    x="285"
+    y="515"
+    width="510"
+    height="510"
     rx="20"
     fill="#ffffff"
-    stroke="#f4c76b"
-    stroke-width="6"
   />
 
   <image
     href="${qrUrl}"
-    x="330"
-    y="505"
-    width="420"
-    height="420"
+    x="325"
+    y="555"
+    width="430"
+    height="430"
   />
 
   <text
     x="540"
-    y="995"
+    y="935"
     text-anchor="middle"
     font-family="Arial"
-    font-size="30"
+    font-size="28"
     font-weight="700"
     fill="#ffffff"
+  >
+    Scan to browse the setlist and request a song.
+  </text>
+
+  <text
+    x="540"
+    y="985"
+    text-anchor="middle"
+    font-family="Arial"
+    font-size="26"
+    font-weight="700"
+    fill="#f4c76b"
   >
     NO APP • NO LOGIN • INSTANT REQUESTS
   </text>
 
   <text
     x="540"
-    y="1040"
+    y="1035"
     text-anchor="middle"
     font-family="Arial"
     font-size="22"
-    fill="#f4c76b"
+    fill="#ffffff"
   >
     Request tonight's songs. Influence tomorrow's setlist.
   </text>
