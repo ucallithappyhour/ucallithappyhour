@@ -45,36 +45,28 @@ export async function GET(req: NextRequest) {
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=520`;
+  )}&size=600&margin=1`;
 
   const svg = `
 <svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
 
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0b0b0b"/>
-      <stop offset="100%" stop-color="#171717"/>
+      <stop offset="0%" stop-color="#050505"/>
+      <stop offset="100%" stop-color="#151515"/>
     </linearGradient>
-
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="10" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
 
   <rect width="1080" height="1080" fill="url(#bg)"/>
 
   <text
     x="540"
-    y="70"
+    y="60"
     text-anchor="middle"
     font-family="Arial"
-    font-size="26"
+    font-size="24"
     font-weight="700"
-    fill="#f4c76b"
+    fill="#d4af37"
   >
     U CALL IT HAPPY HOUR
   </text>
@@ -84,10 +76,10 @@ export async function GET(req: NextRequest) {
       ? `
   <image
     href="${logoUrl}"
-    x="290"
-    y="90"
-    width="500"
-    height="220"
+    x="190"
+    y="80"
+    width="700"
+    height="260"
     preserveAspectRatio="xMidYMid meet"
   />
   `
@@ -96,89 +88,76 @@ export async function GET(req: NextRequest) {
 
   <text
     x="540"
-    y="365"
+    y="430"
     text-anchor="middle"
     font-family="Arial"
-    font-size="92"
+    font-size="64"
     font-weight="900"
     fill="#ffffff"
+  >
+    ${escapeSvg(artistName).toUpperCase()}
+  </text>
+
+  <text
+    x="540"
+    y="500"
+    text-anchor="middle"
+    font-family="Arial"
+    font-size="88"
+    font-weight="900"
+    fill="#d4af37"
   >
     REQUEST A SONG
   </text>
 
   <text
     x="540"
-    y="435"
+    y="555"
     text-anchor="middle"
     font-family="Arial"
-    font-size="48"
-    font-weight="700"
-    fill="#f4c76b"
+    font-size="28"
+    fill="#ffffff"
   >
-    ${escapeSvg(artistName)}
+    Scan to browse the setlist and send a request.
   </text>
 
   <rect
-    x="255"
-    y="485"
-    width="570"
-    height="570"
-    rx="28"
-    fill="#f4c76b"
-    opacity="0.18"
-    filter="url(#glow)"
-  />
-
-  <rect
-    x="285"
-    y="515"
-    width="510"
-    height="510"
-    rx="20"
+    x="300"
+    y="600"
+    width="480"
+    height="480"
+    rx="18"
     fill="#ffffff"
+    stroke="#d4af37"
+    stroke-width="6"
   />
 
   <image
     href="${qrUrl}"
-    x="325"
-    y="555"
-    width="430"
-    height="430"
+    x="340"
+    y="640"
+    width="400"
+    height="400"
+  />
+
+  <rect
+    x="170"
+    y="1010"
+    width="740"
+    height="2"
+    fill="#d4af37"
   />
 
   <text
     x="540"
-    y="935"
+    y="965"
     text-anchor="middle"
     font-family="Arial"
-    font-size="28"
+    font-size="30"
     font-weight="700"
     fill="#ffffff"
-  >
-    Scan to browse the setlist and request a song.
-  </text>
-
-  <text
-    x="540"
-    y="985"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="26"
-    font-weight="700"
-    fill="#f4c76b"
   >
     NO APP • NO LOGIN • INSTANT REQUESTS
-  </text>
-
-  <text
-    x="540"
-    y="1035"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="22"
-    fill="#ffffff"
-  >
-    Request tonight's songs. Influence tomorrow's setlist.
   </text>
 
 </svg>`;
