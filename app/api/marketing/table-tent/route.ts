@@ -9,7 +9,9 @@ const supabase = createClient(
 
 async function fetchImageBytes(url: string) {
   const response = await fetch(url);
+
   if (!response.ok) return null;
+
   return response.arrayBuffer();
 }
 
@@ -56,6 +58,8 @@ export async function GET(req: NextRequest) {
   }
 
   const pdf = await PDFDocument.create();
+
+  // Landscape 11 x 8.5
   const page = pdf.addPage([792, 612]);
 
   const titleFont = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -66,18 +70,18 @@ export async function GET(req: NextRequest) {
   let artistLogoImage: any = null;
 
   if (artist.logo_url) {
-    const logoBytes = await fetchImageBytes(artist.logo_url);
+    try {
+      const logoBytes = await fetchImageBytes(artist.logo_url);
 
-    if (logoBytes) {
-      try {
-        artistLogoImage = await pdf.embedPng(logoBytes);
-      } catch {
+      if (logoBytes) {
         try {
-          artistLogoImage = await pdf.embedJpg(logoBytes);
+          artistLogoImage = await pdf.embedPng(logoBytes);
         } catch {
-          artistLogoImage = null;
+          artistLogoImage = await pdf.embedJpg(logoBytes);
         }
       }
+    } catch {
+      artistLogoImage = null;
     }
   }
 
@@ -94,8 +98,7 @@ export async function GET(req: NextRequest) {
     color: black
   });
 
-  // Fold Line
-
+  // Fold guide
   page.drawLine({
     start: { x: 396, y: 20 },
     end: { x: 396, y: 592 },
@@ -103,112 +106,110 @@ export async function GET(req: NextRequest) {
     color: rgb(0.25, 0.25, 0.25)
   });
 
-  // ==================================
+  // =========================
   // LEFT PANEL
-  // ==================================
-
-  page.drawText("REQUEST A SONG TONIGHT", {
-    x: 38,
-    y: 525,
-    size: 27,
-    font: titleFont,
-    color: gold
-  });
+  // =========================
 
   page.drawText(artistName, {
-    x: 65,
-    y: 475,
-    size: 28,
+    x: 60,
+    y: 520,
+    size: 30,
     font: titleFont,
     color: white
   });
 
   if (artistLogoImage) {
     page.drawImage(artistLogoImage, {
-      x: 85,
-      y: 305,
+      x: 80,
+      y: 325,
       width: 230,
       height: 130
     });
   }
 
-  page.drawText("Scan the QR code to browse", {
-    x: 55,
-    y: 250,
-    size: 18,
-    font: bodyFont,
-    color: softWhite
-  });
+  page.drawText(
+    "Request tonight's songs.",
+    {
+      x: 60,
+      y: 245,
+      size: 22,
+      font: bodyFont,
+      color: gold
+    }
+  );
 
-  page.drawText("tonight's setlist and send a request.", {
-    x: 55,
-    y: 223,
-    size: 18,
-    font: bodyFont,
-    color: softWhite
-  });
+  page.drawText(
+    "Influence tomorrow's setlist.",
+    {
+      x: 60,
+      y: 210,
+      size: 22,
+      font: bodyFont,
+      color: gold
+    }
+  );
 
-  page.drawText("- NO APP", {
-    x: 55,
-    y: 165,
-    size: 22,
+  page.drawText("NO APP", {
+    x: 60,
+    y: 145,
+    size: 26,
     font: titleFont,
-    color: gold
+    color: white
   });
 
-  page.drawText("- NO LOGIN", {
-    x: 55,
-    y: 125,
-    size: 22,
+  page.drawText("NO LOGIN", {
+    x: 60,
+    y: 105,
+    size: 26,
     font: titleFont,
-    color: gold
+    color: white
   });
 
-  page.drawText("- INSTANT REQUESTS", {
-    x: 55,
-    y: 85,
-    size: 22,
+  page.drawText("INSTANT REQUESTS", {
+    x: 60,
+    y: 65,
+    size: 26,
     font: titleFont,
-    color: gold
+    color: white
   });
 
   page.drawText("Powered by U Call It Happy Hour", {
-    x: 55,
-    y: 38,
-    size: 12,
+    x: 60,
+    y: 28,
+    size: 11,
     font: bodyFont,
     color: softWhite
   });
 
-  // ==================================
+  // =========================
   // RIGHT PANEL
-  // ==================================
+  // =========================
 
-  page.drawText("SCAN TO REQUEST", {
-    x: 455,
+  page.drawText("SCAN TO", {
+    x: 500,
     y: 525,
-    size: 28,
+    size: 32,
     font: titleFont,
     color: gold
   });
 
-  page.drawText("A SONG", {
-    x: 545,
+  page.drawText("REQUEST A SONG", {
+    x: 430,
     y: 485,
-    size: 28,
+    size: 32,
     font: titleFont,
     color: white
   });
 
   const qrX = 485;
-  const qrY = 205;
-  const qrSize = 235;
+  const qrY = 210;
+  const qrSize = 240;
 
   page.drawRectangle({
-    x: qrX - 12,
-    y: qrY - 12,
-    width: qrSize + 24,
-    height: qrSize + 24,
+    x: qrX - 10,
+    y: qrY - 10,
+    width: qrSize + 20,
+    height: qrSize + 20,
     color: white,
     borderColor: gold,
     borderWidth: 4
@@ -221,26 +222,32 @@ export async function GET(req: NextRequest) {
     height: qrSize
   });
 
-  page.drawText("Request tonight's songs.", {
-    x: 485,
-    y: 150,
-    size: 18,
-    font: bodyFont,
-    color: softWhite
-  });
+  page.drawText(
+    "Request tonight's songs.",
+    {
+      x: 470,
+      y: 155,
+      size: 18,
+      font: bodyFont,
+      color: softWhite
+    }
+  );
 
-  page.drawText("Influence tomorrow's setlist.", {
-    x: 462,
-    y: 125,
-    size: 18,
-    font: bodyFont,
-    color: softWhite
-  });
+  page.drawText(
+    "Influence tomorrow's setlist.",
+    {
+      x: 450,
+      y: 128,
+      size: 18,
+      font: bodyFont,
+      color: softWhite
+    }
+  );
 
   page.drawText("SCAN NOW", {
-    x: 535,
-    y: 78,
-    size: 18,
+    x: 525,
+    y: 75,
+    size: 22,
     font: titleFont,
     color: gold
   });
