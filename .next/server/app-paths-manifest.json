@@ -15,7 +15,7 @@
   "/admin/registrations/page": "app/admin/registrations/page.js",
   "/api/create-checkout-session/route": "app/api/create-checkout-session/route.js",
   "/api/get-setup-link/route": "app/api/get-setup-link/route.js",
-  "/api/marketing/flyer/route": "app/api/marketing/flyer/route.js",
+  "/api/marketing/flyer/route": "app-edge-has-no-entrypoint",
   "/api/marketing/social/route": "app-edge-has-no-entrypoint",
   "/api/marketing/table-tent/route": "app/api/marketing/table-tent/route.js",
   "/api/register/route": "app/api/register/route.js",

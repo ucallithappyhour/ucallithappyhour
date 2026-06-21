@@ -17,13 +17,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Artist required" }, { status: 400 });
   }
 
-  const { data: artist } = await supabase
+  const { data: artist, error } = await supabase
     .from("artists")
     .select("*")
     .eq("artist_slug", artistSlug)
     .single();
 
-  if (!artist) {
+  if (error || !artist) {
     return NextResponse.json({ error: "Artist not found" }, { status: 404 });
   }
 
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=900&margin=2`;
+  )}&size=1000&margin=2`;
 
   return new ImageResponse(
     (
@@ -45,17 +45,18 @@ export async function GET(req: NextRequest) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "space-between",
-          padding: "70px 80px",
+          padding: "58px 72px 52px",
           fontFamily: "Arial, Helvetica, sans-serif",
           textAlign: "center"
         }}
       >
         <div
           style={{
+            height: "245px",
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "16px"
           }}
         >
           {artist.logo_url ? (
@@ -63,126 +64,124 @@ export async function GET(req: NextRequest) {
               src={artist.logo_url}
               alt={artistName}
               style={{
-                width: "360px",
-                maxHeight: "180px",
-                objectFit: "contain",
-                marginBottom: "55px"
+                width: "460px",
+                maxHeight: "235px",
+                objectFit: "contain"
               }}
             />
           ) : (
             <div
               style={{
-                fontSize: 58,
+                fontSize: 66,
                 fontWeight: 900,
-                marginBottom: "55px"
+                lineHeight: 1.05,
+                maxWidth: "900px"
               }}
             >
               {artistName.toUpperCase()}
             </div>
           )}
+        </div>
 
-          <div
-            style={{
-              color: "#f2c14e",
-              fontSize: 58,
-              fontWeight: 900,
-              letterSpacing: "1px",
-              marginBottom: "26px"
-            }}
-          >
-            REQUEST A SONG TONIGHT
-          </div>
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 60,
+            fontWeight: 900,
+            letterSpacing: "1px",
+            marginBottom: "26px"
+          }}
+        >
+          REQUEST A SONG TONIGHT
+        </div>
 
-          <div
-            style={{
-              fontSize: 70,
-              fontWeight: 900,
-              lineHeight: 1.05,
-              maxWidth: "900px"
-            }}
-          >
-            {artistName.toUpperCase()}
-          </div>
+        <div
+          style={{
+            color: "#ffffff",
+            fontSize: 72,
+            fontWeight: 900,
+            lineHeight: 1.05,
+            maxWidth: "920px",
+            marginBottom: "30px"
+          }}
+        >
+          {artistName.toUpperCase()}
         </div>
 
         <div
           style={{
             background: "white",
-            border: "10px solid #f2c14e",
-            borderRadius: "26px",
-            padding: "28px",
-            display: "flex"
+            border: "12px solid #f2c14e",
+            borderRadius: "28px",
+            padding: "30px",
+            display: "flex",
+            marginBottom: "28px"
           }}
         >
           <img
             src={qrUrl}
             alt="QR Code"
             style={{
-              width: "520px",
-              height: "520px"
+              width: "545px",
+              height: "545px"
             }}
           />
         </div>
 
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
+            fontSize: 34,
+            lineHeight: 1.2,
+            maxWidth: "850px",
+            color: "#eeeeee",
+            marginBottom: "32px"
           }}
         >
-          <div
-            style={{
-              fontSize: 34,
-              lineHeight: 1.25,
-              maxWidth: "850px",
-              color: "#eeeeee",
-              marginBottom: "36px"
-            }}
-          >
-            Scan to browse tonight&apos;s setlist and request songs live.
-          </div>
+          Scan to browse tonight&apos;s setlist and request songs live.
+        </div>
 
-          <div
-            style={{
-              color: "#f2c14e",
-              fontSize: 34,
-              fontWeight: 900,
-              letterSpacing: "1px",
-              marginBottom: "42px"
-            }}
-          >
-            NO APP • NO LOGIN • INSTANT REQUESTS
-          </div>
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 36,
+            fontWeight: 900,
+            letterSpacing: "1px",
+            marginBottom: "34px"
+          }}
+        >
+          NO APP • NO LOGIN • INSTANT REQUESTS
+        </div>
 
-          <div
-            style={{
-              width: "780px",
-              height: "2px",
-              background: "#f2c14e",
-              marginBottom: "34px"
-            }}
-          />
+        <div
+          style={{
+            width: "780px",
+            height: "2px",
+            background: "#f2c14e",
+            marginBottom: "30px"
+          }}
+        />
 
-          <div
-            style={{
-              fontSize: 32,
-              marginBottom: "28px"
-            }}
-          >
-            Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
-          </div>
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 42,
+            fontWeight: 900,
+            letterSpacing: "1px",
+            marginBottom: "22px"
+          }}
+        >
+          REQUEST SONGS LIVE
+        </div>
 
-          <div
-            style={{
-              color: "#f2c14e",
-              fontSize: 22,
-              fontWeight: 900,
-              letterSpacing: "1px"
-            }}
-          >
-            POWERED BY U CALL IT HAPPY HOUR
-          </div>
+        <div
+          style={{
+            color: "#f2c14e",
+            fontSize: 22,
+            fontWeight: 900,
+            letterSpacing: "1px"
+          }}
+        >
+          POWERED BY U CALL IT HAPPY HOUR
         </div>
       </div>
     ),

@@ -227,7 +227,7 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../app/api/marketing/flyer/route.ts
+// Validate ../../app/api/marketing/flyer/route.tsx
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/marketing/flyer">> = Specific
   const handler = {} as typeof import("../../app/api/marketing/flyer/route.js")
