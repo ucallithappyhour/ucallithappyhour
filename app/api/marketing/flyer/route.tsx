@@ -14,35 +14,25 @@ export async function GET(req: NextRequest) {
   const artistSlug = searchParams.get("artist");
 
   if (!artistSlug) {
-    return NextResponse.json(
-      { error: "Artist required" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Artist required" }, { status: 400 });
   }
 
-  const { data: artist } = await supabase
+  const { data: artist, error } = await supabase
     .from("artists")
     .select("*")
     .eq("artist_slug", artistSlug)
     .single();
 
-  if (!artist) {
-    return NextResponse.json(
-      { error: "Artist not found" },
-      { status: 404 }
-    );
+  if (error || !artist) {
+    return NextResponse.json({ error: "Artist not found" }, { status: 404 });
   }
 
-  const artistName =
-    artist.artist_name || artist.artist_slug;
+  const artistName = artist.artist_name || artist.artist_slug;
+  const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
 
-  const artistUrl =
-    `https://www.ucallithappyhour.com/${artist.artist_slug}`;
-
-  const qrUrl =
-    `https://quickchart.io/qr?text=${encodeURIComponent(
-      artistUrl
-    )}&size=1200&margin=2`;
+  const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
+    artistUrl
+  )}&size=1000&margin=2`;
 
   return new ImageResponse(
     (
@@ -55,18 +45,18 @@ export async function GET(req: NextRequest) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: "50px 70px",
-          fontFamily: "Arial, Helvetica, sans-serif"
+          fontFamily: "Arial, Helvetica, sans-serif",
+          padding: "40px 60px",
+          textAlign: "center"
         }}
       >
-        {/* LOGO / BAND NAME */}
         <div
           style={{
+            height: "280px",
+            width: "100%",
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "340px"
+            alignItems: "center"
           }}
         >
           {artist.logo_url ? (
@@ -75,7 +65,7 @@ export async function GET(req: NextRequest) {
               alt={artistName}
               style={{
                 maxWidth: "900px",
-                maxHeight: "320px",
+                maxHeight: "240px",
                 objectFit: "contain"
               }}
             />
@@ -84,7 +74,6 @@ export async function GET(req: NextRequest) {
               style={{
                 fontSize: 90,
                 fontWeight: 900,
-                textAlign: "center",
                 lineHeight: 1
               }}
             >
@@ -93,37 +82,37 @@ export async function GET(req: NextRequest) {
           )}
         </div>
 
-        {/* LIVE TONIGHT */}
         <div
           style={{
             color: "#f2c14e",
             fontSize: 72,
             fontWeight: 900,
-            marginTop: 10
+            marginTop: 10,
+            letterSpacing: "1px"
           }}
         >
           LIVE TONIGHT
         </div>
 
-        {/* REQUEST SONGS */}
         <div
           style={{
             fontSize: 56,
             fontWeight: 700,
-            marginTop: 15,
-            marginBottom: 30
+            marginTop: 10,
+            marginBottom: 30,
+            lineHeight: 1.05,
+            maxWidth: "940px"
           }}
         >
-          REQUEST SONGS LIVE
+          {artistName.toUpperCase()}
         </div>
 
-        {/* QR */}
         <div
           style={{
-            background: "white",
-            border: "12px solid #f2c14e",
-            borderRadius: "30px",
-            padding: "25px",
+            background: "#ffffff",
+            border: "10px solid #f2c14e",
+            borderRadius: "24px",
+            padding: "20px",
             display: "flex"
           }}
         >
@@ -131,44 +120,43 @@ export async function GET(req: NextRequest) {
             src={qrUrl}
             alt="QR"
             style={{
-              width: "500px",
-              height: "500px"
+              width: "450px",
+              height: "450px"
             }}
           />
         </div>
 
-        {/* SCAN MESSAGE */}
         <div
           style={{
-            marginTop: 35,
-            fontSize: 34,
-            textAlign: "center",
-            lineHeight: 1.25,
-            color: "#f3f3f3"
-          }}
-        >
-          Scan to browse tonight's setlist
-        </div>
-
-        <div
-          style={{
-            fontSize: 34,
-            textAlign: "center",
-            lineHeight: 1.25,
-            color: "#f3f3f3",
-            marginBottom: 25
-          }}
-        >
-          and request songs instantly.
-        </div>
-
-        {/* NO APP */}
-        <div
-          style={{
+            marginTop: 30,
             color: "#f2c14e",
-            fontSize: 34,
+            fontSize: 48,
             fontWeight: 900,
-            textAlign: "center"
+            letterSpacing: "1px"
+          }}
+        >
+          SCAN TO REQUEST SONGS
+        </div>
+
+        <div
+          style={{
+            marginTop: 15,
+            fontSize: 28,
+            color: "#e5e5e5",
+            lineHeight: 1.25,
+            maxWidth: "850px"
+          }}
+        >
+          Browse tonight&apos;s setlist and submit requests live.
+        </div>
+
+        <div
+          style={{
+            marginTop: 30,
+            color: "#f2c14e",
+            fontSize: 30,
+            fontWeight: 700,
+            letterSpacing: "1px"
           }}
         >
           NO APP • NO LOGIN • INSTANT REQUESTS
@@ -176,42 +164,20 @@ export async function GET(req: NextRequest) {
 
         <div
           style={{
-            width: "850px",
+            marginTop: "auto",
+            width: "80%",
             height: "2px",
-            background: "#f2c14e",
-            marginTop: 25,
-            marginBottom: 25
+            background: "#f2c14e"
           }}
         />
 
-        {/* TAGLINE */}
-        <div
-          style={{
-            fontSize: 28,
-            textAlign: "center",
-            color: "#ffffff"
-          }}
-        >
-          Request tonight's songs.
-        </div>
-
-        <div
-          style={{
-            fontSize: 28,
-            textAlign: "center",
-            color: "#ffffff"
-          }}
-        >
-          Influence tomorrow's setlist.
-        </div>
-
         <div
           style={{
             marginTop: 25,
+            fontSize: 18,
             color: "#f2c14e",
-            fontSize: 20,
-            fontWeight: 800,
-            letterSpacing: "1px"
+            letterSpacing: "2px",
+            fontWeight: 700
           }}
         >
           POWERED BY U CALL IT HAPPY HOUR
@@ -223,8 +189,7 @@ export async function GET(req: NextRequest) {
       height: 1350,
       headers: {
         "Content-Type": "image/png",
-        "Content-Disposition":
-          `attachment; filename="${artist.artist_slug}-flyer.png"`
+        "Content-Disposition": `attachment; filename="${artist.artist_slug}-flyer.png"`
       }
     }
   );
