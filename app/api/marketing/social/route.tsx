@@ -38,26 +38,27 @@ export async function GET(req: NextRequest) {
     (
       <div
         style={{
-          width: "1080px",
-          height: "1080px",
+          width: 1080,
+          height: 1080,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           background:
-            "radial-gradient(circle at top, #34270d 0%, #111 48%, #050505 100%)",
+            "radial-gradient(circle at top, #34270d 0%, #111111 48%, #050505 100%)",
           color: "white",
           fontFamily: "Arial",
           position: "relative",
-          padding: "54px",
+          padding: 54,
           boxSizing: "border-box"
         }}
       >
         <div
           style={{
             position: "absolute",
-            inset: "40px",
+            inset: 40,
             border: "6px solid #d4af37",
-            borderRadius: "34px"
+            borderRadius: 34,
+            display: "flex"
           }}
         />
 
@@ -66,8 +67,9 @@ export async function GET(req: NextRequest) {
             fontSize: 24,
             fontWeight: 900,
             color: "#d4af37",
-            letterSpacing: "2px",
-            marginTop: 8
+            letterSpacing: 2,
+            marginTop: 8,
+            display: "flex"
           }}
         >
           U CALL IT HAPPY HOUR
@@ -76,7 +78,7 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             width: 560,
-            height: 210,
+            height: 190,
             marginTop: 20,
             display: "flex",
             alignItems: "center",
@@ -97,7 +99,8 @@ export async function GET(req: NextRequest) {
               style={{
                 fontSize: 64,
                 fontWeight: 900,
-                textAlign: "center"
+                textAlign: "center",
+                display: "flex"
               }}
             >
               {artistName.toUpperCase()}
@@ -109,9 +112,10 @@ export async function GET(req: NextRequest) {
           style={{
             fontSize: 58,
             fontWeight: 900,
-            marginTop: 18,
+            marginTop: 8,
             textAlign: "center",
-            lineHeight: 1
+            lineHeight: 1,
+            display: "flex"
           }}
         >
           {artistName.toUpperCase()}
@@ -119,14 +123,15 @@ export async function GET(req: NextRequest) {
 
         <div
           style={{
-            marginTop: 22,
+            marginTop: 20,
             background: "#d4af37",
             color: "#050505",
             borderRadius: 999,
-            padding: "16px 48px",
-            fontSize: 28,
+            padding: "14px 44px",
+            fontSize: 26,
             fontWeight: 900,
-            letterSpacing: "1px"
+            letterSpacing: 1,
+            display: "flex"
           }}
         >
           LIVE MUSIC REQUESTS
@@ -134,23 +139,28 @@ export async function GET(req: NextRequest) {
 
         <div
           style={{
-            marginTop: 34,
+            marginTop: 28,
             color: "#d4af37",
-            fontSize: 76,
+            fontSize: 72,
             fontWeight: 900,
             textAlign: "center",
-            lineHeight: 0.95
+            lineHeight: 0.95,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
           }}
         >
-          REQUEST A<br />SONG TONIGHT
+          <div style={{ display: "flex" }}>REQUEST A</div>
+          <div style={{ display: "flex" }}>SONG TONIGHT</div>
         </div>
 
         <div
           style={{
-            marginTop: 20,
+            marginTop: 18,
             fontSize: 28,
             fontWeight: 700,
-            textAlign: "center"
+            textAlign: "center",
+            display: "flex"
           }}
         >
           Scan to browse the setlist and send a request.
@@ -158,7 +168,7 @@ export async function GET(req: NextRequest) {
 
         <div
           style={{
-            marginTop: 28,
+            marginTop: 24,
             width: 330,
             height: 330,
             background: "#d4af37",
@@ -180,22 +190,17 @@ export async function GET(req: NextRequest) {
               justifyContent: "center"
             }}
           >
-            <img
-              src={qrUrl}
-              style={{
-                width: 260,
-                height: 260
-              }}
-            />
+            <img src={qrUrl} style={{ width: 260, height: 260 }} />
           </div>
         </div>
 
         <div
           style={{
-            marginTop: 24,
+            marginTop: 22,
             fontSize: 28,
             fontWeight: 900,
-            textAlign: "center"
+            textAlign: "center",
+            display: "flex"
           }}
         >
           NO APP | NO LOGIN | INSTANT REQUESTS
@@ -207,7 +212,8 @@ export async function GET(req: NextRequest) {
             fontSize: 22,
             fontWeight: 700,
             color: "#d4af37",
-            textAlign: "center"
+            textAlign: "center",
+            display: "flex"
           }}
         >
           Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
