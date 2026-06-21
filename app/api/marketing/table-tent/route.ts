@@ -151,7 +151,7 @@ export async function GET(req: NextRequest) {
     color: softWhite
   });
 
-  page.drawText("✓ NO APP", {
+  page.drawText("~ NO APP", {
     x: 55,
     y: 170,
     size: 22,
@@ -159,7 +159,7 @@ export async function GET(req: NextRequest) {
     color: gold
   });
 
-  page.drawText("✓ NO LOGIN", {
+  page.drawText("~ NO LOGIN", {
     x: 55,
     y: 130,
     size: 22,
@@ -167,7 +167,7 @@ export async function GET(req: NextRequest) {
     color: gold
   });
 
-  page.drawText("✓ INSTANT REQUESTS", {
+  page.drawText("~ INSTANT REQUESTS", {
     x: 55,
     y: 90,
     size: 22,
