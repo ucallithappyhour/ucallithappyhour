@@ -8,6 +8,7 @@ type Artist = {
   artist_slug: string;
   artist_name: string | null;
   referral_code: string | null;
+  logo_url: string | null;
 };
 
 export default function MarketingKitPage() {
@@ -31,7 +32,7 @@ export default function MarketingKitPage() {
 
     const { data, error } = await supabase
       .from("artists")
-      .select("artist_slug, artist_name, referral_code")
+      .select("artist_slug, artist_name, referral_code, logo_url")
       .eq("owner_email", user.email)
       .maybeSingle();
 
@@ -98,6 +99,16 @@ export default function MarketingKitPage() {
     referralUrl
   )}&size=300`;
 
+  async function copyReferralMessage() {
+    const referralMessage = `Hey! I've been using U Call It Happy Hour to take song requests during my shows.
+
+If you sign up using my referral link you'll save $20 and I'll earn a referral reward.
+
+${referralUrl}`;
+
+    await copyText("Referral Message", referralMessage);
+  }
+
   return (
     <main className="page">
       <div className="overlay">
@@ -109,6 +120,26 @@ export default function MarketingKitPage() {
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
             <h1 className="title">{artistName} Marketing Kit</h1>
+
+            {artist.logo_url && (
+              <div
+                style={{
+                  textAlign: "center",
+                  marginTop: 12,
+                  marginBottom: 16
+                }}
+              >
+                <img
+                  src={artist.logo_url}
+                  alt={artistName}
+                  style={{
+                    maxWidth: 180,
+                    maxHeight: 180,
+                    objectFit: "contain"
+                  }}
+                />
+              </div>
+            )}
 
             <p className="tagline">
               Everything you need to promote your shows.
@@ -240,7 +271,20 @@ export default function MarketingKitPage() {
                   textAlign: "center"
                 }}
               >
-                <h2>🎵 Give $20, Get $20</h2>
+                <h2>💰 Earn $20 For Every Artist You Refer</h2>
+
+                <div
+                  style={{
+                    background: "#f4f4f4",
+                    borderRadius: 12,
+                    padding: 12,
+                    marginBottom: 16
+                  }}
+                >
+                  <div style={{ fontWeight: 700 }}>Referral Earnings</div>
+                  <div style={{ marginTop: 6 }}>$0 earned</div>
+                  <div>0 artists referred</div>
+                </div>
 
                 <p
                   style={{
@@ -321,6 +365,14 @@ export default function MarketingKitPage() {
                   >
                     📋 Copy Referral URL
                   </button>
+
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={copyReferralMessage}
+                  >
+                    📨 Share Referral Message
+                  </button>
                 </div>
               </div>
             </div>
@@ -335,9 +387,10 @@ export default function MarketingKitPage() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gridTemplateColumns: "1fr",
                   gap: 16,
-                  marginTop: 18
+                  margin: "18px auto 0",
+                  maxWidth: 500
                 }}
               >
                 <a
