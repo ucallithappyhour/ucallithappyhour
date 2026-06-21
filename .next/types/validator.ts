@@ -236,7 +236,7 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../app/api/marketing/social/route.ts
+// Validate ../../app/api/marketing/social/route.tsx
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/marketing/social">> = Specific
   const handler = {} as typeof import("../../app/api/marketing/social/route.js")

@@ -1,3 +1,3 @@
 :HL["/_next/static/chunks/01xseuff179nq.css","style"]
 :HL["/ucallit-logo.png.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"YL5CcNRG4PI_aaXItZRUu"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"CtIjdc3LH_j-SapkhmNTm"}
