@@ -274,14 +274,6 @@ ${referralUrl}`;
                   >
                     📋 Copy Artist URL
                   </button>
-
-                  <button
-                    className="btn"
-                    type="button"
-                    onClick={() => copyText("Request Song URL", requestSongUrl)}
-                  >
-                    📋 Copy Request URL
-                  </button>
                 </div>
               </div>
 
@@ -394,14 +386,14 @@ ${referralUrl}`;
               <div style={cardStyle}>
                 <h2>📦 Marketing Materials</h2>
 
-                <p style={{ lineHeight: 1.5, marginBottom: 20 }}>
+                <p style={{ lineHeight: 1.5, marginBottom: 10 }}>
                   Print these for shows or share them online.
                 </p>
 
                 <div
                   style={{
                     display: "grid",
-                    gap: 18,
+                    gap: 10,
                     maxWidth: 420,
                     margin: "0 auto"
                   }}
@@ -416,7 +408,14 @@ ${referralUrl}`;
                       🖨 Download Table Tent
                     </a>
 
-                    <p style={{ marginTop: 8, fontSize: 14, opacity: 0.8 }}>
+                    <p
+  style={{
+    marginTop: 4,
+    marginBottom: 10,
+    fontSize: 14,
+    opacity: 0.8
+  }}
+>
                       Perfect for tables and bar tops.
                     </p>
                   </div>
@@ -431,7 +430,14 @@ ${referralUrl}`;
                       📄 Download Flyer
                     </a>
 
-                    <p style={{ marginTop: 8, fontSize: 14, opacity: 0.8 }}>
+                    <p
+  style={{
+    marginTop: 4,
+    marginBottom: 10,
+    fontSize: 14,
+    opacity: 0.8
+  }}
+>
                       Hang at venues or share before a show.
                     </p>
                   </div>
@@ -446,7 +452,14 @@ ${referralUrl}`;
                       📱 Download Social Graphic
                     </a>
 
-                    <p style={{ marginTop: 8, fontSize: 14, opacity: 0.8 }}>
+                    <p
+  style={{
+    marginTop: 4,
+    marginBottom: 10,
+    fontSize: 14,
+    opacity: 0.8
+  }}
+>
                       Post on Facebook, Instagram, or your story.
                     </p>
                   </div>
