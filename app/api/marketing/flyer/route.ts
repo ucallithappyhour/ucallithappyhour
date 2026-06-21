@@ -124,7 +124,7 @@ export async function GET(req: NextRequest) {
     drawCenteredText(page, artistName, 675, 38, titleFont, white);
   }
 
-  drawCenteredText(page, "🎵 REQUEST A SONG TONIGHT", 590, 34, titleFont, gold);
+  drawCenteredText(page, "REQUEST A SONG TONIGHT", 590, 34, titleFont, gold);
   drawCenteredText(page, artistName, 540, 34, titleFont, white);
   drawCenteredText(
     page,
@@ -173,7 +173,7 @@ export async function GET(req: NextRequest) {
   }
 
   const checkY = 205;
-  drawCenteredText(page, "✓ No App   ✓ No Login   ✓ Request Songs Instantly", checkY, 20, titleFont, gold);
+  drawCenteredText(page, "No App   No Login   Request Songs Instantly", checkY, 20, titleFont, gold);
 
   page.drawLine({
     start: { x: 82, y: 170 },
