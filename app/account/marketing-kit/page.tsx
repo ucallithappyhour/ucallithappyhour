@@ -155,8 +155,9 @@ ${referralUrl}`;
                   src={artist.logo_url}
                   alt={artistName}
                   style={{
-                    maxWidth: 300,
-                    maxHeight: 300,
+                    width: "100%",
+                    maxWidth: 340,
+                    maxHeight: 340,
                     objectFit: "contain"
                   }}
                 />
@@ -389,68 +390,84 @@ ${referralUrl}`;
               </div>
 
               <div style={cardStyle}>
-                <h2>📦 Marketing Materials</h2>
+  <h2>📦 Marketing Materials</h2>
 
-                <p style={{ lineHeight: 1.5, marginBottom: 18 }}>
-                  Print these for shows or share them online.
-                </p>
+  <p style={{ lineHeight: 1.5, marginBottom: 20 }}>
+    Print these for shows or share them online.
+  </p>
 
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    gap: 16,
-                    maxWidth: 420,
-                    margin: "0 auto"
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 800 }}>🖨 Table Tent</div>
-                    <p style={{ margin: "6px 0 10px", fontSize: 14 }}>
-                      Perfect for tables and bar tops.
-                    </p>
-                    <a
-                      className="btn"
-                      href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download Table Tent
-                    </a>
-                  </div>
+  <div
+    style={{
+      display: "grid",
+      gap: 18,
+      maxWidth: 420,
+      margin: "0 auto"
+    }}
+  >
+    <div>
+      <a
+        className="btn"
+        href={`/api/marketing/table-tent?artist=${artist.artist_slug}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        🖨 Download Table Tent
+      </a>
 
-                  <div>
-                    <div style={{ fontWeight: 800 }}>📄 Flyer</div>
-                    <p style={{ margin: "6px 0 10px", fontSize: 14 }}>
-                      Hang at venues or share before a show.
-                    </p>
-                    <a
-                      className="btn"
-                      href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download Flyer
-                    </a>
-                  </div>
+      <p
+        style={{
+          marginTop: 8,
+          fontSize: 14,
+          opacity: 0.8
+        }}
+      >
+        Perfect for tables and bar tops.
+      </p>
+    </div>
 
-                  <div>
-                    <div style={{ fontWeight: 800 }}>📱 Social Graphic</div>
-                    <p style={{ margin: "6px 0 10px", fontSize: 14 }}>
-                      Post on Facebook, Instagram, or your story.
-                    </p>
-                    <a
-                      className="btn"
-                      href={`/api/marketing/social?artist=${artist.artist_slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download Social Graphic
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div>
+      <a
+        className="btn"
+        href={`/api/marketing/flyer?artist=${artist.artist_slug}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        📄 Download Flyer
+      </a>
+
+      <p
+        style={{
+          marginTop: 8,
+          fontSize: 14,
+          opacity: 0.8
+        }}
+      >
+        Hang at venues or share before a show.
+      </p>
+    </div>
+
+    <div>
+      <a
+        className="btn"
+        href={`/api/marketing/social?artist=${artist.artist_slug}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        📱 Download Social Graphic
+      </a>
+
+      <p
+        style={{
+          marginTop: 8,
+          fontSize: 14,
+          opacity: 0.8
+        }}
+      >
+        Post on Facebook, Instagram, or your story.
+      </p>
+    </div>
+  </div>
+</div>
 
             <div className="actions" style={{ marginTop: 28 }}>
               <Link className="btn" href="/account">
