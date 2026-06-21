@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 
   const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
     artistUrl
-  )}&size=700&margin=1`;
+  )}&size=620&margin=1`;
 
   return new ImageResponse(
     (
@@ -42,11 +42,11 @@ export async function GET(req: NextRequest) {
           height: 1080,
           display: "flex",
           position: "relative",
-          overflow: "hidden",
           background:
-            "radial-gradient(circle at 50% 28%, #3b2a0d 0%, #111 45%, #050505 100%)",
+            "radial-gradient(circle at 50% 24%, #3a2a0f 0%, #101010 45%, #050505 100%)",
           color: "white",
-          fontFamily: "Arial"
+          fontFamily: "Arial",
+          overflow: "hidden"
         }}
       >
         <div
@@ -62,10 +62,27 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            top: 70,
+            top: 62,
+            left: 0,
+            width: 1080,
+            display: "flex",
+            justifyContent: "center",
+            fontSize: 24,
+            fontWeight: 900,
+            color: "#d4af37",
+            letterSpacing: 3
+          }}
+        >
+          U CALL IT HAPPY HOUR
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: 100,
             left: 240,
             width: 600,
-            height: 180,
+            height: 165,
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
@@ -81,13 +98,7 @@ export async function GET(req: NextRequest) {
               }}
             />
           ) : (
-            <div
-              style={{
-                display: "flex",
-                fontSize: 70,
-                fontWeight: 900
-              }}
-            >
+            <div style={{ display: "flex", fontSize: 64, fontWeight: 900 }}>
               {artistName.toUpperCase()}
             </div>
           )}
@@ -96,12 +107,12 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            top: 260,
+            top: 270,
             left: 0,
             width: 1080,
             display: "flex",
             justifyContent: "center",
-            fontSize: 58,
+            fontSize: 56,
             fontWeight: 900,
             textShadow: "0 5px 0 #000"
           }}
@@ -112,17 +123,17 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            top: 330,
-            left: 170,
-            width: 740,
-            height: 64,
+            top: 335,
+            left: 220,
+            width: 640,
+            height: 54,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             background: "#d4af37",
             color: "#050505",
             borderRadius: 999,
-            fontSize: 30,
+            fontSize: 26,
             fontWeight: 900,
             letterSpacing: 2
           }}
@@ -133,7 +144,7 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            top: 420,
+            top: 410,
             left: 0,
             width: 1080,
             display: "flex",
@@ -141,24 +152,23 @@ export async function GET(req: NextRequest) {
             alignItems: "center",
             color: "#d4af37",
             fontWeight: 900,
-            textAlign: "center",
-            lineHeight: 0.88,
+            lineHeight: 0.9,
             textShadow: "0 6px 0 #000"
           }}
         >
-          <div style={{ display: "flex", fontSize: 88 }}>REQUEST A</div>
-          <div style={{ display: "flex", fontSize: 96 }}>SONG TONIGHT</div>
+          <div style={{ display: "flex", fontSize: 82 }}>REQUEST A</div>
+          <div style={{ display: "flex", fontSize: 90 }}>SONG TONIGHT</div>
         </div>
 
         <div
           style={{
             position: "absolute",
-            top: 590,
+            top: 570,
             left: 0,
             width: 1080,
             display: "flex",
             justifyContent: "center",
-            fontSize: 30,
+            fontSize: 28,
             fontWeight: 800
           }}
         >
@@ -168,42 +178,42 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            top: 640,
-            left: 345,
-            width: 390,
-            height: 390,
+            top: 625,
+            left: 365,
+            width: 350,
+            height: 350,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             background: "#d4af37",
-            borderRadius: 32,
+            borderRadius: 30,
             boxShadow: "0 0 55px rgba(212,175,55,0.5)"
           }}
         >
           <div
             style={{
-              width: 340,
-              height: 340,
+              width: 305,
+              height: 305,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               background: "#ffffff",
-              borderRadius: 20
+              borderRadius: 18
             }}
           >
-            <img src={qrUrl} style={{ width: 300, height: 300 }} />
+            <img src={qrUrl} style={{ width: 268, height: 268 }} />
           </div>
         </div>
 
         <div
           style={{
             position: "absolute",
-            bottom: 58,
+            bottom: 74,
             left: 0,
             width: 1080,
             display: "flex",
             justifyContent: "center",
-            fontSize: 30,
+            fontSize: 28,
             fontWeight: 900
           }}
         >
@@ -213,18 +223,17 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            bottom: 26,
+            bottom: 38,
             left: 0,
             width: 1080,
             display: "flex",
             justifyContent: "center",
             fontSize: 22,
-            fontWeight: 900,
-            color: "#d4af37",
-            letterSpacing: 2
+            fontWeight: 800,
+            color: "#d4af37"
           }}
         >
-          U CALL IT HAPPY HOUR
+          Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
         </div>
       </div>
     ),
