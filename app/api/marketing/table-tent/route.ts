@@ -133,14 +133,7 @@ export async function GET(req: NextRequest) {
     color: white
   });
 
-  if (artistLogoImage) {
-    page.drawImage(artistLogoImage, {
-      x: 85,
-      y: 320,
-      width: 230,
-      height: 130
-    });
-  }
+
 
   page.drawText("Scan the QR code to browse", {
     x: 55,
