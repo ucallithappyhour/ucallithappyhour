@@ -119,25 +119,58 @@ ${referralUrl}`;
           >
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
-            <h1 className="title">{artistName} Marketing Kit</h1>
+            <h1
+  style={{
+    textAlign: "center",
+    fontSize: 42,
+    fontWeight: 900,
+    color: "#fff",
+    marginBottom: 6
+  }}
+>
+  {artistName}
+</h1>
 
-            {artist.logo_url && (
-              <div style={{ textAlign: "center", margin: "14px 0 16px" }}>
-                <img
-                  src={artist.logo_url}
-                  alt={artistName}
-                  style={{
-                    maxWidth: 180,
-                    maxHeight: 160,
-                    objectFit: "contain"
-                  }}
-                />
-              </div>
-            )}
+<div
+  style={{
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: 700,
+    color: "#d4af37",
+    marginBottom: 22
+  }}
+>
+  Marketing Kit
+</div>
 
-            <p className="tagline">
-              Everything you need to promote your shows.
-            </p>
+{artist.logo_url && (
+  <div
+    style={{
+      textAlign: "center",
+      marginBottom: 24
+    }}
+  >
+    <img
+      src={artist.logo_url}
+      alt={artistName}
+      style={{
+        maxWidth: 180,
+        maxHeight: 180,
+        objectFit: "contain"
+      }}
+    />
+  </div>
+)}
+
+<p
+  style={{
+    textAlign: "center",
+    fontSize: 18,
+    marginBottom: 10
+  }}
+>
+  Everything you need to promote your shows.
+</p>
 
             {copied && (
               <div
