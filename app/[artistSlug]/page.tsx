@@ -267,46 +267,67 @@ export default function DynamicArtistPage() {
             <h2>Upcoming Appearances</h2>
 
             {gigs.length === 0 ? (
-              <p className="empty">No upcoming gigs listed yet.</p>
-            ) : (
-              gigs.map((gig) => (
-                <div
-                  key={gig.id}
-                  style={{
-                    borderTop: "1px solid #333",
-                    paddingTop: 14,
-                    marginTop: 14
-                  }}
-                >
-                  <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
-                    {gig.venue_name || "Venue TBD"}
-                  </p>
+  <p className="empty">No upcoming gigs listed yet.</p>
+) : (
+  gigs.map((gig) => (
+    <div
+      key={gig.id}
+      style={{
+        borderTop: "1px solid #333",
+        paddingTop: 14,
+        marginTop: 14,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 20
+      }}
+    >
+      <div style={{ flex: 1 }}>
+        <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+          {gig.venue_name || "Venue TBD"}
+        </p>
 
-                  <p className="details" style={{ margin: "0 0 6px" }}>
-                    {formatGigDate(gig.gig_date)} •{" "}
-                    {formatGigTime(gig.start_time, gig.end_time)}
-                  </p>
+        <p className="details" style={{ margin: "0 0 6px" }}>
+          {formatGigDate(gig.gig_date)} •{" "}
+          {formatGigTime(gig.start_time, gig.end_time)}
+        </p>
 
-                  <p className="details" style={{ margin: 0 }}>
-                    {gig.venue_address || "Address TBD"} •{" "}
-                    {gig.recurring_type || "One-Time"}
-                  </p>
+        <p className="details" style={{ margin: 0 }}>
+          {gig.venue_address || "Address TBD"} •{" "}
+          {gig.recurring_type || "One-Time"}
+        </p>
 
-                    {gig.special_note && (
-                      <p
-                        style={{
-                          marginTop: 8,
-                          color: "#d4af37",
-                          fontStyle: "italic"
-                        }}
-                      >
-                        {gig.special_note}
-                      </p>
-                    )}
+        {gig.special_note && (
+          <p
+            style={{
+              marginTop: 8,
+              color: "#d4af37",
+              fontStyle: "italic"
+            }}
+          >
+            {gig.special_note}
+          </p>
+        )}
+      </div>
 
-                </div>
-              ))
-            )}
+      <div
+        style={{
+          minWidth: 240,
+          display: "flex",
+          justifyContent: "flex-end"
+        }}
+      >
+        <Link
+          className="btn secondary"
+          href={`/${artist.artist_slug}/request-song?type=future&gig=${gig.id}`}
+        >
+          Request Songs For This Gig
+        </Link>
+      </div>
+    </div>
+  ))
+)}
+
           </div>
 
           <div className="section">
