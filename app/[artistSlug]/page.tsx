@@ -158,18 +158,18 @@ function getNextOccurrence(gig: Gig) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const date = new Date(`${gig.gig_date}T00:00:00`);
+  const date = new Date(`${gig.gig_date}T12:00:00`);
 
   if (gig.recurring_type === "Weekly") {
     while (date < today) {
       date.setDate(date.getDate() + 7);
     }
-  }
-
-  if (gig.recurring_type === "Monthly") {
+  } else if (gig.recurring_type === "Monthly") {
     while (date < today) {
       date.setMonth(date.getMonth() + 1);
     }
+  } else if (date < today) {
+    return null;
   }
 
   return date;
