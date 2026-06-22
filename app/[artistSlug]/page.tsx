@@ -330,10 +330,21 @@ const nextGig =
           <div className="section">
             <h2>Upcoming Appearances</h2>
 
-            {gigs.length === 0 ? (
+            {gigs.filter((gig) => getNextOccurrence(gig)).length === 0 ? (
   <p className="empty">No upcoming gigs listed yet.</p>
 ) : (
-  gigs.map((gig) => (
+  [...gigs]
+    .filter((gig) => getNextOccurrence(gig))
+    .sort((a, b) => {
+      const aDate = getNextOccurrence(a);
+      const bDate = getNextOccurrence(b);
+
+      if (!aDate) return 1;
+      if (!bDate) return -1;
+
+      return aDate.getTime() - bDate.getTime();
+    })
+    .map((gig) => (
     <div
       key={gig.id}
       style={{
@@ -352,7 +363,7 @@ const nextGig =
         </p>
 
         <p className="details" style={{ margin: "0 0 6px" }}>
-          {formatGigDate(gig.gig_date)} •{" "}
+          {formatGigDateForDisplay(getNextOccurrence(gig))} •{" "}
           {formatGigTime(gig.start_time, gig.end_time)}
         </p>
 
