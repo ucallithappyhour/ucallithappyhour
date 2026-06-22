@@ -75,6 +75,7 @@ export default function DynamicArtistPage() {
       .order("gig_date", { ascending: true });
 
     if (!error) {
+      console.log("GIGS", data);
       setGigs(data || []);
     }
   }
