@@ -236,15 +236,14 @@ const nextGig =
               <p className="performer">{artistName}</p>
 
               <div className="details">
-  {nextGig
-    ? `${nextGig.venue_name || "Venue TBD"} • ${formatGigDate(
-        nextGig.gig_date
-      )} • ${formatGigTime(
-        nextGig.start_time,
-        nextGig.end_time
-      )}`
-    : "Upcoming gigs coming soon"}
-</div>
+{nextGig
+  ? `${nextGig.venue_name || "Venue TBD"} • ${formatGigDateForDisplay(
+      getNextOccurrence(nextGig)
+    )} • ${formatGigTime(
+      nextGig.start_time,
+      nextGig.end_time
+    )}`
+  : "Upcoming gigs coming soon"}
 
               <Link className="btn" href={`/${artist.artist_slug}/request-song`}>
                 Request a Song
