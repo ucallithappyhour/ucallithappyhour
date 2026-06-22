@@ -244,6 +244,8 @@ const nextGig =
       nextGig.end_time
     )}`
   : "Upcoming gigs coming soon"}
+</div>
+
 
               <Link className="btn" href={`/${artist.artist_slug}/request-song`}>
                 Request a Song
