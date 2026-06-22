@@ -151,6 +151,29 @@ export default function DynamicArtistPage() {
       </main>
     );
   }
+  
+function getNextOccurrence(gig: Gig) {
+  if (!gig.gig_date) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const date = new Date(`${gig.gig_date}T00:00:00`);
+
+  if (gig.recurring_type === "Weekly") {
+    while (date < today) {
+      date.setDate(date.getDate() + 7);
+    }
+  }
+
+  if (gig.recurring_type === "Monthly") {
+    while (date < today) {
+      date.setMonth(date.getMonth() + 1);
+    }
+  }
+
+  return date;
+}
 
   const artistName = artist.artist_name || "Artist";
   const logo = artist.logo_url || "";
