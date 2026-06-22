@@ -9,10 +9,18 @@ type Song = {
   artist: string;
 };
 
+type Artist = {
+  artist_slug: string;
+  artist_name: string | null;
+  tip_type: string | null;
+  tip_link: string | null;
+};
+
 export default function DynamicRequestSongPage() {
   const params = useParams();
   const artistSlug = String(params.artistSlug || "");
 
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [query, setQuery] = useState("");
   const [songs, setSongs] = useState<Song[]>([]);
   const [songsLoading, setSongsLoading] = useState(true);
@@ -27,9 +35,19 @@ export default function DynamicRequestSongPage() {
     null
   );
 
+  const artistName = artist?.artist_name || "the artist";
+
   useEffect(() => {
-    async function loadSongs() {
+    async function loadArtistAndSongs() {
       setSongsLoading(true);
+
+      const { data: artistData } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name, tip_type, tip_link")
+        .eq("artist_slug", artistSlug)
+        .single();
+
+      setArtist(artistData || null);
 
       const { data, error } = await supabase
         .from("songs")
@@ -51,7 +69,7 @@ export default function DynamicRequestSongPage() {
     }
 
     if (artistSlug) {
-      loadSongs();
+      loadArtistAndSongs();
     }
   }, [artistSlug]);
 
@@ -106,10 +124,15 @@ export default function DynamicRequestSongPage() {
     setSuccessMode(null);
   }
 
+  function openTipLink() {
+    if (!artist?.tip_link) return;
+    window.open(artist.tip_link, "_blank", "noopener,noreferrer");
+  }
+
   async function submitRequest() {
     const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
 
-    const artist =
+    const songArtist =
       mode === "tonight"
         ? selectedSong?.artist
         : futureArtist.trim() || "Unknown Artist";
@@ -126,7 +149,8 @@ export default function DynamicRequestSongPage() {
         },
         body: JSON.stringify({
           song: title,
-          artist,
+          artist: songArtist,
+          artist_slug: artistSlug,
           requester_name: name.trim() || null,
           dedication: dedication.trim() || null,
           request_type: mode
@@ -354,25 +378,61 @@ export default function DynamicRequestSongPage() {
 
             {successMode ? (
               <>
-                <h2>
+                <h2 style={{ marginTop: 0 }}>
                   {successMode === "tonight"
-                    ? "Request sent!"
-                    : "Suggestion sent!"}
+                    ? "🎵 Request Sent!"
+                    : "🎵 Suggestion Received!"}
                 </h2>
 
-                <p>
+                <p style={{ fontSize: 17, lineHeight: 1.5 }}>
                   {successMode === "tonight"
-                    ? "Your request was received."
-                    : "Your future song suggestion was received."}
+                    ? "Thanks for helping shape tonight's setlist."
+                    : `We'll pass your suggestion along to ${artistName} for future shows.`}
+                </p>
+
+                {artist?.tip_link && (
+                  <>
+                    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+                      {successMode === "tonight"
+                        ? `Enjoying ${artistName}'s music?`
+                        : `Love what ${artistName} does?`}
+                    </p>
+
+                    <button
+                      onClick={openTipLink}
+                      style={{
+                        width: "100%",
+                        padding: "15px 18px",
+                        fontSize: 18,
+                        borderRadius: 10,
+                        border: 0,
+                        background: "#ffd84d",
+                        color: "#000",
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        marginBottom: 12
+                      }}
+                    >
+                      💵 Tip {artistName}
+                    </button>
+                  </>
+                )}
+
+                <p style={{ opacity: 0.75, fontSize: 14, lineHeight: 1.4 }}>
+                  No pressure — your{" "}
+                  {successMode === "tonight" ? "request" : "suggestion"} has
+                  already been submitted.
                 </p>
 
                 <button
                   onClick={resetToCatalog}
                   style={{
+                    width: "100%",
                     padding: "12px 18px",
                     fontSize: 16,
                     borderRadius: 8,
-                    cursor: "pointer"
+                    cursor: "pointer",
+                    marginTop: 8
                   }}
                 >
                   Back to Catalog
