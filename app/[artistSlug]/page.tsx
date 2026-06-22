@@ -278,7 +278,7 @@ export default function DynamicArtistPage() {
         marginTop: 14,
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-start",
         gap: 20
       }}
     >
@@ -314,7 +314,8 @@ export default function DynamicArtistPage() {
         style={{
           minWidth: 240,
           display: "flex",
-          justifyContent: "flex-end"
+          justifyContent: "flex-end",
+          alignItems: "flex-start"
         }}
       >
         <Link

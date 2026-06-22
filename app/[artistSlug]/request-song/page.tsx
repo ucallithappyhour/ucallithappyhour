@@ -36,6 +36,7 @@ export default function DynamicRequestSongPage() {
   );
 
   const artistName = artist?.artist_name || "the artist";
+  
 
   console.log("ARTIST STATE", artist);
 
