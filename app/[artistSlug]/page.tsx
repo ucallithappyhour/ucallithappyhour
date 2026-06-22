@@ -151,7 +151,7 @@ export default function DynamicArtistPage() {
       </main>
     );
   }
-  
+
 function getNextOccurrence(gig: Gig) {
   if (!gig.gig_date) return null;
 
@@ -182,16 +182,19 @@ function getNextOccurrence(gig: Gig) {
   const facebookUrl = normalizeExternalUrl(artist.facebook);
   const instagramUrl = normalizeExternalUrl(artist.instagram);
   const youtubeUrl = normalizeExternalUrl(artist.youtube);
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-
 const nextGig =
-  gigs.find((gig) => {
-    if (!gig.gig_date) return false;
+  gigs.length > 0
+    ? [...gigs]
+        .sort((a, b) => {
+          const aDate = getNextOccurrence(a);
+          const bDate = getNextOccurrence(b);
 
-    const gigDate = new Date(`${gig.gig_date}T00:00:00`);
-    return gigDate >= today;
-  }) || gigs[0];
+          if (!aDate) return 1;
+          if (!bDate) return -1;
+
+          return aDate.getTime() - bDate.getTime();
+        })[0]
+    : null;
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
       <div
