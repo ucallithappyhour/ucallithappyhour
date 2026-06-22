@@ -175,14 +175,38 @@ function getNextOccurrence(gig: Gig) {
   return date;
 }
 
-  const artistName = artist.artist_name || "Artist";
-  const logo = artist.logo_url || "";
-  const tipUrl = normalizeExternalUrl(artist.tip_link);
-  const websiteUrl = normalizeExternalUrl(artist.website);
-  const facebookUrl = normalizeExternalUrl(artist.facebook);
-  const instagramUrl = normalizeExternalUrl(artist.instagram);
-  const youtubeUrl = normalizeExternalUrl(artist.youtube);
+function formatGigDateForDisplay(dateValue: Date | null) {
+  if (!dateValue) return "Date TBD";
+
+  return dateValue.toLocaleDateString([], {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
+const artistName = artist.artist_name || "Artist";
+const logo = artist.logo_url || "";
+const tipUrl = normalizeExternalUrl(artist.tip_link);
+const websiteUrl = normalizeExternalUrl(artist.website);
+const facebookUrl = normalizeExternalUrl(artist.facebook);
+const instagramUrl = normalizeExternalUrl(artist.instagram);
+const youtubeUrl = normalizeExternalUrl(artist.youtube);
+
 const nextGig =
+  gigs.length > 0
+    ? [...gigs]
+        .sort((a, b) => {
+          const aDate = getNextOccurrence(a);
+          const bDate = getNextOccurrence(b);
+
+          if (!aDate) return 1;
+          if (!bDate) return -1;
+
+          return aDate.getTime() - bDate.getTime();
+        })[0]
+    : null;
   gigs.length > 0
     ? [...gigs]
         .sort((a, b) => {
