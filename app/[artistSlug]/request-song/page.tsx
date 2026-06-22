@@ -37,17 +37,21 @@ export default function DynamicRequestSongPage() {
 
   const artistName = artist?.artist_name || "the artist";
 
+  console.log("ARTIST STATE", artist);
+
   useEffect(() => {
     async function loadArtistAndSongs() {
       setSongsLoading(true);
 
-      const { data: artistData } = await supabase
-        .from("artists")
-        .select("artist_slug, artist_name, tip_type, tip_link")
-        .eq("artist_slug", artistSlug)
-        .single();
+const { data: artistData } = await supabase
+  .from("artists")
+  .select("artist_slug, artist_name, tip_type, tip_link")
+  .eq("artist_slug", artistSlug)
+  .single();
 
-      setArtist(artistData || null);
+console.log("ARTIST DATA", artistData);
+
+setArtist(artistData || null);
 
       const { data, error } = await supabase
         .from("songs")
