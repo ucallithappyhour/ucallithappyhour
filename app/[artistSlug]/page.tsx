@@ -158,7 +158,16 @@ export default function DynamicArtistPage() {
   const facebookUrl = normalizeExternalUrl(artist.facebook);
   const instagramUrl = normalizeExternalUrl(artist.instagram);
   const youtubeUrl = normalizeExternalUrl(artist.youtube);
+const today = new Date();
+today.setHours(0, 0, 0, 0);
 
+const nextGig =
+  gigs.find((gig) => {
+    if (!gig.gig_date) return false;
+
+    const gigDate = new Date(`${gig.gig_date}T00:00:00`);
+    return gigDate >= today;
+  }) || gigs[0];
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
       <div
@@ -200,12 +209,15 @@ export default function DynamicArtistPage() {
               <p className="performer">{artistName}</p>
 
               <div className="details">
-                {gigs.length > 0
-                  ? `${gigs[0].venue_name || "Venue TBD"} • ${formatGigDate(
-                      gigs[0].gig_date
-                    )} • ${formatGigTime(gigs[0].start_time, gigs[0].end_time)}`
-                  : "Upcoming gigs coming soon"}
-              </div>
+  {nextGig
+    ? `${nextGig.venue_name || "Venue TBD"} • ${formatGigDate(
+        nextGig.gig_date
+      )} • ${formatGigTime(
+        nextGig.start_time,
+        nextGig.end_time
+      )}`
+    : "Upcoming gigs coming soon"}
+</div>
 
               <Link className="btn" href={`/${artist.artist_slug}/request-song`}>
                 Request a Song
