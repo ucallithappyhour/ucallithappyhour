@@ -165,29 +165,34 @@ export default function AgentDashboard() {
     Agency Branding
   </h2>
 
-  {agent.logo_url ? (
-    <img
-      src={agent.logo_url}
-      alt="Agency Logo"
-      style={{
-        maxHeight: 220,
-        maxWidth: "100%",
-        objectFit: "contain",
-        marginBottom: 20
-      }}
-    />
-  ) : (
-    <p style={{ opacity: 0.8, marginBottom: 20 }}>
-      No logo uploaded yet.
-    </p>
-  )}
+{agent.logo_url ? (
+  <img
+    src={agent.logo_url}
+    alt="Agency Logo"
+    style={{
+      maxHeight: 300,
+      maxWidth: "100%",
+      objectFit: "contain",
+      marginBottom: 20,
+      display: "block",
+      marginLeft: "auto",
+      marginRight: "auto"
+    }}
+  />
+) : (
+  <p style={{ marginBottom: 20 }}>
+    No logo uploaded yet.
+  </p>
+)}
 
+<div style={{ marginTop: 12 }}>
   <Link
     href="/agents/artwork"
     className="btn"
   >
     Manage Branding
   </Link>
+</div>
 </div>
 
             <div
