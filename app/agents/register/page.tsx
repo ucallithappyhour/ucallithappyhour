@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -24,6 +25,8 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function AgentRegisterPage() {
+  const router = useRouter();
+
   const [agencyName, setAgencyName] = useState("");
   const [contactName, setContactName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,28 +48,15 @@ export default function AgentRegisterPage() {
     setReferralUrl("");
     setDashboardUrl("");
 
-  const missing =
-  !agencyName?.trim() ||
-  !contactName?.trim() ||
-  !email?.trim() ||
-  !password ||
-  password.length < 6 ||
-  password !== confirmPassword;
+    const isInvalid =
+      !agencyName.trim() ||
+      !contactName.trim() ||
+      !email.trim() ||
+      password.length < 6 ||
+      password !== confirmPassword;
 
-if (missing) {
-  setMessage("Please complete all required fields correctly.");
-  setLoading(false);
-  return;
-}
-
-    if (password.length < 6) {
-      setMessage("Password must be at least 6 characters.");
-      setLoading(false);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match.");
+    if (isInvalid) {
+      setMessage("Please complete all required fields correctly.");
       setLoading(false);
       return;
     }
@@ -89,24 +79,18 @@ if (missing) {
 
       console.log("🔥 REGISTER RESPONSE:", data);
 
-      if (!res.ok) {
+      if (!res.ok || !data?.success) {
         setMessage(data.error || "Something went wrong.");
         setLoading(false);
         return;
       }
 
-      setMessage("Account created successfully.");
+      setMessage("Account created successfully. Redirecting...");
 
-      setReferralUrl(data.referral_url || "");
-      setDashboardUrl(data.dashboard_url || "");
+      setTimeout(() => {
+        router.push("/agents/login");
+      }, 800);
 
-      setAgencyName("");
-      setContactName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setPhone("");
-      setArtistCount("");
     } catch (err) {
       console.error(err);
       setMessage("Server error. Please try again.");
@@ -115,19 +99,12 @@ if (missing) {
     }
   }
 
-  async function copy(text: string, label: string) {
-    await navigator.clipboard.writeText(text);
-    setMessage(`${label} copied.`);
-  }
-
   return (
     <main className="page">
       <div className="overlay">
         <div className="container">
-          <section
-            className="accountCard"
-            style={{ maxWidth: 920, margin: "0 auto" }}
-          >
+          <section className="accountCard" style={{ maxWidth: 920, margin: "0 auto" }}>
+            
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
             <h1 className="title">Request Your Agent Link</h1>
@@ -149,57 +126,25 @@ if (missing) {
 
               <form onSubmit={submitAgentRequest}>
                 <label style={labelStyle}>Agency Name</label>
-                <input
-                  style={inputStyle}
-                  value={agencyName}
-                  onChange={(e) => setAgencyName(e.target.value)}
-                />
+                <input style={inputStyle} value={agencyName} onChange={(e) => setAgencyName(e.target.value)} />
 
                 <label style={labelStyle}>Contact Name</label>
-                <input
-                  style={inputStyle}
-                  value={contactName}
-                  onChange={(e) => setContactName(e.target.value)}
-                />
+                <input style={inputStyle} value={contactName} onChange={(e) => setContactName(e.target.value)} />
 
                 <label style={labelStyle}>Email</label>
-                <input
-                  style={inputStyle}
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 
                 <label style={labelStyle}>Password</label>
-                <input
-                  style={inputStyle}
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <input style={inputStyle} type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
                 <label style={labelStyle}>Confirm Password</label>
-                <input
-                  style={inputStyle}
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                <input style={inputStyle} type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
                 <label style={labelStyle}>Phone</label>
-                <input
-                  style={inputStyle}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
+                <input style={inputStyle} value={phone} onChange={(e) => setPhone(e.target.value)} />
 
                 <label style={labelStyle}>Artists Represented</label>
-                <input
-                  style={inputStyle}
-                  type="number"
-                  value={artistCount}
-                  onChange={(e) => setArtistCount(e.target.value)}
-                />
+                <input style={inputStyle} type="number" value={artistCount} onChange={(e) => setArtistCount(e.target.value)} />
 
                 <button
                   disabled={loading}
@@ -222,28 +167,6 @@ if (missing) {
                   {message}
                 </p>
               )}
-
-              {(referralUrl || dashboardUrl) && (
-                <div style={{ marginTop: 20 }}>
-                  {dashboardUrl && (
-                    <>
-                      <p>{dashboardUrl}</p>
-                      <button onClick={() => copy(dashboardUrl, "Dashboard")}>
-                        Copy Dashboard
-                      </button>
-                    </>
-                  )}
-
-                  {referralUrl && (
-                    <>
-                      <p>{referralUrl}</p>
-                      <button onClick={() => copy(referralUrl, "Referral")}>
-                        Copy Referral
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
             </div>
 
             <div style={{ marginTop: 20 }}>
@@ -251,6 +174,7 @@ if (missing) {
                 ← Back to Agent Portal
               </Link>
             </div>
+
           </section>
         </div>
       </div>
