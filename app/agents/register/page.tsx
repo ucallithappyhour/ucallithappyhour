@@ -37,16 +37,11 @@ export default function AgentRegisterPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const [referralUrl, setReferralUrl] = useState("");
-  const [dashboardUrl, setDashboardUrl] = useState("");
-
   async function submitAgentRequest(e: React.FormEvent) {
     e.preventDefault();
 
     setLoading(true);
     setMessage("");
-    setReferralUrl("");
-    setDashboardUrl("");
 
     const isInvalid =
       !agencyName.trim() ||
@@ -87,9 +82,10 @@ export default function AgentRegisterPage() {
 
       setMessage("Account created successfully. Redirecting...");
 
+      // 🚀 SAAS ONBOARDING FLOW (IMPORTANT)
       setTimeout(() => {
-        router.push("/agents/login");
-      }, 800);
+        router.push("/account/artwork");
+      }, 700);
 
     } catch (err) {
       console.error(err);
@@ -104,7 +100,7 @@ export default function AgentRegisterPage() {
       <div className="overlay">
         <div className="container">
           <section className="accountCard" style={{ maxWidth: 920, margin: "0 auto" }}>
-            
+
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
             <h1 className="title">Request Your Agent Link</h1>
