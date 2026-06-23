@@ -391,6 +391,20 @@ export default function DashboardPage() {
     await loadArtistAndRequests();
   }
 
+async function removeFromPlaylist(song: PlaylistSong) {
+  const { error } = await supabase
+    .from("gig_playlists")
+    .delete()
+    .eq("id", song.id);
+
+  if (error) {
+    setMessage(`Could not remove song from playlist: ${error.message}`);
+    return;
+  }
+
+  await loadArtistAndRequests();
+}
+
   function RequestGroupCard({ group }: { group: RequestGroup }) {
     const isFuture = group.requestType === "future";
 
@@ -532,28 +546,41 @@ export default function DashboardPage() {
         <h3 style={{ marginTop: 0 }}>🎵 Playlist</h3>
 
         {songs.map((song, index) => (
-          <div
-            key={song.id}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: 12,
-              borderTop: index === 0 ? "0" : "1px solid #333",
-              paddingTop: index === 0 ? 0 : 10,
-              marginTop: index === 0 ? 0 : 10
-            }}
-          >
-            <div>
-              <strong>
-                {index + 1}. {song.song}
-              </strong>
-              <br />
-              <span style={{ opacity: 0.8 }}>
-                {song.artist || "Unknown Artist"}
-              </span>
-            </div>
-          </div>
-        ))}
+  <div
+    key={song.id}
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 12,
+      borderTop: index === 0 ? "0" : "1px solid #333",
+      paddingTop: index === 0 ? 0 : 10,
+      marginTop: index === 0 ? 0 : 10
+    }}
+  >
+    <div>
+      <strong>
+        {index + 1}. {song.song}
+      </strong>
+      <br />
+      <span style={{ opacity: 0.8 }}>
+        {song.artist || "Unknown Artist"}
+      </span>
+    </div>
+
+    <button
+      onClick={() => removeFromPlaylist(song)}
+      style={{
+        padding: "8px 12px",
+        borderRadius: 8,
+        cursor: "pointer",
+        fontWeight: "bold"
+      }}
+    >
+      Remove
+    </button>
+  </div>
+))}
       </div>
     );
   }
