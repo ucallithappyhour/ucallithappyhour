@@ -39,6 +39,7 @@ export default function AgentRegisterPage() {
 
   async function submitAgentRequest(e: React.FormEvent) {
     e.preventDefault();
+
     setLoading(true);
     setMessage("");
     setReferralUrl("");
@@ -70,13 +71,15 @@ export default function AgentRegisterPage() {
           agency_name: agencyName,
           contact_name: contactName,
           email,
-          password, // 🔥 REQUIRED FOR SUPABASE AUTH FLOW
+          password,
           phone,
           artist_count: Number(artistCount || 0)
         })
       });
 
       const data = await res.json();
+
+      console.log("🔥 REGISTER RESPONSE:", data);
 
       if (!res.ok) {
         setMessage(data.error || "Something went wrong.");
@@ -85,6 +88,7 @@ export default function AgentRegisterPage() {
       }
 
       setMessage("Account created successfully.");
+
       setReferralUrl(data.referral_url || "");
       setDashboardUrl(data.dashboard_url || "");
 
