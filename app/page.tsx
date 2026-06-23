@@ -417,7 +417,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-          </div>
+                   </div>
 
           {/* FOR BOOKING AGENTS */}
           <div className="section">
@@ -425,8 +425,8 @@ export default function Home() {
 
             <div className="event-card">
               <p className="performer">
-  Earn $25 Every Time an Artist Completes Setup
-</p>
+                Earn $25 Every Time an Artist Completes Setup
+              </p>
 
               <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
                 Give your artists a smarter way to engage fans.
@@ -438,7 +438,14 @@ export default function Home() {
                 referral commission.
               </p>
 
-              <div style={{ marginTop: 18, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+              <div
+                style={{
+                  marginTop: 18,
+                  lineHeight: 1.9,
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
                 <div>✓ Free Agent Account</div>
                 <div>✓ Free Dashboard</div>
                 <div>✓ Free Referral Tools</div>
@@ -451,7 +458,8 @@ export default function Home() {
               </div>
 
               <div className="details" style={{ marginTop: 18 }}>
-                Referral links • QR codes • Agent dashboard • Commission tracking
+                Referral links • QR codes • Agent dashboard • Commission
+                tracking
               </div>
 
               <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
@@ -459,23 +467,31 @@ export default function Home() {
                 entertainment companies, and venue managers.
               </p>
 
-              <p style={{ marginTop: 16, fontWeight: 900, fontSize: "1.05rem" }}>
+              <p
+                style={{
+                  marginTop: 16,
+                  fontWeight: 900,
+                  fontSize: "1.05rem"
+                }}
+              >
                 Refer 10 artists = $250 in commissions.
-                <p style={{ opacity: 0.9, marginTop: 12 }}>
-  Free to join. No monthly fees.
-</p>
+              </p>
+
+              <p style={{ opacity: 0.9, marginTop: 12 }}>
+                Free to join. No monthly fees.
+              </p>
 
               <Link className="btn" href="/agents">
-                                Request Agent Account
+                Request Agent Account
               </Link>
 
               <div className="actions" style={{ marginTop: 18 }}>
                 <Link className="btn secondary" href="/agents">
-  Agent Login
-</Link>
+                  Agent Login
+                </Link>
               </div>
             </div>
-          </div>
+          </div> 
         </div>
 
         <div
