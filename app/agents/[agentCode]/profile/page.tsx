@@ -148,7 +148,7 @@ export default function AgentProfilePage() {
       .from("agent-artwork")
       .getPublicUrl(filePath);
 
-    const publicUrl = data.publicUrl;
+    const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
 
     setLogoUrl(publicUrl);
 
