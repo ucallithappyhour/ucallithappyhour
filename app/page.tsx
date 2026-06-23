@@ -234,11 +234,14 @@ export default function Home() {
   style={{
     maxWidth: 760,
     margin: "0 auto 28px",
-    lineHeight: 1.6,
+    lineHeight: 1.7,
+    fontStyle: "italic",
+    opacity: 0.82,
+    fontSize: "1.05rem",
   }}
 >
-  <strong>Think TouchTunes, but for live music.</strong> Browse an
-  artist&apos;s song library, send requests, and help shape the show.
+  Think TouchTunes, but for live music. Browse an artist&apos;s song
+  library, send requests, and help shape the show.
 </p>
 
 <h2 style={{ marginTop: 18 }}>Choose Your Artist</h2>
