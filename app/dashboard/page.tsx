@@ -227,7 +227,6 @@ function RequestGroupCard({ group }: { group: RequestGroup }) {
         border: isFuture ? "2px solid #ffd84d" : "2px solid #7ee787"
       }}
     >
-      >
         <div
           style={{
             display: "inline-block",
