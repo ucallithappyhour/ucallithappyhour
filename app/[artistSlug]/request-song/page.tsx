@@ -518,7 +518,7 @@ if (normalizedTitle.includes("wagonwheel")) {
       Brian&apos;s current rate for this song is <strong>$500</strong>.
     </p>
 
-    <button<p style={{ fontSize: 17, lineHeight: 1.5 }}>
+    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
   {premiumSongMode === "browneyedgirl"
     ? "Brian has heard this request approximately 47,000 times."
     : "Brian will happily spin that wheel one more time."}
@@ -528,6 +528,8 @@ if (normalizedTitle.includes("wagonwheel")) {
 
   Current rate: <strong>$500</strong>.
 </p>
+
+<button
       onClick={openTipLink}
       style={{
         width: "100%",
