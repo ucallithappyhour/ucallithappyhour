@@ -10,15 +10,32 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { song, artist, requester_name, dedication, request_type } = body;
+    const {
+      song,
+      artist,
+      artist_slug,
+      requester_name,
+      dedication,
+      request_type,
+      gig_id
+    } = body;
+
+    if (!song || !artist || !artist_slug) {
+      return NextResponse.json(
+        { error: "Missing song, artist, or artist slug." },
+        { status: 400 }
+      );
+    }
 
     const { error } = await supabase.from("song_requests").insert({
       song,
       artist,
+      artist_slug,
       requester_name,
       dedication,
       status: "pending",
-      request_type
+      request_type: request_type || "tonight",
+      gig_id: gig_id || null
     });
 
     if (error) {
