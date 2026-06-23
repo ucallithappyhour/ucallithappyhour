@@ -218,20 +218,6 @@ export default function AgentDashboard() {
                   padding: 20
                 }}
               >
-                <p style={{ margin: 0, opacity: 0.75 }}>Referral Code</p>
-                <h2 style={{ marginBottom: 0, color: "#ffd84d" }}>
-                  {agent.referral_code || "Not set"}
-                </h2>
-              </div>
-
-              <div
-                style={{
-                  background: "#181818",
-                  border: "1px solid #333",
-                  borderRadius: 14,
-                  padding: 20
-                }}
-              >
                 <p style={{ margin: 0, opacity: 0.75 }}>Commission</p>
                 <h2 style={{ marginBottom: 0 }}>$25 / completed artist</h2>
               </div>
