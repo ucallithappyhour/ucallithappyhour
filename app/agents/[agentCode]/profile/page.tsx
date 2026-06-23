@@ -47,6 +47,8 @@ export default function AgentProfilePage() {
   const [agent, setAgent] = useState<BookingAgent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   const [agencyName, setAgencyName] = useState("");
   const [contactName, setContactName] = useState("");
@@ -113,6 +115,72 @@ export default function AgentProfilePage() {
     setMessage("Agency profile saved.");
     setSaving(false);
     loadAgent();
+  }
+
+  async function uploadLogo(file: File) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setMessage("Please upload an image file.");
+      return;
+    }
+
+    setUploading(true);
+    setMessage("");
+
+    const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const filePath = `${agentCode}/logo.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("agent-artwork")
+      .upload(filePath, file, {
+        upsert: true,
+        contentType: file.type
+      });
+
+    if (uploadError) {
+      setUploading(false);
+      setMessage("Could not upload logo: " + uploadError.message);
+      return;
+    }
+
+    const { data } = supabase.storage
+      .from("agent-artwork")
+      .getPublicUrl(filePath);
+
+    const publicUrl = data.publicUrl;
+
+    setLogoUrl(publicUrl);
+
+    const { error: saveError } = await supabase
+      .from("booking_agents")
+      .update({
+        logo_url: publicUrl
+      })
+      .eq("referral_code", agentCode);
+
+    setUploading(false);
+
+    if (saveError) {
+      setMessage("Logo uploaded, but could not save URL: " + saveError.message);
+      return;
+    }
+
+    setMessage("Logo uploaded and saved.");
+    loadAgent();
+  }
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) uploadLogo(file);
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadLogo(file);
   }
 
   useEffect(() => {
@@ -191,6 +259,37 @@ export default function AgentProfilePage() {
                 </div>
               )}
 
+              <h2 style={{ color: "#111", marginTop: 0 }}>Agency Logo</h2>
+
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragging(true);
+                }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={handleDrop}
+                style={{
+                  border: dragging ? "2px solid #ffd84d" : "2px dashed #999",
+                  borderRadius: 14,
+                  padding: 28,
+                  textAlign: "center",
+                  marginBottom: 18,
+                  background: dragging ? "#fff8d8" : "#fafafa"
+                }}
+              >
+                <p style={{ color: "#111", marginBottom: 14 }}>
+                  {uploading ? "Uploading logo..." : "Drag and drop logo here"}
+                </p>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  disabled={uploading}
+                  style={{ color: "#111" }}
+                />
+              </div>
+
               <label style={labelStyle}>Agency Name</label>
               <input
                 style={inputStyle}
@@ -205,14 +304,6 @@ export default function AgentProfilePage() {
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
                 placeholder="John Smith"
-              />
-
-              <label style={labelStyle}>Logo URL</label>
-              <input
-                style={inputStyle}
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://..."
               />
 
               <label style={labelStyle}>Website</label>
@@ -255,7 +346,7 @@ export default function AgentProfilePage() {
                 className="btn"
                 type="button"
                 onClick={saveProfile}
-                disabled={saving}
+                disabled={saving || uploading}
                 style={{ width: "100%", marginTop: 12 }}
               >
                 {saving ? "Saving..." : "Save Agency Profile"}
