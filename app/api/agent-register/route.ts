@@ -48,37 +48,21 @@ export async function POST(req: NextRequest) {
         email_confirm: true
       });
 
-    if (authError) {
-  console.log("❌ AUTH FAILED:", authError);
-  return NextResponse.json(
-    { error: authError.message },
-    { status: 500 }
-  );
-}
-
-if (!authData?.user) {
-  console.log("❌ NO USER RETURNED");
-  return NextResponse.json(
-    { error: "No auth user created" },
-    { status: 500 }
-  );
-}
-
-console.log("✅ AUTH USER CREATED:", authData.user.id);
-
     if (authError || !authData?.user) {
+      console.log("❌ AUTH FAILED:", authError);
+
       return NextResponse.json(
-        {
-          error: authError?.message || "Failed to create auth user"
-        },
+        { error: authError?.message || "Auth user creation failed" },
         { status: 500 }
       );
     }
 
     const authUser = authData.user;
 
+    console.log("✅ AUTH USER CREATED:", authUser.id);
+
     // ======================================================
-    // 2. CREATE AGENT PROFILE LINKED TO AUTH USER
+    // 2. CREATE BOOKING AGENT LINKED TO AUTH USER
     // ======================================================
     const { data: agent, error: dbError } = await supabase
       .from("booking_agents")
@@ -147,6 +131,7 @@ console.log("✅ AUTH USER CREATED:", authData.user.id);
       referral_code: referralCode,
       login_url: "/agents/login"
     });
+
   } catch (error) {
     console.error("Agent register error:", error);
 
