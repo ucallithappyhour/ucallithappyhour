@@ -50,7 +50,6 @@ type NewGig = {
   recurring_type: string;
   special_note: string;
   allow_requests: boolean;
-
 };
 
 type NewArtist = {
@@ -127,7 +126,7 @@ export default function AccountPage() {
     }));
   }
 
-  function updateGigField(field: keyof NewGig, value: string) {
+  function updateGigField(field: keyof NewGig, value: string | boolean) {
     setNewGig((current) => ({
       ...current,
       [field]: value
@@ -359,7 +358,7 @@ export default function AccountPage() {
     loadGigs();
   }
 
-      function startEditGig(gig: Gig) {
+  function startEditGig(gig: Gig) {
     setEditingGigId(gig.id);
 
     setNewGig({
@@ -369,7 +368,8 @@ export default function AccountPage() {
       start_time: gig.start_time || "",
       end_time: gig.end_time || "",
       recurring_type: gig.recurring_type || "One-Time",
-        special_note: gig.special_note || ""
+      special_note: gig.special_note || "",
+      allow_requests: gig.allow_requests !== false
     });
 
     setMessage("Editing gig. Make changes below, then save.");
@@ -877,18 +877,34 @@ export default function AccountPage() {
                             {gig.recurring_type || "One-Time"}
                           </p>
 
-                            {gig.special_note && (
-                              <p
-                                style={{
-                                  marginTop: 8,
-                                  color: "#d4af37",
-                                  fontStyle: "italic"
-                                }}
-                              >
-                                {gig.special_note}
-                              </p>
-                            )}
-                            
+                          {gig.special_note && (
+                            <p
+                              style={{
+                                marginTop: 8,
+                                color: "#d4af37",
+                                fontStyle: "italic"
+                              }}
+                            >
+                              {gig.special_note}
+                            </p>
+                          )}
+
+                          <p
+                            style={{
+                              margin: "8px 0 12px",
+                              color:
+                                gig.allow_requests === false
+                                  ? "#ff8a8a"
+                                  : "#8affb2",
+                              fontWeight: 800
+                            }}
+                          >
+                            Requests:{" "}
+                            {gig.allow_requests === false
+                              ? "Off for this gig"
+                              : "On"}
+                          </p>
+
                           <button
                             className="smallbtn"
                             type="button"
@@ -963,46 +979,46 @@ export default function AccountPage() {
                       <option value="Weekly">Weekly</option>
                       <option value="Monthly">Monthly</option>
                     </select>
-<label>Special Note</label>
 
-<textarea
-  value={newGig.special_note}
-  onChange={(e) =>
-    updateGigField("special_note", e.target.value)
-  }
-  placeholder="Patio show, birthday party, Eagles game after-party, special guest appearance..."
-/>
+                    <label>Special Note</label>
+                    <textarea
+                      value={newGig.special_note}
+                      onChange={(e) =>
+                        updateGigField("special_note", e.target.value)
+                      }
+                      placeholder="Patio show, birthday party, Eagles game after-party, special guest appearance..."
+                    />
 
-<label
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    marginTop: 12,
-    fontWeight: 800
-  }}
->
-  <input
-    type="checkbox"
-    checked={newGig.allow_requests !== false}
-    onChange={(e) =>
-      updateGigField("allow_requests", e.target.checked)
-    }
-    style={{ width: 18, height: 18 }}
-  />
-  Allow song requests for this gig
-</label>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        marginTop: 12,
+                        fontWeight: 800
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={newGig.allow_requests !== false}
+                        onChange={(e) =>
+                          updateGigField("allow_requests", e.target.checked)
+                        }
+                        style={{ width: 18, height: 18 }}
+                      />
+                      Allow song requests for this gig
+                    </label>
 
-<p
-  style={{
-    marginTop: 6,
-    marginBottom: 18,
-    color: "#bbb"
-  }}
->
-  Turn this off for ticketed shows, fixed setlists, tribute nights,
-  or performances where requests are not a good fit.
-</p>
+                    <p
+                      style={{
+                        marginTop: 6,
+                        marginBottom: 18,
+                        color: "#bbb"
+                      }}
+                    >
+                      Turn this off for ticketed shows, fixed setlists, tribute nights,
+                      or performances where requests are not a good fit.
+                    </p>
 
                     <button className="btn" type="button" onClick={saveGig}>
                       {editingGigId ? "Save Changes" : "Save Gig"}
