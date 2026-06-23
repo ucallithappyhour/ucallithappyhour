@@ -424,7 +424,9 @@ export default function Home() {
             <h2>For Booking Agents & Talent Buyers</h2>
 
             <div className="event-card">
-              <p className="performer">Earn $25 Every Time an Artist Joins</p>
+              <p className="performer">
+  Earn $25 Every Time an Artist Completes Setup
+</p>
 
               <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
                 Give your artists a smarter way to engage fans.
@@ -437,6 +439,9 @@ export default function Home() {
               </p>
 
               <div style={{ marginTop: 18, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+                <div>✓ Free Agent Account</div>
+                <div>✓ Free Dashboard</div>
+                <div>✓ Free Referral Tools</div>
                 <div>✓ Earn $25 per completed artist setup</div>
                 <div>✓ Give artists a referral discount</div>
                 <div>✓ Track signups from your own dashboard</div>
@@ -456,7 +461,9 @@ export default function Home() {
 
               <p style={{ marginTop: 16, fontWeight: 900, fontSize: "1.05rem" }}>
                 Refer 10 artists = $250 in commissions.
-              </p>
+                <p style={{ opacity: 0.9, marginTop: 12 }}>
+  Free to join. No monthly fees.
+</p>
 
               <Link className="btn" href="/agents">
                                 Request Agent Account
