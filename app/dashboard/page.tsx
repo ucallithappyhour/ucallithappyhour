@@ -169,34 +169,32 @@ export default function DashboardPage() {
   );
 
   async function updateGroup(group: RequestGroup, status: string) {
-    const ids = group.items.map((request) => request.id);
+  const ids = group.items.map((request) => request.id);
 
-    if (ids.length === 0) return;
+  if (ids.length === 0) return;
 
-    setRequests((current) =>
-      current.filter((request) => !ids.includes(request.id))
-    );
+  setRequests((current) =>
+    current.filter((request) => !ids.includes(request.id))
+  );
 
-    const { error } = await supabase
-      .from("song_requests")
-      .update({ status })
-      .in("id", ids);
+  const response = await fetch("/api/song-request-status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      ids,
+      status
+    })
+  });
 
-    if (error) {
-      setMessage(`Could not update request: ${error.message}`);
-      loadArtistAndRequests();
-    }
+  const data = await response.json();
+
+  if (!response.ok) {
+    setMessage(`Could not update request: ${data.error}`);
+    loadArtistAndRequests();
   }
-
-  async function addGroupToLibrary(group: RequestGroup) {
-    if (!artist?.artist_slug) return;
-
-    const { error: songError } = await supabase.from("songs").insert({
-      title: group.song,
-      artist: group.artist || "",
-      artist_slug: artist.artist_slug,
-      is_active: true
-    });
+}
 
     if (songError) {
       setMessage(`Could not add song to library: ${songError.message}`);
