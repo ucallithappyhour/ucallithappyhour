@@ -225,11 +225,23 @@ export default function Home() {
               </div>
             )}
 
-            <h1 className="title">Choose Your Artist</h1>
+<h1 className="title">
+  Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
+</h1>
 
-            <p className="tagline">
-              Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
-            </p>
+<p
+  className="tagline"
+  style={{
+    maxWidth: 760,
+    margin: "0 auto 28px",
+    lineHeight: 1.6,
+  }}
+>
+  <strong>Think TouchTunes, but for live music.</strong> Browse an
+  artist&apos;s song library, send requests, and help shape the show.
+</p>
+
+<h2 style={{ marginTop: 18 }}>Choose Your Artist</h2>
 
             <div className="section">
               <h2>Available Artists</h2>
