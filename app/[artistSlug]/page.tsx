@@ -28,6 +28,7 @@ type Gig = {
   end_time: string | null;
   recurring_type: string | null;
   special_note: string | null;
+  allow_requests: boolean | null;
 };
 
 type GigOccurrence = {
