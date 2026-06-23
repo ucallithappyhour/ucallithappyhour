@@ -40,6 +40,7 @@ export default function DynamicRequestSongPage() {
   const [name, setName] = useState("");
   const [dedication, setDedication] = useState("");
   const [loading, setLoading] = useState(false);
+  const [freeBirdMode, setFreeBirdMode] = useState(false);
   const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(
     null
   );
@@ -118,6 +119,7 @@ export default function DynamicRequestSongPage() {
     setDedication("");
     setQuery("");
     setLoading(false);
+    setFreeBirdMode(false);
     setSuccessMode(null);
   }
 
@@ -127,6 +129,7 @@ export default function DynamicRequestSongPage() {
     setName("");
     setDedication("");
     setLoading(false);
+    setFreeBirdMode(false);
     setSuccessMode(null);
   }
 
@@ -138,6 +141,7 @@ export default function DynamicRequestSongPage() {
     setName("");
     setDedication("");
     setLoading(false);
+    setFreeBirdMode(false);
     setSuccessMode(null);
   }
 
@@ -154,29 +158,19 @@ export default function DynamicRequestSongPage() {
         ? selectedSong?.artist
         : futureArtist.trim() || "Unknown Artist";
 
-if (!title) return;
+    if (!title) return;
 
-const normalizedTitle = title
-  .toLowerCase()
-  .replace(/[^a-z0-9]/g, "");
+    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-const normalizedArtist = String(songArtist || "")
-  .toLowerCase()
-  .replace(/[^a-z0-9]/g, "");
+    if (
+      artistSlug === "brian-quinn" &&
+      normalizedTitle.includes("freebird")
+    ) {
+      setFreeBirdMode(true);
+      return;
+    }
 
-if (
-  artistSlug === "brian-quinn" &&
-  normalizedTitle.includes("freebird")
-) {
-  alert(
-    "🦅 Brian will gladly play Free Bird... for a $1,000 tip."
-  );
-
-  openTipLink();
-  return;
-}
-
-setLoading(true);
+    setLoading(true);
 
     try {
       const response = await fetch("/api/song-request", {
@@ -221,13 +215,7 @@ setLoading(true);
         fontFamily: "Arial, sans-serif"
       }}
     >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 760,
-          margin: "0 auto"
-        }}
-      >
+      <div style={{ width: "100%", maxWidth: 760, margin: "0 auto" }}>
         <h1
           style={{
             fontSize: "clamp(30px, 7vw, 56px)",
@@ -293,7 +281,8 @@ setLoading(true);
                         setMode("future"),
                         setFutureTitle(song.title),
                         setFutureArtist(song.artist),
-                        setSuccessMode(null))
+                        setSuccessMode(null),
+                        setFreeBirdMode(false))
                       : openTonightRequest(song)
                   }
                   style={{
@@ -388,7 +377,7 @@ setLoading(true);
         </div>
       </div>
 
-      {(selectedSong || mode === "future") && (
+      {(selectedSong || mode === "future" || freeBirdMode) && (
         <div
           style={{
             position: "fixed",
@@ -426,7 +415,47 @@ setLoading(true);
               ×
             </button>
 
-            {successMode ? (
+            {freeBirdMode ? (
+              <>
+                <h2 style={{ marginTop: 0 }}>🦅 Free Bird Request Detected</h2>
+
+                <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+                  Brian&apos;s current rate for Free Bird is{" "}
+                  <strong>$1,000</strong>.
+                </p>
+
+                <button
+                  onClick={openTipLink}
+                  style={{
+                    width: "100%",
+                    padding: "15px 18px",
+                    fontSize: 18,
+                    borderRadius: 10,
+                    border: 0,
+                    background: "#ffd84d",
+                    color: "#000",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    marginBottom: 12
+                  }}
+                >
+                  💸 Pay Brian $1,000
+                </button>
+
+                <button
+                  onClick={resetToCatalog}
+                  style={{
+                    width: "100%",
+                    padding: "12px 18px",
+                    fontSize: 16,
+                    borderRadius: 8,
+                    cursor: "pointer"
+                  }}
+                >
+                  Back to Catalog
+                </button>
+              </>
+            ) : successMode ? (
               <>
                 <h2 style={{ marginTop: 0 }}>
                   {successMode === "tonight"
