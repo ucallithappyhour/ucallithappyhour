@@ -13,6 +13,7 @@ type BookingAgent = {
   phone: string | null;
   artists_represented: string | null;
   referral_code: string | null;
+  logo_url: string | null;
 };
 
 export default function AgentDashboard() {
@@ -145,6 +146,26 @@ export default function AgentDashboard() {
                 Log Out
               </button>
             </div>
+
+{agent.logo_url && (
+  <div
+    style={{
+      textAlign: "center",
+      marginTop: 24,
+      marginBottom: 8
+    }}
+  >
+    <img
+      src={agent.logo_url}
+      alt="Agency Logo"
+      style={{
+        maxHeight: 120,
+        maxWidth: "100%",
+        objectFit: "contain"
+      }}
+    />
+  </div>
+)}
 
             <div
               style={{
