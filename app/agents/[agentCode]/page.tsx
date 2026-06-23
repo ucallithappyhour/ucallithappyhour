@@ -397,11 +397,19 @@ const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
               )}
             </div>
 
-            <div style={{ marginTop: 24 }}>
-              <Link href="/agents" style={{ color: "#ffd84d", fontWeight: 800 }}>
-                ← Back to Agent Portal
-              </Link>
-            </div>
+            <div
+  style={{
+    marginTop: 24,
+    textAlign: "center"
+  }}
+>
+  <Link
+    href={`/agents/${agentCode}/profile`}
+    className="btn"
+  >
+    Edit Agency Profile
+  </Link>
+</div>
           </section>
         </div>
       </div>

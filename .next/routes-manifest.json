@@ -31,6 +31,14 @@
       "namedRegex": "^/agents/(?<nxtPagentCode>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/agents/[agentCode]/profile",
+      "regex": "^/agents/([^/]+?)/profile(?:/)?$",
+      "routeKeys": {
+        "nxtPagentCode": "nxtPagentCode"
+      },
+      "namedRegex": "^/agents/(?<nxtPagentCode>[^/]+?)/profile(?:/)?$"
+    },
+    {
       "page": "/[artistSlug]",
       "regex": "^/([^/]+?)(?:/)?$",
       "routeKeys": {
