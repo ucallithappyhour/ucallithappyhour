@@ -188,7 +188,7 @@ export default function DashboardPage() {
     })
   });
 
-  const data = await response.json();
+    const data = await response.json();
 
   if (!response.ok) {
     setMessage(`Could not update request: ${data.error}`);
@@ -196,26 +196,37 @@ export default function DashboardPage() {
   }
 }
 
-    if (songError) {
-      setMessage(`Could not add song to library: ${songError.message}`);
-      return;
-    }
+async function addGroupToLibrary(group: RequestGroup) {
+  if (!artist?.artist_slug) return;
 
-    await updateGroup(group, "added_to_library");
+  const { error: songError } = await supabase.from("songs").insert({
+    title: group.song,
+    artist: group.artist || "",
+    artist_slug: artist.artist_slug,
+    is_active: true
+  });
+
+  if (songError) {
+    setMessage(`Could not add song to library: ${songError.message}`);
+    return;
   }
 
-  function RequestGroupCard({ group }: { group: RequestGroup }) {
-    const isFuture = group.requestType === "future";
+  await updateGroup(group, "added_to_library");
+}
 
-    return (
-      <div
-        style={{
-          background: isFuture ? "#241a00" : "#181818",
-          padding: 20,
-          borderRadius: 12,
-          marginBottom: 20,
-          border: isFuture ? "2px solid #ffd84d" : "2px solid #7ee787"
-        }}
+function RequestGroupCard({ group }: { group: RequestGroup }) {
+  const isFuture = group.requestType === "future";
+
+  return (
+    <div
+      style={{
+        background: isFuture ? "#241a00" : "#181818",
+        padding: 20,
+        borderRadius: 12,
+        marginBottom: 20,
+        border: isFuture ? "2px solid #ffd84d" : "2px solid #7ee787"
+      }}
+    >
       >
         <div
           style={{
