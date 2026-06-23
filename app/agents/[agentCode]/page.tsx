@@ -181,17 +181,23 @@ const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
             className="accountCard"
             style={{ maxWidth: 980, margin: "0 auto" }}
           >
-            <div className="brand">U CALL IT HAPPY HOUR</div>
+            
 
 {agent.logo_url && (
-  <div style={{ textAlign: "center", marginBottom: 18 }}>
+  <div
+    style={{
+      textAlign: "center",
+      marginBottom: 24
+    }}
+  >
     <img
       src={agent.logo_url}
       alt={`${agent.agency_name || "Agency"} logo`}
       style={{
-        maxWidth: 180,
-        maxHeight: 120,
-        objectFit: "contain"
+        maxWidth: "100%",
+        maxHeight: 180,
+        objectFit: "contain",
+        borderRadius: 8
       }}
     />
   </div>
