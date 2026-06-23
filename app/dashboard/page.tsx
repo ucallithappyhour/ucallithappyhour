@@ -407,6 +407,37 @@ async function removeFromPlaylist(song: PlaylistSong) {
   await loadArtistAndRequests();
 }
 
+async function movePlaylistSong(song: PlaylistSong, direction: "up" | "down") {
+  const songsForGig = playlistSongs
+    .filter((item) => item.gig_id === song.gig_id)
+    .sort((a, b) => (a.position || 0) - (b.position || 0));
+
+  const currentIndex = songsForGig.findIndex((item) => item.id === song.id);
+  const swapIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+
+  if (currentIndex < 0 || swapIndex < 0 || swapIndex >= songsForGig.length) {
+    return;
+  }
+
+  const currentSong = songsForGig[currentIndex];
+  const swapSong = songsForGig[swapIndex];
+
+  const currentPosition = currentSong.position || currentIndex + 1;
+  const swapPosition = swapSong.position || swapIndex + 1;
+
+  await supabase
+    .from("gig_playlists")
+    .update({ position: swapPosition })
+    .eq("id", currentSong.id);
+
+  await supabase
+    .from("gig_playlists")
+    .update({ position: currentPosition })
+    .eq("id", swapSong.id);
+
+  await loadArtistAndRequests();
+}
+
 async function addManualSongToPlaylist() {
   if (!artist?.artist_slug) return;
   if (!manualSongGigId) return;
@@ -592,14 +623,36 @@ async function addManualSongToPlaylist() {
     }}
   >
     <div>
-      <strong>
-        {index + 1}. {song.song}
-      </strong>
-      <br />
-      <span style={{ opacity: 0.8 }}>
-        {song.artist || "Unknown Artist"}
-      </span>
-    </div>
+  <strong>
+    {index + 1}. {song.song}
+  </strong>
+  <br />
+  <span style={{ opacity: 0.8 }}>
+    {song.artist || "Unknown Artist"}
+  </span>
+
+  <div
+    style={{
+      display: "flex",
+      gap: 6,
+      marginTop: 8
+    }}
+  >
+    <button
+      onClick={() => movePlaylistSong(song, "up")}
+      disabled={index === 0}
+    >
+      ↑
+    </button>
+
+    <button
+      onClick={() => movePlaylistSong(song, "down")}
+      disabled={index === songs.length - 1}
+    >
+      ↓
+    </button>
+  </div>
+</div>
 
     <button
       onClick={() => removeFromPlaylist(song)}
