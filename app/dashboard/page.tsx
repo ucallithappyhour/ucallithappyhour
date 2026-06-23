@@ -345,7 +345,7 @@ export default function DashboardPage() {
             marginBottom: 10
           }}
         >
-          {isFuture ? "🎵 Gig Setlist Suggestion" : "🎤 Tonight's Request"}
+          {isFuture ? "🎵 Suggested for This Gig" : "🎤 Tonight's Request"}
         </div>
 
         <h2>
@@ -397,7 +397,7 @@ export default function DashboardPage() {
               fontWeight: "bold"
             }}
           >
-            Add to Library
+            Add to Playlist
           </button>
         ) : (
           <button
