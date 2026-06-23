@@ -403,8 +403,6 @@ export default function DynamicArtistPage() {
   Request Songs For This Gig
 </Link>
                 </div>
-              ))
-            )}
           </div>
 
           {(websiteUrl || facebookUrl || instagramUrl || youtubeUrl) && (
