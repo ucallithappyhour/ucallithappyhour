@@ -192,15 +192,21 @@ function openFutureSuggestion() {
       return;
     }
 
-    if (normalizedTitle.includes("browneyedgirl")) {
-      setPremiumSongMode("browneyedgirl");
-      return;
-    }
+   if (
+  normalizedTitle.includes("browneyedgirl") ||
+  normalizedTitle.includes("browneyegirl")
+) {
+  setPremiumSongMode("browneyedgirl");
+  return;
+}
 
-    if (normalizedTitle.includes("wagonwheel")) {
-      setPremiumSongMode("wagonwheel");
-      return;
-    }
+  if (
+  normalizedTitle.includes("wagonwheel") ||
+  normalizedTitle.includes("wagonwheels")
+) {
+  setPremiumSongMode("wagonwheel");
+  return;
+}
   }
 }
 
