@@ -108,22 +108,26 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
-  useEffect(() => {
+    useEffect(() => {
     loadArtistAndRequests();
 
     const channel = supabase
       .channel("song-request-updates")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "song_requests" },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "song_requests"
+        },
         (payload) => {
-  console.log("Realtime event:", payload);
-  loadArtistAndRequests();
-}
+          console.log("Realtime event:", payload);
+          loadArtistAndRequests();
+        }
       )
       .subscribe((status) => {
-  console.log("Realtime status:", status);
-});
+        console.log("Realtime status:", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
