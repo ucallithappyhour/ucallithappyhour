@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 
 type Registration = {
@@ -12,8 +12,10 @@ type Registration = {
   artist_type: string | null;
   notes: string | null;
   referred_by: string | null;
+  referring_agent: string | null;
   setup_fee: number | null;
   status: string;
+  created_at?: string | null;
 };
 
 type Artist = {
@@ -52,6 +54,17 @@ function makeReferralCode(name: string) {
   return `${base || "ARTIST"}20`;
 }
 
+function formatDate(value?: string | null) {
+  if (!value) return "-";
+  return new Date(value).toLocaleDateString();
+}
+
+function getCommission(reg: Registration) {
+  if (reg.referring_agent) return 25;
+  if (reg.referred_by) return 20;
+  return 0;
+}
+
 export default function AdminRegistrationsPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -66,6 +79,21 @@ export default function AdminRegistrationsPage() {
   const [editEndTime, setEditEndTime] = useState("");
   const [editRecurringType, setEditRecurringType] = useState("One-Time");
 
+  const totalAgentReferrals = useMemo(
+    () => registrations.filter((r) => r.referring_agent).length,
+    [registrations]
+  );
+
+  const totalArtistReferrals = useMemo(
+    () => registrations.filter((r) => r.referred_by).length,
+    [registrations]
+  );
+
+  const totalCommissions = useMemo(
+    () => registrations.reduce((sum, reg) => sum + getCommission(reg), 0),
+    [registrations]
+  );
+
   async function loadRegistrations() {
     const { data, error } = await supabase
       .from("artist_registrations")
@@ -73,7 +101,7 @@ export default function AdminRegistrationsPage() {
       .order("id", { ascending: false });
 
     if (error) {
-      setMessage("Could not load registrations.");
+      setMessage("Could not load registrations: " + error.message);
       return;
     }
 
@@ -259,10 +287,48 @@ export default function AdminRegistrationsPage() {
             <h1 className="title">Artist Registrations</h1>
 
             <p className="tagline">
-              Track artist signups, payment status, referrals, artist pages, and gigs.
+              Track artist signups, payment status, referrals, commissions,
+              artist pages, and gigs.
             </p>
 
             {message && <div className="message">{message}</div>}
+
+            <div
+              className="section"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: 14
+              }}
+            >
+              <div>
+                <h3>Total Registrations</h3>
+                <p style={{ fontSize: 28, fontWeight: 900 }}>
+                  {registrations.length}
+                </p>
+              </div>
+
+              <div>
+                <h3>Agent Referrals</h3>
+                <p style={{ fontSize: 28, fontWeight: 900 }}>
+                  {totalAgentReferrals}
+                </p>
+              </div>
+
+              <div>
+                <h3>Artist Referrals</h3>
+                <p style={{ fontSize: 28, fontWeight: 900 }}>
+                  {totalArtistReferrals}
+                </p>
+              </div>
+
+              <div>
+                <h3>Commissions Owed</h3>
+                <p style={{ fontSize: 28, fontWeight: 900 }}>
+                  ${totalCommissions}
+                </p>
+              </div>
+            </div>
 
             {registrations.length === 0 ? (
               <div className="section">No artist registrations found.</div>
@@ -270,26 +336,63 @@ export default function AdminRegistrationsPage() {
               registrations.map((reg) => {
                 const slug = makeSlug(reg.artist_name);
                 const referralCode = makeReferralCode(reg.artist_name);
+                const commission = getCommission(reg);
 
                 return (
                   <div key={reg.id} className="section">
                     <h2>{reg.artist_name}</h2>
 
-                    <p><strong>Status:</strong> {reg.status || "unknown"}</p>
-                    <p><strong>Contact:</strong> {reg.contact_name}</p>
-                    <p><strong>Email:</strong> {reg.email}</p>
-                    <p><strong>Phone:</strong> {reg.phone || "-"}</p>
-                    <p><strong>Type:</strong> {reg.artist_type || "-"}</p>
-                    <p><strong>Setup Fee:</strong> ${reg.setup_fee || 99}</p>
-                    <p><strong>Referred By:</strong> {reg.referred_by || "None"}</p>
-                    <p><strong>Referral Code To Assign:</strong> {referralCode}</p>
+                    <p>
+                      <strong>Status:</strong> {reg.status || "unknown"}
+                    </p>
+                    <p>
+                      <strong>Created:</strong> {formatDate(reg.created_at)}
+                    </p>
+                    <p>
+                      <strong>Contact:</strong> {reg.contact_name}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {reg.email}
+                    </p>
+                    <p>
+                      <strong>Phone:</strong> {reg.phone || "-"}
+                    </p>
+                    <p>
+                      <strong>Type:</strong> {reg.artist_type || "-"}
+                    </p>
+                    <p>
+                      <strong>Setup Fee:</strong> ${reg.setup_fee || 99}
+                    </p>
+                    <p>
+                      <strong>Artist Referral:</strong>{" "}
+                      {reg.referred_by || "None"}
+                    </p>
+                    <p>
+                      <strong>Agent Referral:</strong>{" "}
+                      {reg.referring_agent || "None"}
+                    </p>
+                    <p>
+                      <strong>Commission Owed:</strong>{" "}
+                      {commission > 0 ? `$${commission}` : "None"}
+                    </p>
+                    <p>
+                      <strong>Referral Code To Assign:</strong> {referralCode}
+                    </p>
 
-                    {reg.notes && <p><strong>Notes:</strong> {reg.notes}</p>}
+                    {reg.notes && (
+                      <p>
+                        <strong>Notes:</strong> {reg.notes}
+                      </p>
+                    )}
 
-                    <p><strong>Artist URL:</strong> /{slug}</p>
+                    <p>
+                      <strong>Artist URL:</strong> /{slug}
+                    </p>
 
                     {reg.status === "artist_created" ? (
-                      <p style={{ fontWeight: 800 }}>Artist page already created.</p>
+                      <p style={{ fontWeight: 800 }}>
+                        Artist page already created.
+                      </p>
                     ) : (
                       <button className="btn" onClick={() => createArtistPage(reg)}>
                         Create Artist Page
