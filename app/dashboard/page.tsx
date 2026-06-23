@@ -116,9 +116,14 @@ export default function DashboardPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "song_requests" },
-        () => loadArtistAndRequests()
+        (payload) => {
+  console.log("Realtime event:", payload);
+  loadArtistAndRequests();
+}
       )
-      .subscribe();
+      .subscribe((status) => {
+  console.log("Realtime status:", status);
+});
 
     return () => {
       supabase.removeChannel(channel);
