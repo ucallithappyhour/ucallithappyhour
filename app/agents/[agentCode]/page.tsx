@@ -57,7 +57,9 @@ export default function AgentDashboardPage() {
 
 const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
   referralUrl
-)}&size=300`;
+)}&size=300&margin=2&centerImageSizeRatio=0.16&centerImageUrl=${encodeURIComponent(
+  "https://www.ucallithappyhour.com/ucallit-logo.png.png"
+)}`;
 
   const completedRegistrations = useMemo(
     () =>

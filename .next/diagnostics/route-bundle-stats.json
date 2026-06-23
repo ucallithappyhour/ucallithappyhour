@@ -62,11 +62,11 @@
   },
   {
     "route": "/agents/[agentCode]",
-    "firstLoadUncompressedJsBytes": 755450,
+    "firstLoadUncompressedJsBytes": 755448,
     "firstLoadChunkPaths": [
       ".next\\static\\chunks\\05-c3ty_6dwfk.js",
       ".next\\static\\chunks\\2rjht1i8j1gsp.js",
-      ".next\\static\\chunks\\1nkig86kmw142.js",
+      ".next\\static\\chunks\\02_iwv4qipowg.js",
       ".next\\static\\chunks\\0byta0t64wukb.js",
       ".next\\static\\chunks\\0vm21_1eh7154.js",
       ".next\\static\\chunks\\3krfs4awckr-k.js",
