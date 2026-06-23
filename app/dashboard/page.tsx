@@ -21,6 +21,13 @@ type SongRequest = {
   artist_slug: string | null;
 };
 
+type RequestGroup = {
+  song: string;
+  artist: string;
+  requestType: string;
+  items: SongRequest[];
+};
+
 export default function DashboardPage() {
   const [requests, setRequests] = useState<SongRequest[]>([]);
   const [artist, setArtist] = useState<Artist | null>(null);
@@ -31,73 +38,74 @@ export default function DashboardPage() {
     setLoading(true);
     setMessage("");
 
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
+    const params = new URLSearchParams(window.location.search);
+    const artistFromUrl = params.get("artist");
 
-    if (!user?.email) {
-      setArtist(null);
-      setRequests([]);
-      setMessage("Please log in to view your dashboard.");
-      setLoading(false);
-      return;
-    }
+    let artistData: Artist | null = null;
 
-    const { data: artistData, error: artistError } = await supabase
-      .from("artists")
-      .select("artist_slug, artist_name")
-      .eq("owner_email", user.email)
-      .maybeSingle();
+    if (artistFromUrl) {
+      const { data, error } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name")
+        .eq("artist_slug", artistFromUrl)
+        .maybeSingle();
 
-    if (artistError) {
-      setArtist(null);
-      setRequests([]);
-      setMessage(`Could not load artist profile: ${artistError.message}`);
-      setLoading(false);
-      return;
-    }
+      if (error || !data) {
+        setArtist(null);
+        setRequests([]);
+        setMessage("Could not load that artist dashboard.");
+        setLoading(false);
+        return;
+      }
 
-    if (!artistData) {
-      setArtist(null);
-      setRequests([]);
-      setMessage("No artist profile is linked to this login.");
-      setLoading(false);
-      return;
+      artistData = data;
+    } else {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+
+      if (!user?.email) {
+        setArtist(null);
+        setRequests([]);
+        setMessage("Please log in to view your dashboard.");
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name")
+        .eq("owner_email", user.email)
+        .maybeSingle();
+
+      if (error || !data) {
+        setArtist(null);
+        setRequests([]);
+        setMessage("No artist profile is linked to this login.");
+        setLoading(false);
+        return;
+      }
+
+      artistData = data;
     }
 
     setArtist(artistData);
 
-    const { data, error } = await supabase
+    const { data: requestData, error: requestError } = await supabase
       .from("song_requests")
       .select("*")
       .eq("artist_slug", artistData.artist_slug)
       .eq("status", "pending")
       .order("created_at", { ascending: false });
 
-    if (error) {
+    if (requestError) {
       setRequests([]);
-      setMessage(`Could not load song requests: ${error.message}`);
+      setMessage(`Could not load song requests: ${requestError.message}`);
     } else {
-      setRequests(data || []);
+      setRequests(requestData || []);
     }
 
     setLoading(false);
-  }
-
-  async function loadRequestsOnly(currentArtistSlug: string) {
-    const { data, error } = await supabase
-      .from("song_requests")
-      .select("*")
-      .eq("artist_slug", currentArtistSlug)
-      .eq("status", "pending")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      setMessage(`Could not refresh requests: ${error.message}`);
-      return;
-    }
-
-    setRequests(data || []);
   }
 
   useEffect(() => {
@@ -108,9 +116,7 @@ export default function DashboardPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "song_requests" },
-        () => {
-          loadArtistAndRequests();
-        }
+        () => loadArtistAndRequests()
       )
       .subscribe();
 
@@ -119,72 +125,13 @@ export default function DashboardPage() {
     };
   }, []);
 
-  async function updateGroup(
-    song: string,
-    requestArtist: string,
-    requestType: string,
-    status: string
-  ) {
-    if (!artist?.artist_slug) return;
-
-    const ids = requests
-      .filter(
-        (request) =>
-          request.song === song &&
-          request.artist === requestArtist &&
-          (request.request_type || "tonight") === requestType &&
-          request.artist_slug === artist.artist_slug
-      )
-      .map((request) => request.id);
-
-    if (ids.length === 0) return;
-
-    const { error } = await supabase
-      .from("song_requests")
-      .update({ status })
-      .in("id", ids);
-
-    if (error) {
-      setMessage(`Could not update request: ${error.message}`);
-      return;
-    }
-
-    setRequests((current) => current.filter((request) => !ids.includes(request.id)));
-
-    if (artist.artist_slug) {
-      loadRequestsOnly(artist.artist_slug);
-    }
-  }
-
-  async function addGroupToLibrary(group: {
-    song: string;
-    artist: string;
-    requestType: string;
-    items: SongRequest[];
-  }) {
-    if (!artist?.artist_slug) return;
-
-    const { error: songError } = await supabase.from("songs").insert({
-      title: group.song,
-      artist: group.artist || "",
-      artist_slug: artist.artist_slug,
-      is_active: true
-    });
-
-    if (songError) {
-      setMessage(`Could not add song to library: ${songError.message}`);
-      return;
-    }
-
-    await updateGroup(group.song, group.artist, group.requestType, "added_to_library");
-  }
-
   function groupRequests(items: SongRequest[]) {
     const groups: Record<string, SongRequest[]> = {};
 
     items.forEach((request) => {
       const requestType = request.request_type || "tonight";
       const key = `${request.song}|||${request.artist}|||${requestType}`;
+
       if (!groups[key]) groups[key] = [];
       groups[key].push(request);
     });
@@ -192,7 +139,13 @@ export default function DashboardPage() {
     return Object.entries(groups)
       .map(([key, groupedItems]) => {
         const [song, requestArtist, requestType] = key.split("|||");
-        return { song, artist: requestArtist, requestType, items: groupedItems };
+
+        return {
+          song,
+          artist: requestArtist,
+          requestType,
+          items: groupedItems
+        };
       })
       .sort((a, b) => b.items.length - a.items.length);
   }
@@ -215,16 +168,45 @@ export default function DashboardPage() {
     [requests]
   );
 
-  function RequestGroupCard({
-    group
-  }: {
-    group: {
-      song: string;
-      artist: string;
-      requestType: string;
-      items: SongRequest[];
-    };
-  }) {
+  async function updateGroup(group: RequestGroup, status: string) {
+    const ids = group.items.map((request) => request.id);
+
+    if (ids.length === 0) return;
+
+    setRequests((current) =>
+      current.filter((request) => !ids.includes(request.id))
+    );
+
+    const { error } = await supabase
+      .from("song_requests")
+      .update({ status })
+      .in("id", ids);
+
+    if (error) {
+      setMessage(`Could not update request: ${error.message}`);
+      loadArtistAndRequests();
+    }
+  }
+
+  async function addGroupToLibrary(group: RequestGroup) {
+    if (!artist?.artist_slug) return;
+
+    const { error: songError } = await supabase.from("songs").insert({
+      title: group.song,
+      artist: group.artist || "",
+      artist_slug: artist.artist_slug,
+      is_active: true
+    });
+
+    if (songError) {
+      setMessage(`Could not add song to library: ${songError.message}`);
+      return;
+    }
+
+    await updateGroup(group, "added_to_library");
+  }
+
+  function RequestGroupCard({ group }: { group: RequestGroup }) {
     const isFuture = group.requestType === "future";
 
     return (
@@ -265,7 +247,11 @@ export default function DashboardPage() {
         {group.items.map((item) => (
           <div
             key={item.id}
-            style={{ borderTop: "1px solid #444", paddingTop: 12, marginTop: 12 }}
+            style={{
+              borderTop: "1px solid #444",
+              paddingTop: 12,
+              marginTop: 12
+            }}
           >
             <p>
               <strong>Requested by:</strong> {item.requester_name || "Guest"}
@@ -302,9 +288,7 @@ export default function DashboardPage() {
           </button>
         ) : (
           <button
-            onClick={() =>
-              updateGroup(group.song, group.artist, group.requestType, "played")
-            }
+            onClick={() => updateGroup(group, "played")}
             style={{
               padding: "10px 16px",
               marginRight: 10,
@@ -318,16 +302,15 @@ export default function DashboardPage() {
         )}
 
         <button
-          onClick={() =>
-            updateGroup(group.song, group.artist, group.requestType, "skipped")
-          }
+          onClick={() => updateGroup(group, isFuture ? "dismissed" : "skipped")}
           style={{
             padding: "10px 16px",
             borderRadius: 8,
-            cursor: "pointer"
+            cursor: "pointer",
+            fontWeight: "bold"
           }}
         >
-          Skip
+          {isFuture ? "Dismiss" : "Skip"}
         </button>
       </div>
     );
