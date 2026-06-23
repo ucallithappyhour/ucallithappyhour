@@ -654,7 +654,21 @@ async function addManualSongToPlaylist() {
             </p>
           </div>
 
-          
+          <button
+  onClick={() => setManualSongGigId(gigGroup.gigId)}
+  style={{
+    padding: "10px 16px",
+    borderRadius: 999,
+    cursor: "pointer",
+    fontWeight: "bold",
+    background: "#ffd84d",
+    color: "#000",
+    border: 0
+  }}
+>
+  + Add Song
+</button>
+
         </div>
 
         <GigPlaylist songs={gigGroup.playlist} />
