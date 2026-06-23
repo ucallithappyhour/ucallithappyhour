@@ -83,7 +83,7 @@ export default function AgentRegisterPage() {
       setMessage("Account created successfully. Redirecting...");
 
       // ✅ CLEAN SAAS FLOW (NO TIMEOUT HACKS)
-      router.push("/account/setup/login");
+      router.push("/agents");
 
     } catch (err) {
       console.error(err);
