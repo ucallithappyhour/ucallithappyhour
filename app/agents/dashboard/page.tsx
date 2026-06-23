@@ -31,8 +31,10 @@ export default function AgentDashboard() {
   const qrUrl = useMemo(() => {
     if (!referralLink) return "";
     return `https://quickchart.io/qr?text=${encodeURIComponent(
-      referralLink
-    )}&size=700&margin=2`;
+  referralLink
+)}&size=900&margin=2&centerImageUrl=${encodeURIComponent(
+  "https://www.ucallithappyhour.com/ucallit-qr-logo.png"
+)}&centerImageSizeRatio=0.18`;
   }, [referralLink]);
 
   useEffect(() => {
@@ -315,7 +317,7 @@ export default function AgentDashboard() {
                     alt="Agent referral QR code"
                     style={{
                       width: "100%",
-                      maxWidth: 240,
+                      maxWidth: 300,
                       background: "#fff",
                       borderRadius: 12
                     }}
