@@ -2,13 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 function makeReferralCode(name: string) {
   return (
     name
@@ -20,6 +13,18 @@ function makeReferralCode(name: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceKey) {
+      return NextResponse.json(
+        { error: "Missing Supabase server environment variables." },
+        { status: 500 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceKey);
+
     const body = await req.json();
 
     const agencyName = body.agency_name?.trim();
@@ -31,16 +36,13 @@ export async function POST(req: NextRequest) {
 
     if (!agencyName || !contactName || !email || !password) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields." },
         { status: 400 }
       );
     }
 
     const referralCode = makeReferralCode(agencyName);
 
-    // ======================================================
-    // 1. CREATE SUPABASE AUTH USER
-    // ======================================================
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
@@ -49,21 +51,14 @@ export async function POST(req: NextRequest) {
       });
 
     if (authError || !authData?.user) {
-      console.log("❌ AUTH FAILED:", authError);
-
       return NextResponse.json(
-        { error: authError?.message || "Auth user creation failed" },
+        { error: authError?.message || "Auth user creation failed." },
         { status: 500 }
       );
     }
 
     const authUser = authData.user;
 
-    console.log("✅ AUTH USER CREATED:", authUser.id);
-
-    // ======================================================
-    // 2. CREATE BOOKING AGENT LINKED TO AUTH USER
-    // ======================================================
     const { data: agent, error: dbError } = await supabase
       .from("booking_agents")
       .insert({
@@ -80,63 +75,52 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (dbError) {
-      console.error("DB insert error:", dbError);
-
       return NextResponse.json(
-        { error: "Failed to create agent record" },
+        { error: dbError.message || "Failed to create agent record." },
         { status: 500 }
       );
     }
 
-    // ======================================================
-    // 3. SEND WELCOME EMAIL
-    // ======================================================
-    await resend.emails.send({
-      from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
-      to: email,
-      subject: "Your Agent Login is Ready",
-      html: `
-        <div style="font-family:Arial; color:#111; line-height:1.6;">
-          <h2>Welcome to U Call It Happy Hour 🎸</h2>
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
-          <p>Your agent account has been created successfully.</p>
+        await resend.emails.send({
+          from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
+          to: email,
+          subject: "Your Agent Login is Ready",
+          html: `
+            <div style="font-family:Arial; color:#111; line-height:1.6;">
+              <h2>Welcome to U Call It Happy Hour 🎸</h2>
+              <p>Your agent account has been created successfully.</p>
+              <p><strong>Agency:</strong> ${agencyName}</p>
+              <p><strong>Referral Code:</strong> ${referralCode}</p>
+              <p>You can now log in using your email and password.</p>
+              <p>
+                <a href="https://www.ucallithappyhour.com/agents"
+                  style="display:inline-block;padding:12px 18px;background:#ffd84d;color:#000;font-weight:bold;text-decoration:none;border-radius:8px;">
+                  Login to Dashboard
+                </a>
+              </p>
+            </div>
+          `
+        });
+      } catch (emailError) {
+        console.error("Agent welcome email failed:", emailError);
+      }
+    }
 
-          <p><strong>Agency:</strong> ${agencyName}</p>
-          <p><strong>Agent Code:</strong> ${referralCode}</p>
-
-          <p>You can now log in using your email and password.</p>
-
-          <p>
-            <a href="https://www.ucallithappyhour.com/agents/login"
-              style="display:inline-block;padding:12px 18px;background:#ffd84d;color:#000;font-weight:bold;text-decoration:none;border-radius:8px;">
-              Login to Dashboard
-            </a>
-          </p>
-
-          <hr />
-
-          <p style="font-size:12px;color:#555;">
-            Use your email + password to access your dashboard anytime.
-          </p>
-        </div>
-      `
-    });
-
-    // ======================================================
-    // 4. RESPONSE
-    // ======================================================
     return NextResponse.json({
       success: true,
       agent,
       referral_code: referralCode,
-      login_url: "/agents/login"
+      login_url: "/agents"
     });
-
   } catch (error) {
     console.error("Agent register error:", error);
 
     return NextResponse.json(
-      { error: "Server error" },
+      { error: "Server error while creating agent account." },
       { status: 500 }
     );
   }
