@@ -41,9 +41,12 @@ export default function DynamicRequestSongPage() {
   const [dedication, setDedication] = useState("");
   const [loading, setLoading] = useState(false);
   const [freeBirdMode, setFreeBirdMode] = useState(false);
+  const [premiumSongMode, setPremiumSongMode] = useState<
+  "browneyedgirl" | "wagonwheel" | false
+>(false);
   const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(
     null
-  );
+);
 
   const artistName = artist?.artist_name || "the artist";
   const resolvedArtistSlug = artist?.artist_slug || artistSlug;
@@ -120,18 +123,54 @@ export default function DynamicRequestSongPage() {
     setQuery("");
     setLoading(false);
     setFreeBirdMode(false);
+    setPremiumSongMode(false);
     setSuccessMode(null);
   }
 
-  function openTonightRequest(song: Song) {
-    setSelectedSong(song);
-    setMode("tonight");
-    setName("");
-    setDedication("");
-    setLoading(false);
-    setFreeBirdMode(false);
-    setSuccessMode(null);
+function openTonightRequest(song: Song) {
+  alert(`clicked: ${song.title} | slug: ${artistSlug}`);
+  const normalizedTitle = song.title.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const normalizedSlug = String(artistSlug).toLowerCase().trim();
+
+  setName("");
+  setDedication("");
+  setLoading(false);
+  setFreeBirdMode(false);
+  setPremiumSongMode(false);
+  setSuccessMode(null);
+
+  if (normalizedSlug === "brian-quinn") {
+    if (normalizedTitle.includes("freebird")) {
+      setSelectedSong(null);
+      setMode("tonight");
+      setFreeBirdMode(true);
+      return;
+    }
+
+if (
+  normalizedTitle.includes("browneyedgirl") ||
+  normalizedTitle.includes("vanmorrison")
+) {
+  setSelectedSong(null);
+  setMode("tonight");
+  setPremiumSongMode("browneyedgirl");
+  return;
+}
+
+if (
+  normalizedTitle.includes("wagonwheel") ||
+  normalizedTitle.includes("dariusrucker")
+) {
+  setSelectedSong(null);
+  setMode("tonight");
+  setPremiumSongMode("wagonwheel");
+  return;
+}
   }
+
+  setSelectedSong(song);
+  setMode("tonight");
+}
 
   function openFutureSuggestion() {
     setSelectedSong(null);
@@ -142,6 +181,7 @@ export default function DynamicRequestSongPage() {
     setDedication("");
     setLoading(false);
     setFreeBirdMode(false);
+    setPremiumSongMode(false);
     setSuccessMode(null);
   }
 
@@ -162,16 +202,24 @@ export default function DynamicRequestSongPage() {
 
     const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    if (
-      artistSlug === "brian-quinn" &&
-      normalizedTitle.includes("freebird")
-    ) {
-      setFreeBirdMode(true);
-      return;
-    }
+if (artistSlug === "brian-quinn") {
+  if (normalizedTitle.includes("freebird")) {
+    setFreeBirdMode(true);
+    return;
+  }
 
-    setLoading(true);
 
+}
+
+setLoading(true);if (normalizedTitle.includes("browneyedgirl")) {
+  setPremiumSongMode("browneyedgirl");
+  return;
+}
+
+if (normalizedTitle.includes("wagonwheel")) {
+  setPremiumSongMode("wagonwheel");
+  return;
+}
     try {
       const response = await fetch("/api/song-request", {
         method: "POST",
@@ -377,7 +425,10 @@ export default function DynamicRequestSongPage() {
         </div>
       </div>
 
-      {(selectedSong || mode === "future" || freeBirdMode) && (
+      {(selectedSong ||
+  mode === "future" ||
+  freeBirdMode ||
+  premiumSongMode) && (
         <div
           style={{
             position: "fixed",
@@ -455,7 +506,59 @@ export default function DynamicRequestSongPage() {
                   Back to Catalog
                 </button>
               </>
-            ) : successMode ? (
+            ) : premiumSongMode ? (
+  <>
+    <h2 style={{ marginTop: 0 }}>
+  {premiumSongMode === "browneyedgirl"
+    ? "👀 Brown Eyed Girl Detected"
+    : "🛞 Wagon Wheel Detected"}
+</h2>
+
+    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+      Brian&apos;s current rate for this song is <strong>$500</strong>.
+    </p>
+
+    <button<p style={{ fontSize: 17, lineHeight: 1.5 }}>
+  {premiumSongMode === "browneyedgirl"
+    ? "Brian has heard this request approximately 47,000 times."
+    : "Brian will happily spin that wheel one more time."}
+
+  <br />
+  <br />
+
+  Current rate: <strong>$500</strong>.
+</p>
+      onClick={openTipLink}
+      style={{
+        width: "100%",
+        padding: "15px 18px",
+        fontSize: 18,
+        borderRadius: 10,
+        border: 0,
+        background: "#ffd84d",
+        color: "#000",
+        cursor: "pointer",
+        fontWeight: "bold",
+        marginBottom: 12
+      }}
+    >
+      💸 Pay Brian $500
+    </button>
+
+    <button
+      onClick={resetToCatalog}
+      style={{
+        width: "100%",
+        padding: "12px 18px",
+        fontSize: 16,
+        borderRadius: 8,
+        cursor: "pointer"
+      }}
+    >
+      Back to Catalog
+    </button>
+  </>
+) : successMode ? (
               <>
                 <h2 style={{ marginTop: 0 }}>
                   {successMode === "tonight"
