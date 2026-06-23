@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
 type ArtistProfile = {
@@ -28,7 +28,12 @@ type Gig = {
   end_time: string | null;
   recurring_type: string | null;
   special_note: string | null;
+};
 
+type GigOccurrence = {
+  gig: Gig;
+  occurrenceDate: Date;
+  occurrenceNumber: number;
 };
 
 function normalizeExternalUrl(url: string | null) {
@@ -75,22 +80,8 @@ export default function DynamicArtistPage() {
       .order("gig_date", { ascending: true });
 
     if (!error) {
-      console.log("GIGS", data);
       setGigs(data || []);
     }
-  }
-
-  function formatGigDate(dateValue: string | null) {
-    if (!dateValue) return "Date TBD";
-
-    const date = new Date(`${dateValue}T12:00:00`);
-
-    return date.toLocaleDateString([], {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    });
   }
 
   function formatTime(time: string | null) {
@@ -111,6 +102,76 @@ export default function DynamicArtistPage() {
     if (!start && end) return formatTime(end);
 
     return `${formatTime(start)} - ${formatTime(end)}`;
+  }
+
+  function formatGigDateForDisplay(dateValue: Date | null) {
+    if (!dateValue) return "Date TBD";
+
+    return dateValue.toLocaleDateString([], {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function getNextOccurrence(gig: Gig) {
+    if (!gig.gig_date) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const date = new Date(`${gig.gig_date}T12:00:00`);
+
+    if (gig.recurring_type === "Weekly") {
+      while (date < today) {
+        date.setDate(date.getDate() + 7);
+      }
+    } else if (gig.recurring_type === "Monthly") {
+      while (date < today) {
+        date.setMonth(date.getMonth() + 1);
+      }
+    } else if (date < today) {
+      return null;
+    }
+
+    return date;
+  }
+
+  function buildGigOccurrences(gigList: Gig[]) {
+    const occurrences: GigOccurrence[] = [];
+
+    gigList.forEach((gig) => {
+      const firstOccurrence = getNextOccurrence(gig);
+      if (!firstOccurrence) return;
+
+      const repeatCount =
+        gig.recurring_type === "Weekly" || gig.recurring_type === "Monthly"
+          ? 4
+          : 1;
+
+      for (let index = 0; index < repeatCount; index++) {
+        const occurrenceDate = new Date(firstOccurrence);
+
+        if (gig.recurring_type === "Weekly") {
+          occurrenceDate.setDate(firstOccurrence.getDate() + index * 7);
+        }
+
+        if (gig.recurring_type === "Monthly") {
+          occurrenceDate.setMonth(firstOccurrence.getMonth() + index);
+        }
+
+        occurrences.push({
+          gig,
+          occurrenceDate,
+          occurrenceNumber: index
+        });
+      }
+    });
+
+    return occurrences.sort(
+      (a, b) => a.occurrenceDate.getTime() - b.occurrenceDate.getTime()
+    );
   }
 
   useEffect(() => {
@@ -152,73 +213,17 @@ export default function DynamicArtistPage() {
     );
   }
 
-function getNextOccurrence(gig: Gig) {
-  if (!gig.gig_date) return null;
+  const artistName = artist.artist_name || "Artist";
+  const logo = artist.logo_url || "";
+  const tipUrl = normalizeExternalUrl(artist.tip_link);
+  const websiteUrl = normalizeExternalUrl(artist.website);
+  const facebookUrl = normalizeExternalUrl(artist.facebook);
+  const instagramUrl = normalizeExternalUrl(artist.instagram);
+  const youtubeUrl = normalizeExternalUrl(artist.youtube);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const upcomingOccurrences = buildGigOccurrences(gigs);
+  const nextOccurrence = upcomingOccurrences[0] || null;
 
-  const date = new Date(`${gig.gig_date}T12:00:00`);
-
-  if (gig.recurring_type === "Weekly") {
-    while (date < today) {
-      date.setDate(date.getDate() + 7);
-    }
-  } else if (gig.recurring_type === "Monthly") {
-    while (date < today) {
-      date.setMonth(date.getMonth() + 1);
-    }
-  } else if (date < today) {
-    return null;
-  }
-
-  return date;
-}
-
-function formatGigDateForDisplay(dateValue: Date | null) {
-  if (!dateValue) return "Date TBD";
-
-  return dateValue.toLocaleDateString([], {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-}
-
-const artistName = artist.artist_name || "Artist";
-const logo = artist.logo_url || "";
-const tipUrl = normalizeExternalUrl(artist.tip_link);
-const websiteUrl = normalizeExternalUrl(artist.website);
-const facebookUrl = normalizeExternalUrl(artist.facebook);
-const instagramUrl = normalizeExternalUrl(artist.instagram);
-const youtubeUrl = normalizeExternalUrl(artist.youtube);
-
-const nextGig =
-  gigs.length > 0
-    ? [...gigs]
-        .sort((a, b) => {
-          const aDate = getNextOccurrence(a);
-          const bDate = getNextOccurrence(b);
-
-          if (!aDate) return 1;
-          if (!bDate) return -1;
-
-          return aDate.getTime() - bDate.getTime();
-        })[0]
-    : null;
-  gigs.length > 0
-    ? [...gigs]
-        .sort((a, b) => {
-          const aDate = getNextOccurrence(a);
-          const bDate = getNextOccurrence(b);
-
-          if (!aDate) return 1;
-          if (!bDate) return -1;
-
-          return aDate.getTime() - bDate.getTime();
-        })[0]
-    : null;
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
       <div
@@ -260,16 +265,17 @@ const nextGig =
               <p className="performer">{artistName}</p>
 
               <div className="details">
-{nextGig
-  ? `${nextGig.venue_name || "Venue TBD"} • ${formatGigDateForDisplay(
-      getNextOccurrence(nextGig)
-    )} • ${formatGigTime(
-      nextGig.start_time,
-      nextGig.end_time
-    )}`
-  : "Upcoming gigs coming soon"}
-</div>
-
+                {nextOccurrence
+                  ? `${
+                      nextOccurrence.gig.venue_name || "Venue TBD"
+                    } • ${formatGigDateForDisplay(
+                      nextOccurrence.occurrenceDate
+                    )} • ${formatGigTime(
+                      nextOccurrence.gig.start_time,
+                      nextOccurrence.gig.end_time
+                    )}`
+                  : "Upcoming gigs coming soon"}
+              </div>
 
               <Link className="btn" href={`/${artist.artist_slug}/request-song`}>
                 Request a Song
@@ -328,87 +334,78 @@ const nextGig =
           )}
 
           <div className="section">
-            <h2>Upcoming Appearances</h2>
-
-            {gigs.filter((gig) => getNextOccurrence(gig)).length === 0 ? (
-  <p className="empty">No upcoming gigs listed yet.</p>
-) : (
-  [...gigs]
-    .filter((gig) => getNextOccurrence(gig))
-    .sort((a, b) => {
-      const aDate = getNextOccurrence(a);
-      const bDate = getNextOccurrence(b);
-
-      if (!aDate) return 1;
-      if (!bDate) return -1;
-
-      return aDate.getTime() - bDate.getTime();
-    })
-    .map((gig) => (
-    <div
-      key={gig.id}
-      style={{
-        borderTop: "1px solid #333",
-        paddingTop: 14,
-        marginTop: 14,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        gap: 20
-      }}
-    >
-      <div style={{ flex: 1 }}>
-        <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
-          {gig.venue_name || "Venue TBD"}
-        </p>
-
-        <p className="details" style={{ margin: "0 0 6px" }}>
-          {formatGigDateForDisplay(getNextOccurrence(gig))} •{" "}
-          {formatGigTime(gig.start_time, gig.end_time)}
-        </p>
-
-        <p className="details" style={{ margin: 0 }}>
-          {gig.venue_address || "Address TBD"} •{" "}
-          {gig.recurring_type || "One-Time"}
-        </p>
-
-        {gig.special_note && (
-          <p
-            style={{
-              marginTop: 8,
-              color: "#d4af37",
-              fontStyle: "italic"
-            }}
-          >
-            {gig.special_note}
-          </p>
-        )}
-      </div>
-
-      <div
-        style={{
-          minWidth: 240,
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "flex-start"
-        }}
-      >
-        <Link
-          className="btn secondary"
-          href={`/${artist.artist_slug}/request-song?type=future&gig=${gig.id}`}
-        >
-          Request Songs For This Gig
-        </Link>
-      </div>
-    </div>
-  ))
-)}
-
+            <h2>About the Artist</h2>
+            <p>{artist.bio || "Artist bio coming soon."}</p>
           </div>
 
           <div className="section">
-            <h2>About the Artist</h2>
-            <p>{artist.bio || "Artist bio coming soon."}</p>
+            <h2>Upcoming Appearances</h2>
+
+            {upcomingOccurrences.length === 0 ? (
+              <p className="empty">No upcoming gigs listed yet.</p>
+            ) : (
+              upcomingOccurrences.map((occurrence) => (
+                <div
+                  key={`${occurrence.gig.id}-${occurrence.occurrenceDate.toISOString()}`}
+                  style={{
+                    borderTop: "1px solid #333",
+                    paddingTop: 14,
+                    marginTop: 14,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: 20
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+                      {occurrence.gig.venue_name || "Venue TBD"}
+                    </p>
+
+                    <p className="details" style={{ margin: "0 0 6px" }}>
+                      {formatGigDateForDisplay(occurrence.occurrenceDate)} •{" "}
+                      {formatGigTime(
+                        occurrence.gig.start_time,
+                        occurrence.gig.end_time
+                      )}
+                    </p>
+
+                    <p className="details" style={{ margin: 0 }}>
+                      {occurrence.gig.venue_address || "Address TBD"} •{" "}
+                      {occurrence.gig.recurring_type || "One-Time"}
+                    </p>
+
+                    {occurrence.gig.special_note && (
+                      <p
+                        style={{
+                          marginTop: 8,
+                          color: "#d4af37",
+                          fontStyle: "italic"
+                        }}
+                      >
+                        {occurrence.gig.special_note}
+                      </p>
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      minWidth: 240,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-start"
+                    }}
+                  >
+                    <Link
+                      className="btn secondary"
+                      href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
+                    >
+                      Request Songs For This Gig
+                    </Link>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {(websiteUrl || facebookUrl || instagramUrl || youtubeUrl) && (
