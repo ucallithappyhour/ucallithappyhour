@@ -16,6 +16,8 @@
   "/admin/registrations/page": "app/admin/registrations/page.js",
   "/agents/[agentCode]/page": "app/agents/[agentCode]/page.js",
   "/agents/[agentCode]/profile/page": "app/agents/[agentCode]/profile/page.js",
+  "/agents/dashboard/page": "app/agents/dashboard/page.js",
+  "/agents/login/page": "app/agents/login/page.js",
   "/agents/page": "app/agents/page.js",
   "/agents/register/page": "app/agents/register/page.js",
   "/api/agent-register/route": "app/api/agent-register/route.js",

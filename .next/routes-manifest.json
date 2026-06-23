@@ -147,6 +147,18 @@
       "namedRegex": "^/agents(?:/)?$"
     },
     {
+      "page": "/agents/dashboard",
+      "regex": "^/agents/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents/dashboard(?:/)?$"
+    },
+    {
+      "page": "/agents/login",
+      "regex": "^/agents/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents/login(?:/)?$"
+    },
+    {
       "page": "/agents/register",
       "regex": "^/agents/register(?:/)?$",
       "routeKeys": {},

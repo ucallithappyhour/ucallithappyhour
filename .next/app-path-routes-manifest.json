@@ -16,6 +16,8 @@
   "/admin/registrations/page": "/admin/registrations",
   "/agents/[agentCode]/page": "/agents/[agentCode]",
   "/agents/[agentCode]/profile/page": "/agents/[agentCode]/profile",
+  "/agents/dashboard/page": "/agents/dashboard",
+  "/agents/login/page": "/agents/login",
   "/agents/page": "/agents",
   "/agents/register/page": "/agents/register",
   "/api/agent-register/route": "/api/agent-register",
