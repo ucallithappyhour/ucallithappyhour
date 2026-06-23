@@ -25,12 +25,22 @@ type Registration = {
   status: string | null;
   setup_fee: number | null;
   referring_agent: string | null;
+  artist_slug?: string | null;
   created_at: string | null;
 };
 
 function formatDate(value?: string | null) {
   if (!value) return "-";
   return new Date(value).toLocaleDateString();
+}
+
+function makeSlug(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 export default function AgentDashboardPage() {
@@ -92,7 +102,7 @@ export default function AgentDashboardPage() {
     const { data: referralData, error: referralError } = await supabase
       .from("artist_registrations")
       .select(
-        "id, artist_name, contact_name, email, status, setup_fee, referring_agent, created_at"
+        "id, artist_name, contact_name, email, status, setup_fee, referring_agent, artist_slug, created_at"
       )
       .eq("referring_agent", agentCode)
       .order("id", { ascending: false });
@@ -149,7 +159,7 @@ export default function AgentDashboardPage() {
                 <strong>{agentCode}</strong>.
               </p>
 
-              <Link className="btn" href="/agents">
+              <Link className="btn" href="/agents/register">
                 Request an Agent Link
               </Link>
             </section>
@@ -322,6 +332,9 @@ export default function AgentDashboardPage() {
                   const completed =
                     reg.status === "paid" || reg.status === "artist_created";
 
+                  const artistSlug = reg.artist_slug || makeSlug(reg.artist_name);
+                  const artistUrl = `https://www.ucallithappyhour.com/${artistSlug}`;
+
                   return (
                     <div
                       key={reg.id}
@@ -347,17 +360,38 @@ export default function AgentDashboardPage() {
                       </p>
 
                       <p>
-                        <strong>Setup Fee:</strong> ${reg.setup_fee || 74}
+                        <strong>Artist Setup Fee:</strong> ${reg.setup_fee || 74}
+                      </p>
+
+                      <p>
+                        <strong>Referral Discount:</strong> $25 off regular $99
+                        setup
+                      </p>
+
+                      <p>
+                        <strong>Agent Commission:</strong>{" "}
+                        {completed ? "$25 earned" : "$25 pending"}
                       </p>
 
                       <p>
                         <strong>Registered:</strong> {formatDate(reg.created_at)}
                       </p>
 
-                      <p>
-                        <strong>Commission:</strong>{" "}
-                        {completed ? "$25 earned" : "$25 pending"}
-                      </p>
+                      {completed && (
+                        <p style={{ marginTop: 12 }}>
+                          <a
+                            href={artistUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              color: "#ffd84d",
+                              fontWeight: 800
+                            }}
+                          >
+                            View Artist Page →
+                          </a>
+                        </p>
+                      )}
                     </div>
                   );
                 })
@@ -366,7 +400,7 @@ export default function AgentDashboardPage() {
 
             <div style={{ marginTop: 24 }}>
               <Link href="/agents" style={{ color: "#ffd84d", fontWeight: 800 }}>
-                ← Back to Agent Signup Page
+                ← Back to Agent Portal
               </Link>
             </div>
           </section>
