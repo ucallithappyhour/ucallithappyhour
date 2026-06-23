@@ -38,24 +38,35 @@ export async function POST(req: NextRequest) {
 
     const referralCode = makeReferralCode(agencyName);
 
-    // 1. CREATE SUPABASE AUTH USER (🔥 CORE STEP)
-    const { data: authUser, error: authError } =
+    // ======================================================
+    // 1. CREATE SUPABASE AUTH USER (REAL LOGIN ACCOUNT)
+    // ======================================================
+    const { data, error: authError } =
       await supabase.auth.admin.createUser({
         email,
         password,
-        email_confirm: true // skip email confirmation for instant login
+        email_confirm: true
       });
 
-    if (authError || !authUser?.user) {
+    if (authError || !data?.user) {
       console.error("Auth create error:", authError);
+
       return NextResponse.json(
-        { error: authError?.message || "Failed to create auth user" },
+        {
+          error:
+            authError?.message ||
+            "Failed to create auth user"
+        },
         { status: 500 }
       );
     }
 
-    // 2. CREATE AGENT PROFILE LINKED TO AUTH USER
-    const { data, error } = await supabase
+    const authUser = data.user;
+
+    // ======================================================
+    // 2. CREATE BOOKING AGENT LINKED TO AUTH USER
+    // ======================================================
+    const { data: agent, error: dbError } = await supabase
       .from("booking_agents")
       .insert({
         agency_name: agencyName,
@@ -65,20 +76,23 @@ export async function POST(req: NextRequest) {
         artist_count: artistCount,
         referral_code: referralCode,
         status: "active",
-        auth_user_id: authUser.user.id // 🔗 THIS IS THE LINK
+        auth_user_id: authUser.id
       })
       .select()
       .single();
 
-    if (error) {
-      console.error("DB insert error:", error);
+    if (dbError) {
+      console.error("DB insert error:", dbError);
+
       return NextResponse.json(
         { error: "Failed to create agent record" },
         { status: 500 }
       );
     }
 
+    // ======================================================
     // 3. SEND WELCOME EMAIL
+    // ======================================================
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
       to: email,
@@ -110,14 +124,18 @@ export async function POST(req: NextRequest) {
       `
     });
 
+    // ======================================================
+    // 4. RESPONSE BACK TO FRONTEND
+    // ======================================================
     return NextResponse.json({
       success: true,
-      agent: data,
+      agent,
       referral_code: referralCode,
       login_url: "/agents/login"
     });
   } catch (error) {
     console.error("Agent register error:", error);
+
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }
