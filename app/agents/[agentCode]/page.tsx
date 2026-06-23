@@ -25,7 +25,6 @@ type Registration = {
   status: string | null;
   setup_fee: number | null;
   referring_agent: string | null;
-  artist_slug?: string | null;
   created_at: string | null;
 };
 
@@ -56,11 +55,9 @@ export default function AgentDashboardPage() {
     ? `https://www.ucallithappyhour.com/register?agent=${agentCode}`
     : "";
 
-  const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
-    referralUrl
-  )}&size=900&margin=2&centerImageUrl=${encodeURIComponent(
-    "https://www.ucallithappyhour.com/ucallit-logo.png.png"
-  )}`;
+const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
+  referralUrl
+)}&size=300`;
 
   const completedRegistrations = useMemo(
     () =>
@@ -102,7 +99,7 @@ export default function AgentDashboardPage() {
     const { data: referralData, error: referralError } = await supabase
       .from("artist_registrations")
       .select(
-        "id, artist_name, contact_name, email, status, setup_fee, referring_agent, artist_slug, created_at"
+        "id, artist_name, contact_name, email, status, setup_fee, referring_agent, created_at"
       )
       .eq("referring_agent", agentCode)
       .order("id", { ascending: false });
@@ -332,7 +329,7 @@ export default function AgentDashboardPage() {
                   const completed =
                     reg.status === "paid" || reg.status === "artist_created";
 
-                  const artistSlug = reg.artist_slug || makeSlug(reg.artist_name);
+                  const artistSlug = makeSlug(reg.artist_name);
                   const artistUrl = `https://www.ucallithappyhour.com/${artistSlug}`;
 
                   return (
