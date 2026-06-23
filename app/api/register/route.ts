@@ -15,8 +15,17 @@ export async function POST(request: Request) {
       phone,
       artistType,
       notes,
-      referredBy
+      referredBy,
+      referringAgent
     } = body;
+
+    const hasArtistReferral =
+      typeof referredBy === "string" && referredBy.trim() !== "";
+
+    const hasAgentReferral =
+      typeof referringAgent === "string" && referringAgent.trim() !== "";
+
+    const setupFee = hasAgentReferral ? 74 : hasArtistReferral ? 79 : 99;
 
     if (!artistName || !contactName || !email) {
       return NextResponse.json(
@@ -35,7 +44,8 @@ export async function POST(request: Request) {
         artist_type: artistType,
         notes,
         referred_by: referredBy || null,
-        setup_fee: 99,
+        referring_agent: referringAgent || null,
+        setup_fee: setupFee,
         status: "unpaid"
       })
       .select("id");
@@ -52,8 +62,6 @@ export async function POST(request: Request) {
     }
 
     const registrationId = registration[0].id;
-
-    
 
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
@@ -79,8 +87,9 @@ export async function POST(request: Request) {
         <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
         <p><strong>Artist Type:</strong> ${artistType || "Not provided"}</p>
         <p><strong>Notes:</strong> ${notes || "None"}</p>
-        <p><strong>Referred By:</strong> ${referredBy || "None"}</p>
-        <p><strong>Setup Fee:</strong> $99</p>
+        <p><strong>Artist Referral:</strong> ${referredBy || "None"}</p>
+        <p><strong>Agent Referral:</strong> ${referringAgent || "None"}</p>
+        <p><strong>Setup Fee:</strong> $${setupFee}</p>
 
         <br />
 
