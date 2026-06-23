@@ -39,32 +39,31 @@ export async function POST(req: NextRequest) {
     const referralCode = makeReferralCode(agencyName);
 
     // ======================================================
-    // 1. CREATE SUPABASE AUTH USER (REAL LOGIN ACCOUNT)
+    // 1. CREATE SUPABASE AUTH USER
     // ======================================================
-    const { data, error: authError } =
+    const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
         password,
         email_confirm: true
       });
 
-    if (authError || !data?.user) {
-      console.error("Auth create error:", authError);
+    console.log("🔥 AUTH DATA:", authData);
+    console.log("🔥 AUTH ERROR:", authError);
 
+    if (authError || !authData?.user) {
       return NextResponse.json(
         {
-          error:
-            authError?.message ||
-            "Failed to create auth user"
+          error: authError?.message || "Failed to create auth user"
         },
         { status: 500 }
       );
     }
 
-    const authUser = data.user;
+    const authUser = authData.user;
 
     // ======================================================
-    // 2. CREATE BOOKING AGENT LINKED TO AUTH USER
+    // 2. CREATE AGENT PROFILE LINKED TO AUTH USER
     // ======================================================
     const { data: agent, error: dbError } = await supabase
       .from("booking_agents")
@@ -125,7 +124,7 @@ export async function POST(req: NextRequest) {
     });
 
     // ======================================================
-    // 4. RESPONSE BACK TO FRONTEND
+    // 4. RESPONSE
     // ======================================================
     return NextResponse.json({
       success: true,
