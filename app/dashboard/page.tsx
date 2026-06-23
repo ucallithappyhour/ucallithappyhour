@@ -9,6 +9,14 @@ type Artist = {
   artist_name: string | null;
 };
 
+type Gig = {
+  id: number;
+  venue_name: string | null;
+  gig_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+};
+
 type SongRequest = {
   id: number;
   song: string;
@@ -19,6 +27,7 @@ type SongRequest = {
   request_type: "tonight" | "future" | null;
   created_at: string;
   artist_slug: string | null;
+  gig_id: number | null;
 };
 
 type RequestGroup = {
@@ -28,8 +37,15 @@ type RequestGroup = {
   items: SongRequest[];
 };
 
+type GigRequestGroup = {
+  gigId: number;
+  gig: Gig | null;
+  groups: RequestGroup[];
+};
+
 export default function DashboardPage() {
   const [requests, setRequests] = useState<SongRequest[]>([]);
+  const [gigsById, setGigsById] = useState<Record<number, Gig>>({});
   const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -100,15 +116,48 @@ export default function DashboardPage() {
 
     if (requestError) {
       setRequests([]);
+      setGigsById({});
       setMessage(`Could not load song requests: ${requestError.message}`);
+      setLoading(false);
+      return;
+    }
+
+    const loadedRequests = (requestData || []) as SongRequest[];
+    setRequests(loadedRequests);
+
+    const gigIds = Array.from(
+      new Set(
+        loadedRequests
+          .map((request) => request.gig_id)
+          .filter((gigId): gigId is number => typeof gigId === "number")
+      )
+    );
+
+    if (gigIds.length > 0) {
+      const { data: gigData, error: gigError } = await supabase
+        .from("gigs")
+        .select("id, venue_name, gig_date, start_time, end_time")
+        .in("id", gigIds);
+
+      if (gigError) {
+        setGigsById({});
+      } else {
+        const nextGigsById: Record<number, Gig> = {};
+
+        (gigData || []).forEach((gig) => {
+          nextGigsById[gig.id] = gig;
+        });
+
+        setGigsById(nextGigsById);
+      }
     } else {
-      setRequests(requestData || []);
+      setGigsById({});
     }
 
     setLoading(false);
   }
 
-    useEffect(() => {
+  useEffect(() => {
     loadArtistAndRequests();
 
     const channel = supabase
@@ -120,12 +169,11 @@ export default function DashboardPage() {
           schema: "public",
           table: "song_requests"
         },
-        (payload) => {
+        () => {
           loadArtistAndRequests();
         }
       )
-      .subscribe((status) => {
-      });
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -157,6 +205,26 @@ export default function DashboardPage() {
       .sort((a, b) => b.items.length - a.items.length);
   }
 
+  function formatGigDate(gig: Gig | null) {
+    if (!gig?.gig_date) return "Date TBD";
+
+    return new Date(`${gig.gig_date}T12:00:00`).toLocaleDateString([], {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function formatGigTime(gig: Gig | null) {
+    if (!gig?.start_time) return "";
+
+    const start = gig.start_time.slice(0, 5);
+    const end = gig.end_time ? gig.end_time.slice(0, 5) : "";
+
+    return end ? `${start} - ${end}` : start;
+  }
+
   const tonightGroups = useMemo(
     () =>
       groupRequests(
@@ -167,73 +235,105 @@ export default function DashboardPage() {
     [requests]
   );
 
-  const futureGroups = useMemo(
+  const upcomingGigGroups = useMemo(() => {
+    const futureWithGig = requests.filter(
+      (request) => request.request_type === "future" && request.gig_id
+    );
+
+    const byGig: Record<number, SongRequest[]> = {};
+
+    futureWithGig.forEach((request) => {
+      if (!request.gig_id) return;
+      if (!byGig[request.gig_id]) byGig[request.gig_id] = [];
+      byGig[request.gig_id].push(request);
+    });
+
+    return Object.entries(byGig)
+      .map(([gigId, gigRequests]) => {
+        const numericGigId = Number(gigId);
+
+        return {
+          gigId: numericGigId,
+          gig: gigsById[numericGigId] || null,
+          groups: groupRequests(gigRequests)
+        };
+      })
+      .sort((a, b) => {
+        const aDate = a.gig?.gig_date || "";
+        const bDate = b.gig?.gig_date || "";
+        return aDate.localeCompare(bDate);
+      });
+  }, [requests, gigsById]);
+
+  const unassignedFutureGroups = useMemo(
     () =>
       groupRequests(
-        requests.filter((request) => request.request_type === "future")
+        requests.filter(
+          (request) => request.request_type === "future" && !request.gig_id
+        )
       ),
     [requests]
   );
 
   async function updateGroup(group: RequestGroup, status: string) {
-  const ids = group.items.map((request) => request.id);
+    const ids = group.items.map((request) => request.id);
 
-  if (ids.length === 0) return;
+    if (ids.length === 0) return;
 
-  setRequests((current) =>
-    current.filter((request) => !ids.includes(request.id))
-  );
+    setRequests((current) =>
+      current.filter((request) => !ids.includes(request.id))
+    );
 
-  const response = await fetch("/api/song-request-status", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      ids,
-      status
-    })
-  });
+    const response = await fetch("/api/song-request-status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        ids,
+        status
+      })
+    });
 
     const data = await response.json();
 
-  if (!response.ok) {
-    setMessage(`Could not update request: ${data.error}`);
-    loadArtistAndRequests();
-  }
-}
-
-async function addGroupToLibrary(group: RequestGroup) {
-  if (!artist?.artist_slug) return;
-
-  const { error: songError } = await supabase.from("songs").insert({
-    title: group.song,
-    artist: group.artist || "",
-    artist_slug: artist.artist_slug,
-    is_active: true
-  });
-
-  if (songError) {
-    setMessage(`Could not add song to library: ${songError.message}`);
-    return;
+    if (!response.ok) {
+      setMessage(`Could not update request: ${data.error}`);
+      loadArtistAndRequests();
+    }
   }
 
-  await updateGroup(group, "added_to_library");
-}
+  async function addGroupToLibrary(group: RequestGroup) {
+    if (!artist?.artist_slug) return;
 
-function RequestGroupCard({ group }: { group: RequestGroup }) {
-  const isFuture = group.requestType === "future";
+    const { error: songError } = await supabase.from("songs").insert({
+      title: group.song,
+      artist: group.artist || "",
+      artist_slug: artist.artist_slug,
+      is_active: true
+    });
 
-  return (
-    <div
-      style={{
-        background: isFuture ? "#241a00" : "#181818",
-        padding: 20,
-        borderRadius: 12,
-        marginBottom: 20,
-        border: isFuture ? "2px solid #ffd84d" : "2px solid #7ee787"
-      }}
-    >
+    if (songError) {
+      setMessage(`Could not add song to library: ${songError.message}`);
+      return;
+    }
+
+    await updateGroup(group, "added_to_library");
+  }
+
+  function RequestGroupCard({ group }: { group: RequestGroup }) {
+    const isFuture = group.requestType === "future";
+
+    return (
+      <div
+        style={{
+          background: isFuture ? "#241a00" : "#181818",
+          padding: 20,
+          borderRadius: 12,
+          marginBottom: 20,
+          border: isFuture ? "2px solid #ffd84d" : "2px solid #7ee787"
+        }}
+      >
         <div
           style={{
             display: "inline-block",
@@ -245,9 +345,7 @@ function RequestGroupCard({ group }: { group: RequestGroup }) {
             marginBottom: 10
           }}
         >
-          {isFuture
-            ? "⭐ Future Song Suggestion"
-            : "🎤 Tonight's Playlist Request"}
+          {isFuture ? "🎵 Gig Setlist Suggestion" : "🎤 Tonight's Request"}
         </div>
 
         <h2>
@@ -317,7 +415,7 @@ function RequestGroupCard({ group }: { group: RequestGroup }) {
         )}
 
         <button
-          onClick={() => updateGroup(group, isFuture ? "dismissed" : "skipped")}
+          onClick={() => updateGroup(group, isFuture ? "reviewed" : "skipped")}
           style={{
             padding: "10px 16px",
             borderRadius: 8,
@@ -325,8 +423,72 @@ function RequestGroupCard({ group }: { group: RequestGroup }) {
             fontWeight: "bold"
           }}
         >
-          {isFuture ? "Dismiss" : "Skip"}
+          {isFuture ? "Mark Reviewed" : "Skip"}
         </button>
+      </div>
+    );
+  }
+
+  function GigRequestCard({ gigGroup }: { gigGroup: GigRequestGroup }) {
+    const gigTime = formatGigTime(gigGroup.gig);
+
+    return (
+      <div
+        style={{
+          background: "#181818",
+          padding: 22,
+          borderRadius: 14,
+          marginBottom: 24,
+          border: "1px solid #333"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 16,
+            alignItems: "flex-start",
+            flexWrap: "wrap",
+            borderBottom: "1px solid #333",
+            paddingBottom: 14,
+            marginBottom: 18
+          }}
+        >
+          <div>
+            <h2 style={{ marginTop: 0, marginBottom: 6 }}>
+              {gigGroup.gig?.venue_name || `Gig #${gigGroup.gigId}`}
+            </h2>
+
+            <p style={{ margin: 0, opacity: 0.85 }}>
+              {formatGigDate(gigGroup.gig)}
+              {gigTime ? ` • ${gigTime}` : ""}
+            </p>
+          </div>
+
+          <button
+            onClick={() =>
+              alert("Playlist builder is next. Requests are now grouped by gig.")
+            }
+            style={{
+              padding: "10px 16px",
+              borderRadius: 999,
+              cursor: "pointer",
+              fontWeight: "bold",
+              background: "#ffd84d",
+              color: "#000",
+              border: 0
+            }}
+          >
+            Build Playlist
+          </button>
+        </div>
+
+        {gigGroup.groups.map((group) => (
+          <RequestGroupCard
+            key={`${gigGroup.gigId}-${group.song}-${group.artist}`}
+            group={group}
+          />
+        ))}
       </div>
     );
   }
@@ -355,7 +517,7 @@ function RequestGroupCard({ group }: { group: RequestGroup }) {
           <p>
             {artist?.artist_name
               ? `Dashboard for ${artist.artist_name}.`
-              : "Tonight's requests are separated from future song suggestions."}
+              : "Tonight's requests and upcoming gig setlists."}
           </p>
         </div>
 
@@ -396,21 +558,31 @@ function RequestGroupCard({ group }: { group: RequestGroup }) {
           </section>
 
           <section style={{ marginTop: 40 }}>
-            <h2>⭐ Future Song Suggestions</h2>
+            <h2>🎵 Upcoming Gig Requests</h2>
 
-            {futureGroups.length === 0 ? (
+            {upcomingGigGroups.length === 0 ? (
               <div style={{ background: "#181818", padding: 20, borderRadius: 12 }}>
-                <p>No future suggestions yet.</p>
+                <p>No upcoming gig requests yet.</p>
               </div>
             ) : (
-              futureGroups.map((group) => (
+              upcomingGigGroups.map((gigGroup) => (
+                <GigRequestCard key={gigGroup.gigId} gigGroup={gigGroup} />
+              ))
+            )}
+          </section>
+
+          {unassignedFutureGroups.length > 0 && (
+            <section style={{ marginTop: 40 }}>
+              <h2>⭐ Unassigned Future Suggestions</h2>
+
+              {unassignedFutureGroups.map((group) => (
                 <RequestGroupCard
                   key={`${group.song}-${group.artist}-${group.requestType}`}
                   group={group}
                 />
-              ))
-            )}
-          </section>
+              ))}
+            </section>
+          )}
         </>
       )}
     </main>
