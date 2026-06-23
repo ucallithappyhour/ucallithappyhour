@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
 type ArtistProfile = {
@@ -33,7 +33,6 @@ type Gig = {
 type GigOccurrence = {
   gig: Gig;
   occurrenceDate: Date;
-  occurrenceNumber: number;
 };
 
 function normalizeExternalUrl(url: string | null) {
@@ -163,8 +162,7 @@ export default function DynamicArtistPage() {
 
         occurrences.push({
           gig,
-          occurrenceDate,
-          occurrenceNumber: index
+          occurrenceDate
         });
       }
     });
@@ -397,12 +395,15 @@ export default function DynamicArtistPage() {
                     }}
                   >
                     <Link
-  className="btn secondary"
-  href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
->
-  Request Songs For This Gig
-</Link>
+                      className="btn secondary"
+                      href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
+                    >
+                      Request Songs For This Gig
+                    </Link>
+                  </div>
                 </div>
+              ))
+            )}
           </div>
 
           {(websiteUrl || facebookUrl || instagramUrl || youtubeUrl) && (
