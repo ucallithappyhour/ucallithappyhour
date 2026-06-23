@@ -48,8 +48,23 @@ export async function POST(req: NextRequest) {
         email_confirm: true
       });
 
-    console.log("🔥 AUTH DATA:", authData);
-    console.log("🔥 AUTH ERROR:", authError);
+    if (authError) {
+  console.log("❌ AUTH FAILED:", authError);
+  return NextResponse.json(
+    { error: authError.message },
+    { status: 500 }
+  );
+}
+
+if (!authData?.user) {
+  console.log("❌ NO USER RETURNED");
+  return NextResponse.json(
+    { error: "No auth user created" },
+    { status: 500 }
+  );
+}
+
+console.log("✅ AUTH USER CREATED:", authData.user.id);
 
     if (authError || !authData?.user) {
       return NextResponse.json(
