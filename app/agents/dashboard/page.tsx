@@ -154,6 +154,7 @@ export default function AgentDashboard() {
     textAlign: "center"
   }}
 
+  >
 
 {agent.logo_url ? (
   <img
