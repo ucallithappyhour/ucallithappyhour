@@ -244,8 +244,6 @@ export default function Home() {
   library, send requests, and help shape the show.
 </p>
 
-<h2 style={{ marginTop: 18 }}>Choose Your Artist</h2>
-
             <div className="section">
               <h2>Available Artists</h2>
 
