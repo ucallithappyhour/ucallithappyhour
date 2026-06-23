@@ -396,27 +396,12 @@ export default function DynamicArtistPage() {
                       alignItems: "flex-start"
                     }}
                   >
-                    {gig.allow_requests !== false ? (
-  <Link
-    className="btn secondary"
-    href={`/${artist.artist_slug}/request-song?type=future&gig=${gig.id}`}
-  >
-    Request Songs For This Gig
-  </Link>
-) : (
-  <div
-    style={{
-      padding: "10px 16px",
-      borderRadius: 8,
-      background: "#333",
-      color: "#aaa",
-      fontWeight: 700
-    }}
-  >
-    Requests Disabled
-  </div>
-)}
-                  </div>
+                    <Link
+  className="btn secondary"
+  href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
+>
+  Request Songs For This Gig
+</Link>
                 </div>
               ))
             )}
