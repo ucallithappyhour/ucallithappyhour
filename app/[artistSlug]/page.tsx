@@ -471,3 +471,8 @@ export default function DynamicArtistPage() {
     </div>
   </div>
 )}
+  </div>
+      </div>
+    </main>
+  );
+}
