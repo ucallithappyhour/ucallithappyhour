@@ -154,9 +154,30 @@ export default function DynamicRequestSongPage() {
         ? selectedSong?.artist
         : futureArtist.trim() || "Unknown Artist";
 
-    if (!title) return;
+if (!title) return;
 
-    setLoading(true);
+const normalizedTitle = title
+  .toLowerCase()
+  .replace(/[^a-z0-9]/g, "");
+
+const normalizedArtist = String(songArtist || "")
+  .toLowerCase()
+  .replace(/[^a-z0-9]/g, "");
+
+if (
+  artistSlug === "brian-quinn" &&
+  normalizedTitle.includes("freebird") &&
+  normalizedArtist.includes("lynyrdskynyrd")
+) {
+  alert(
+    "🦅 Brian will gladly play Free Bird... for a $1,000 tip."
+  );
+
+  openTipLink();
+  return;
+}
+
+setLoading(true);
 
     try {
       const response = await fetch("/api/song-request", {
