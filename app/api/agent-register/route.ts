@@ -9,17 +9,14 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-function makeReferralCode(agencyName: string) {
+// simple referral code generator
+function makeReferralCode(name: string) {
   return (
-    agencyName
+    name
       .toUpperCase()
       .replace(/[^A-Z0-9]/g, "")
       .slice(0, 10) + "25"
   );
-}
-
-function makeSetupToken() {
-  return crypto.randomUUID().replace(/-/g, "");
 }
 
 export async function POST(req: NextRequest) {
@@ -31,35 +28,34 @@ export async function POST(req: NextRequest) {
     const email = body.email?.trim().toLowerCase();
     const phone = body.phone?.trim() || "";
     const artistCount = Number(body.artist_count || 0);
+    const password = body.password?.trim(); // 🔥 REQUIRED FOR AUTH
 
-    if (!agencyName || !contactName || !email) {
+    if (!agencyName || !contactName || !email || !password) {
       return NextResponse.json(
-        { error: "Agency name, contact name, and email are required." },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const baseCode = makeReferralCode(agencyName);
+    const referralCode = makeReferralCode(agencyName);
 
-    const { data: existing } = await supabase
-      .from("booking_agents")
-      .select("id")
-      .eq("referral_code", baseCode)
-      .maybeSingle();
+    // 1. CREATE SUPABASE AUTH USER (THIS IS THE KEY CHANGE)
+    const { data: authUser, error: authError } =
+      await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true
+      });
 
-    const referralCode = existing
-      ? `${baseCode}${Math.floor(100 + Math.random() * 900)}`
-      : baseCode;
+    if (authError || !authUser?.user) {
+      console.error("Auth error:", authError);
+      return NextResponse.json(
+        { error: authError?.message || "Auth user creation failed" },
+        { status: 500 }
+      );
+    }
 
-    const setupToken = makeSetupToken();
-    const setupTokenExpiresAt = new Date(
-      Date.now() + 1000 * 60 * 60 * 24 * 30
-    ).toISOString();
-
-    const dashboardUrl = `https://www.ucallithappyhour.com/agents/${referralCode}`;
-    const profileUrl = `https://www.ucallithappyhour.com/agents/${referralCode}/profile?token=${setupToken}`;
-    const referralUrl = `https://www.ucallithappyhour.com/register?agent=${referralCode}`;
-
+    // 2. CREATE AGENT ROW LINKED TO AUTH USER
     const { data, error } = await supabase
       .from("booking_agents")
       .insert({
@@ -69,79 +65,47 @@ export async function POST(req: NextRequest) {
         phone,
         artist_count: artistCount,
         referral_code: referralCode,
-        setup_token: setupToken,
-        setup_token_expires_at: setupTokenExpiresAt,
-        status: "active"
+        status: "active",
+        auth_user_id: authUser.user.id // 🔗 CRITICAL LINK
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Agent registration error:", error);
+      console.error("DB insert error:", error);
       return NextResponse.json(
-        { error: "Could not create agent registration." },
+        { error: "Failed to create agent record" },
         { status: 500 }
       );
     }
 
+    // 3. EMAIL (CLEANED UP — NO TOKENS ANYMORE)
     await resend.emails.send({
       from: "U Call It Happy Hour <noreply@ucallithappyhour.com>",
       to: email,
-      subject: "Your U Call It Happy Hour Agent Links",
+      subject: "Your Agent Account is Ready",
       html: `
-        <div style="font-family:Arial,sans-serif; color:#111; line-height:1.6;">
-          <div style="text-align:center; margin-bottom:24px;">
-            <img
-              src="https://www.ucallithappyhour.com/ucallit-logo.png.png"
-              alt="U Call It Happy Hour"
-              width="190"
-              style="display:block; margin:0 auto;"
-            />
-          </div>
+        <div style="font-family:Arial; color:#111;">
+          <h2>Welcome to U Call It Happy Hour 🎸</h2>
 
-          <h2>Your Booking Agent Dashboard Is Ready</h2>
+          <p>Your booking agent account has been created.</p>
 
-          <p>Hi ${contactName},</p>
-
-          <p>
-            Your U Call It Happy Hour booking agent profile has been created for
-            <strong> ${agencyName}</strong>.
-          </p>
-
-          <p>
-            Share your referral link with artists. They save <strong>$25</strong>
-            on setup, and you earn <strong>$25</strong> when they complete setup.
-          </p>
-
+          <p><strong>Agency:</strong> ${agencyName}</p>
           <p><strong>Agent Code:</strong> ${referralCode}</p>
 
+          <p>You can now log in with your email and password.</p>
+
           <p>
-            <a
-              href="${dashboardUrl}"
-              style="display:inline-block;background:#d4af37;color:#000;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:bold;"
-            >
-              Open Agent Dashboard
+            <a href="https://www.ucallithappyhour.com/agents/login"
+              style="display:inline-block;padding:12px 18px;background:#ffd84d;color:#000;font-weight:bold;text-decoration:none;border-radius:8px;">
+              Login to Dashboard
             </a>
           </p>
 
-          <p>
-            <a
-              href="${profileUrl}"
-              style="display:inline-block;background:#111;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:bold;"
-            >
-              Set Up Agency Profile
-            </a>
-          </p>
+          <hr />
 
-          <hr style="margin:24px 0;" />
-
-          <p><strong>Referral Link:</strong><br />${referralUrl}</p>
-          <p><strong>Dashboard Link:</strong><br />${dashboardUrl}</p>
-          <p><strong>Profile Setup Link:</strong><br />${profileUrl}</p>
-
-          <p style="font-size:13px;color:#555;margin-top:24px;">
-            Save or bookmark your dashboard link so you can track referred
-            artists and commissions anytime.
+          <p style="font-size:12px;color:#555;">
+            Use your email + password to access your dashboard anytime.
           </p>
         </div>
       `
@@ -151,14 +115,13 @@ export async function POST(req: NextRequest) {
       success: true,
       agent: data,
       referral_code: referralCode,
-      referral_url: referralUrl,
-      dashboard_url: dashboardUrl,
-      profile_url: profileUrl
+      login_email: email,
+      dashboard_url: "/agents/login"
     });
   } catch (error) {
-    console.error("Agent register route error:", error);
+    console.error("Agent register error:", error);
     return NextResponse.json(
-      { error: "Unexpected server error." },
+      { error: "Server error" },
       { status: 500 }
     );
   }
