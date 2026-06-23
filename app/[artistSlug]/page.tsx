@@ -351,12 +351,12 @@ export default function DynamicArtistPage() {
           paddingTop: 14,
           marginTop: 14,
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          gap: 20
+          flexDirection: "column",
+          gap: 14,
+          alignItems: "stretch"
         }}
       >
-        <div style={{ flex: 1 }}>
+        <div style={{ width: "100%" }}>
           <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
             {occurrence.gig.venue_name || "Venue TBD"}
           </p>
