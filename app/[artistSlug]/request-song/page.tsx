@@ -451,7 +451,7 @@ if (normalizedTitle.includes("wagonwheel")) {
       </div>
 
       {(selectedSong ||
-  mode === "future" ||
+  futureTitle.trim().length > 0 ||
   freeBirdMode ||
   premiumSongMode) && (
         <div
