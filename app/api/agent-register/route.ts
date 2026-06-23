@@ -11,7 +11,7 @@ function makeReferralCode(agencyName: string) {
     agencyName
       .toUpperCase()
       .replace(/[^A-Z0-9]/g, "")
-      .slice(0, 10) + "20"
+      .slice(0, 10) + "25"
   );
 }
 
