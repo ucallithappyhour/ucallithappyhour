@@ -36,7 +36,6 @@ export default function DynamicRequestSongPage() {
   );
 
   const artistName = artist?.artist_name || "the artist";
-  
 
   console.log("ARTIST STATE", artist);
 
@@ -368,66 +367,81 @@ setArtist(artistData || null);
             }}
           >
             <button
-              onClick={resetToCatalog}
-              style={{
-                float: "right",
-                fontSize: 22,
-                background: "transparent",
-                color: "#fff",
-                border: 0,
-                cursor: "pointer"
-              }}
-            >
-              ×
-            </button>
+  onClick={resetToCatalog}
+  style={{
+    float: "right",
+    fontSize: 22,
+    background: "transparent",
+    color: "#fff",
+    border: 0,
+    cursor: "pointer"
+  }}
+>
+  ×
+</button>
 
-            {successMode ? (
-              <>
-                <h2 style={{ marginTop: 0 }}>
-                  {successMode === "tonight"
-                    ? "🎵 Request Sent!"
-                    : "🎵 Suggestion Received!"}
-                </h2>
+{successMode ? (
+  <>
+    <h2 style={{ marginTop: 0 }}>
+      {successMode === "tonight"
+        ? "🎵 Request Sent!"
+        : "🎵 Suggestion Received!"}
+    </h2>
 
-                <p style={{ fontSize: 17, lineHeight: 1.5 }}>
-                  {successMode === "tonight"
-                    ? "Thanks for helping shape tonight's setlist."
-                    : `We'll pass your suggestion along to ${artistName} for future shows.`}
-                </p>
+    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+      {successMode === "tonight"
+        ? "Thanks for helping shape tonight's setlist."
+        : `We'll pass your suggestion along to ${artistName} for future shows.`}
+    </p>
 
-                {artist?.tip_link && (
-                  <>
-                    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
-                      {successMode === "tonight"
-                        ? `Enjoying ${artistName}'s music?`
-                        : `Love what ${artistName} does?`}
-                    </p>
+    {successMode === "tonight" && (
+      <p
+        style={{
+          fontSize: 15,
+          lineHeight: 1.5,
+          color: "#bbb",
+          marginBottom: 18
+        }}
+      >
+        Your request has been sent to the artist. They'll do their best
+        to play it, depending on timing, audience requests, and the flow
+        of the show.
+      </p>
+    )}
 
-                    <button
-                      onClick={openTipLink}
-                      style={{
-                        width: "100%",
-                        padding: "15px 18px",
-                        fontSize: 18,
-                        borderRadius: 10,
-                        border: 0,
-                        background: "#ffd84d",
-                        color: "#000",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                        marginBottom: 12
-                      }}
-                    >
-                      💵 Tip {artistName}
-                    </button>
-                  </>
-                )}
+    {artist?.tip_link && (
+      <>
+        <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+          {successMode === "tonight"
+            ? `Enjoying ${artistName}'s music?`
+            : `Love what ${artistName} does?`}
+        </p>
 
-                <p style={{ opacity: 0.75, fontSize: 14, lineHeight: 1.4 }}>
-                  No pressure — your{" "}
-                  {successMode === "tonight" ? "request" : "suggestion"} has
-                  already been submitted.
-                </p>
+        <button
+          onClick={openTipLink}
+          style={{
+            width: "100%",
+            padding: "15px 18px",
+            fontSize: 18,
+            borderRadius: 10,
+            border: 0,
+            background: "#ffd84d",
+            color: "#000",
+            cursor: "pointer",
+            fontWeight: "bold",
+            marginBottom: 12
+          }}
+        >
+          💵 Tip {artistName}
+        </button>
+      </>
+    )}
+
+    <p style={{ opacity: 0.75, fontSize: 14, lineHeight: 1.4 }}>
+      No pressure — your{" "}
+      {successMode === "tonight" ? "request" : "suggestion"} has
+      already been submitted.
+    </p>
 
                 <button
                   onClick={resetToCatalog}
