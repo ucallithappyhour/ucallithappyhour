@@ -142,40 +142,52 @@ export default function AgentsPage() {
 
             <div
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: 16,
+                background: "#181818",
+                border: "1px solid #333",
+                borderRadius: 14,
+                padding: 22,
                 marginTop: 24
               }}
             >
-              {[
-                "Share your referral link",
-                "Artists get a setup discount",
-                "Track signups in your dashboard",
-                "Earn $25 per completed artist"
-              ].map((item, index) => (
-                <div
-                  key={item}
-                  style={{
-                    background: "#181818",
-                    border: "1px solid #333",
-                    borderRadius: 14,
-                    padding: 18
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 28,
-                      fontWeight: "bold",
-                      color: "#ffd84d",
-                      marginBottom: 8
-                    }}
-                  >
-                    {index + 1}
-                  </div>
-                  <p style={{ margin: 0, lineHeight: 1.4 }}>{item}</p>
+              <h2
+                style={{
+                  color: "#ffd84d",
+                  marginTop: 0,
+                  marginBottom: 16
+                }}
+              >
+                How It Works
+              </h2>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                  fontSize: 16,
+                  lineHeight: 1.45
+                }}
+              >
+                <div>
+                  <strong style={{ color: "#ffd84d" }}>1.</strong> Share your
+                  referral link
                 </div>
-              ))}
+
+                <div>
+                  <strong style={{ color: "#ffd84d" }}>2.</strong> Artists
+                  receive a setup discount
+                </div>
+
+                <div>
+                  <strong style={{ color: "#ffd84d" }}>3.</strong> Track
+                  signups in your dashboard
+                </div>
+
+                <div>
+                  <strong style={{ color: "#ffd84d" }}>4.</strong> Earn $25 per
+                  completed artist
+                </div>
+              </div>
             </div>
 
             <div style={{ marginTop: 24 }}>
