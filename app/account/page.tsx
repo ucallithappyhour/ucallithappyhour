@@ -38,6 +38,7 @@ type Gig = {
   end_time: string | null;
   recurring_type: string | null;
   special_note: string | null;
+  allow_requests: boolean | null;
 };
 
 type NewGig = {
@@ -81,7 +82,8 @@ const emptyGig: NewGig = {
   start_time: "",
   end_time: "",
   recurring_type: "One-Time",
-  special_note: ""
+  special_note: "",
+  allow_requests: true
 };
 
 const emptyArtist: NewArtist = {
@@ -342,7 +344,8 @@ export default function AccountPage() {
       start_time: newGig.start_time,
       end_time: newGig.end_time,
       recurring_type: newGig.recurring_type,
-        special_note: newGig.special_note || null
+      special_note: newGig.special_note || null,
+      allow_requests: newGig.allow_requests
     });
 
     if (error) {
@@ -396,7 +399,8 @@ export default function AccountPage() {
           start_time: newGig.start_time,
           end_time: newGig.end_time,
           recurring_type: newGig.recurring_type,
-          special_note: newGig.special_note || null
+          special_note: newGig.special_note || null,
+          allow_requests: newGig.allow_requests
         })
         .eq("id", editingGigId);
 
@@ -967,6 +971,37 @@ export default function AccountPage() {
   }
   placeholder="Patio show, birthday party, Eagles game after-party, special guest appearance..."
 />
+
+<label
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 12,
+    fontWeight: 800
+  }}
+>
+  <input
+    type="checkbox"
+    checked={newGig.allow_requests !== false}
+    onChange={(e) =>
+      updateGigField("allow_requests", e.target.checked)
+    }
+    style={{ width: 18, height: 18 }}
+  />
+  Allow song requests for this gig
+</label>
+
+<p
+  style={{
+    marginTop: 6,
+    marginBottom: 18,
+    color: "#bbb"
+  }}
+>
+  Turn this off for ticketed shows, fixed setlists, tribute nights,
+  or performances where requests are not a good fit.
+</p>
 
                     <button className="btn" type="button" onClick={saveGig}>
                       {editingGigId ? "Save Changes" : "Save Gig"}
