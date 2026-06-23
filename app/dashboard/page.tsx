@@ -121,12 +121,10 @@ export default function DashboardPage() {
           table: "song_requests"
         },
         (payload) => {
-          console.log("Realtime event:", payload);
           loadArtistAndRequests();
         }
       )
       .subscribe((status) => {
-        console.log("Realtime status:", status);
       });
 
     return () => {
