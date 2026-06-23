@@ -45,11 +45,19 @@ export default function AgentRegisterPage() {
     setReferralUrl("");
     setDashboardUrl("");
 
-    if (!agencyName || !contactName || !email) {
-      setMessage("All required fields must be filled.");
-      setLoading(false);
-      return;
-    }
+  const missing =
+  !agencyName?.trim() ||
+  !contactName?.trim() ||
+  !email?.trim() ||
+  !password ||
+  password.length < 6 ||
+  password !== confirmPassword;
+
+if (missing) {
+  setMessage("Please complete all required fields correctly.");
+  setLoading(false);
+  return;
+}
 
     if (password.length < 6) {
       setMessage("Password must be at least 6 characters.");
