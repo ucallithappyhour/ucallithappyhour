@@ -17,39 +17,33 @@ export default function AgentLoginPage() {
     setErrorMsg("");
     setLoading(true);
 
-    const { data, error: loginError } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
     setLoading(false);
 
-    if (loginError) {
-      setErrorMsg(loginError.message);
+    if (error || !data?.user) {
+      setErrorMsg(error?.message || "Login failed");
       return;
     }
 
-    if (!data?.user) {
-      setErrorMsg("Login failed. Please try again.");
-      return;
-    }
+    // 🔥 SESSION IS NOW ACTIVE IN BROWSER
 
-    // optional safety check (future-proofing hybrid setup)
-    const { data: agent } = await supabase
+    const { data: agent, error: agentError } = await supabase
       .from("booking_agents")
       .select("id")
       .eq("auth_user_id", data.user.id)
       .single();
 
-    if (!agent) {
-      setErrorMsg(
-        "No agent profile linked to this account. Contact admin."
-      );
+    if (agentError || !agent) {
+      setErrorMsg("No agent profile linked to this account.");
       return;
     }
 
-    router.push("/agents/dashboard");
+    // 🚀 CLEAN SAAS FLOW → ALWAYS GO TO ARTWORK FIRST
+    router.push("/account/artwork");
   }
 
   return (
