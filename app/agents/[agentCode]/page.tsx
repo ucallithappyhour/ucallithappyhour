@@ -46,6 +46,12 @@ export default function AgentDashboardPage() {
     ? `https://www.ucallithappyhour.com/register?agent=${agentCode}`
     : "";
 
+  const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
+    referralUrl
+  )}&size=900&margin=2&centerImageUrl=${encodeURIComponent(
+    "https://www.ucallithappyhour.com/ucallit-logo.png.png"
+  )}`;
+
   const completedRegistrations = useMemo(
     () =>
       registrations.filter(
@@ -105,6 +111,12 @@ export default function AgentDashboardPage() {
     if (!referralUrl) return;
     await navigator.clipboard.writeText(referralUrl);
     setMessage("Referral link copied.");
+  }
+
+  async function copyDashboardUrl() {
+    const dashboardUrl = `https://www.ucallithappyhour.com/agents/${agentCode}`;
+    await navigator.clipboard.writeText(dashboardUrl);
+    setMessage("Dashboard link copied.");
   }
 
   useEffect(() => {
@@ -186,6 +198,60 @@ export default function AgentDashboardPage() {
               <button className="btn" type="button" onClick={copyReferralUrl}>
                 Copy Referral Link
               </button>
+
+              <button
+                className="btn secondary"
+                type="button"
+                onClick={copyDashboardUrl}
+                style={{ marginLeft: 10 }}
+              >
+                Copy Dashboard Link
+              </button>
+
+              <div
+                style={{
+                  marginTop: 24,
+                  textAlign: "center",
+                  background: "#111",
+                  border: "1px solid #333",
+                  borderRadius: 14,
+                  padding: 20
+                }}
+              >
+                <h3 style={{ marginTop: 0 }}>Agent Referral QR Code</h3>
+
+                <img
+                  src={qrUrl}
+                  alt="Agent Referral QR"
+                  width="260"
+                  height="260"
+                  style={{
+                    background: "#fff",
+                    padding: 14,
+                    borderRadius: 16,
+                    maxWidth: "100%",
+                    height: "auto"
+                  }}
+                />
+
+                <p
+                  style={{
+                    marginTop: 12,
+                    opacity: 0.85
+                  }}
+                >
+                  Scan to register with your referral discount.
+                </p>
+
+                <a
+                  href={qrUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn"
+                >
+                  Download QR Code
+                </a>
+              </div>
             </div>
 
             <div
