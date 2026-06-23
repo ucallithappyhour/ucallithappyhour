@@ -61,7 +61,9 @@ export default function DashboardPage() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-
+const [manualSongGigId, setManualSongGigId] = useState<number | null>(null);
+const [manualSongTitle, setManualSongTitle] = useState("");
+const [manualSongArtist, setManualSongArtist] = useState("");
   async function loadArtistAndRequests() {
     setLoading(true);
     setMessage("");
@@ -405,6 +407,37 @@ async function removeFromPlaylist(song: PlaylistSong) {
   await loadArtistAndRequests();
 }
 
+async function addManualSongToPlaylist() {
+  if (!artist?.artist_slug) return;
+  if (!manualSongGigId) return;
+  if (!manualSongTitle.trim()) return;
+
+  const existingForGig = playlistSongs.filter(
+    (song) => song.gig_id === manualSongGigId
+  );
+
+  const { error } = await supabase
+    .from("gig_playlists")
+    .insert({
+      gig_id: manualSongGigId,
+      artist_slug: artist.artist_slug,
+      song: manualSongTitle.trim(),
+      artist: manualSongArtist.trim(),
+      position: existingForGig.length + 1
+    });
+
+  if (error) {
+    setMessage(`Could not add song: ${error.message}`);
+    return;
+  }
+
+  setManualSongGigId(null);
+  setManualSongTitle("");
+  setManualSongArtist("");
+
+  await loadArtistAndRequests();
+}
+
   function RequestGroupCard({ group }: { group: RequestGroup }) {
     const isFuture = group.requestType === "future";
 
@@ -621,22 +654,7 @@ async function removeFromPlaylist(song: PlaylistSong) {
             </p>
           </div>
 
-          <button
-            onClick={() =>
-              alert("Next step: reorder and edit this playlist.")
-            }
-            style={{
-              padding: "10px 16px",
-              borderRadius: 999,
-              cursor: "pointer",
-              fontWeight: "bold",
-              background: "#ffd84d",
-              color: "#000",
-              border: 0
-            }}
-          >
-            Edit Playlist
-          </button>
+          
         </div>
 
         <GigPlaylist songs={gigGroup.playlist} />
