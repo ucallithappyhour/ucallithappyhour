@@ -308,157 +308,166 @@ export default function DynamicArtistPage() {
           </div>
 
           {tipUrl && (
-            <div className="section">
-              <p>
-                <strong>Enjoying the music?</strong>
-              </p>
+  <div className="section">
+    <p>
+      <strong>Enjoying the music?</strong>
+    </p>
 
-              <span className="details">
-                Tip {artistName} directly on {artist.tip_type || "their tip link"}.
-              </span>
+    <span className="details">
+      Tip {artistName} directly on {artist.tip_type || "their tip link"}.
+    </span>
 
-              <br />
-              <br />
+    <br />
+    <br />
 
-              <a
-                className="btn secondary"
-                href={tipUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Tip {artistName}
-              </a>
-            </div>
-          )}
+    <a
+      className="btn secondary"
+      href={tipUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Tip {artistName}
+    </a>
+  </div>
+)}
 
-          <div className="section">
-            <h2>About the Artist</h2>
-            <p>{artist.bio || "Artist bio coming soon."}</p>
-          </div>
+<div className="section">
+  <h2>About the Artist</h2>
+  <p>{artist.bio || "Artist bio coming soon."}</p>
+</div>
 
-          <div className="section">
-            <h2>Upcoming Appearances</h2>
+<div className="section">
+  <h2>Upcoming Appearances</h2>
 
-            {upcomingOccurrences.length === 0 ? (
-              <p className="empty">No upcoming gigs listed yet.</p>
-            ) : (
-              upcomingOccurrences.map((occurrence) => (
-                <div
-                  key={`${occurrence.gig.id}-${occurrence.occurrenceDate.toISOString()}`}
-                  style={{
-                    borderTop: "1px solid #333",
-                    paddingTop: 14,
-                    marginTop: 14,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: 20
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
-                      {occurrence.gig.venue_name || "Venue TBD"}
-                    </p>
+  {upcomingOccurrences.length === 0 ? (
+    <p className="empty">No upcoming gigs listed yet.</p>
+  ) : (
+    upcomingOccurrences.map((occurrence) => (
+      <div
+        key={`${occurrence.gig.id}-${occurrence.occurrenceDate.toISOString()}`}
+        style={{
+          borderTop: "1px solid #333",
+          paddingTop: 14,
+          marginTop: 14,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: 20
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+            {occurrence.gig.venue_name || "Venue TBD"}
+          </p>
 
-                    <p className="details" style={{ margin: "0 0 6px" }}>
-                      {formatGigDateForDisplay(occurrence.occurrenceDate)} •{" "}
-                      {formatGigTime(
-                        occurrence.gig.start_time,
-                        occurrence.gig.end_time
-                      )}
-                    </p>
-
-                    <p className="details" style={{ margin: 0 }}>
-                      {occurrence.gig.venue_address || "Address TBD"} •{" "}
-                      {occurrence.gig.recurring_type || "One-Time"}
-                    </p>
-
-                    {occurrence.gig.special_note && (
-                      <p
-                        style={{
-                          marginTop: 8,
-                          color: "#d4af37",
-                          fontStyle: "italic"
-                        }}
-                      >
-                        {occurrence.gig.special_note}
-                      </p>
-                    )}
-                  </div>
-
-                  <div
-                    style={{
-                      minWidth: 240,
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      alignItems: "flex-start"
-                    }}
-                  >
-                    <Link
-                      className="btn secondary"
-                      href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
-                    >
-                      Request Songs For This Gig
-                    </Link>
-                  </div>
-                </div>
-              ))
+          <p className="details" style={{ margin: "0 0 6px" }}>
+            {formatGigDateForDisplay(occurrence.occurrenceDate)} •{" "}
+            {formatGigTime(
+              occurrence.gig.start_time,
+              occurrence.gig.end_time
             )}
-          </div>
+          </p>
 
-          {(websiteUrl || facebookUrl || instagramUrl || youtubeUrl) && (
-            <div className="section">
-              <h2>Connect</h2>
+          <p className="details" style={{ margin: 0 }}>
+            {occurrence.gig.venue_address || "Address TBD"} •{" "}
+            {occurrence.gig.recurring_type || "One-Time"}
+          </p>
 
-              <div className="actions">
-                {websiteUrl && (
-                  <a
-                    className="btn secondary"
-                    href={websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Website
-                  </a>
-                )}
+          {occurrence.gig.special_note && (
+            <p
+              style={{
+                marginTop: 8,
+                color: "#d4af37",
+                fontStyle: "italic"
+              }}
+            >
+              {occurrence.gig.special_note}
+            </p>
+          )}
+        </div>
 
-                {facebookUrl && (
-                  <a
-                    className="btn secondary"
-                    href={facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Facebook
-                  </a>
-                )}
-
-                {instagramUrl && (
-                  <a
-                    className="btn secondary"
-                    href={instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Instagram
-                  </a>
-                )}
-
-                {youtubeUrl && (
-                  <a
-                    className="btn secondary"
-                    href={youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    YouTube
-                  </a>
-                )}
-              </div>
+        <div
+          style={{
+            minWidth: 240,
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "flex-start"
+          }}
+        >
+          {occurrence.gig.allow_requests !== false ? (
+            <Link
+              className="btn secondary"
+              href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
+            >
+              Request Songs For This Gig
+            </Link>
+          ) : (
+            <div
+              style={{
+                padding: "10px 16px",
+                borderRadius: 8,
+                background: "#333",
+                color: "#aaa",
+                fontWeight: 700
+              }}
+            >
+              Requests Disabled
             </div>
           )}
         </div>
       </div>
-    </main>
-  );
-}
+    ))
+  )}
+</div>
+
+{(websiteUrl || facebookUrl || instagramUrl || youtubeUrl) && (
+  <div className="section">
+    <h2>Connect</h2>
+
+    <div className="actions">
+      {websiteUrl && (
+        <a
+          className="btn secondary"
+          href={websiteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Website
+        </a>
+      )}
+
+      {facebookUrl && (
+        <a
+          className="btn secondary"
+          href={facebookUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Facebook
+        </a>
+      )}
+
+      {instagramUrl && (
+        <a
+          className="btn secondary"
+          href={instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram
+        </a>
+      )}
+
+      {youtubeUrl && (
+        <a
+          className="btn secondary"
+          href={youtubeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          YouTube
+        </a>
+      )}
+    </div>
+  </div>
+)}
