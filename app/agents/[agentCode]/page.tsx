@@ -15,7 +15,12 @@ type BookingAgent = {
   referral_code: string | null;
   status: string | null;
   created_at: string | null;
-};
+  logo_url: string | null;
+  website: string | null;
+  facebook: string | null;
+  instagram: string | null;
+  bio: string | null;
+  };
 
 type Registration = {
   id: number;
@@ -178,9 +183,23 @@ const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
           >
             <div className="brand">U CALL IT HAPPY HOUR</div>
 
-            <h1 className="title">
-              {agent.agency_name || "Agent"} Dashboard
-            </h1>
+{agent.logo_url && (
+  <div style={{ textAlign: "center", marginBottom: 18 }}>
+    <img
+      src={agent.logo_url}
+      alt={`${agent.agency_name || "Agency"} logo`}
+      style={{
+        maxWidth: 180,
+        maxHeight: 120,
+        objectFit: "contain"
+      }}
+    />
+  </div>
+)}
+
+<h1 className="title">
+  {agent.agency_name || "Agent"} Dashboard
+</h1>
 
             <p className="tagline">
               Track your referral link, referred artists, signup status, and
