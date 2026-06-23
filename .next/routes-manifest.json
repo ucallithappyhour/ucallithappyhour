@@ -119,6 +119,18 @@
       "namedRegex": "^/admin/registrations(?:/)?$"
     },
     {
+      "page": "/agents",
+      "regex": "^/agents(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents(?:/)?$"
+    },
+    {
+      "page": "/api/agent-register",
+      "regex": "^/api/agent\\-register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/agent\\-register(?:/)?$"
+    },
+    {
       "page": "/api/create-checkout-session",
       "regex": "^/api/create\\-checkout\\-session(?:/)?$",
       "routeKeys": {},
@@ -159,6 +171,12 @@
       "regex": "^/api/song\\-request(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/song\\-request(?:/)?$"
+    },
+    {
+      "page": "/api/song-request-status",
+      "regex": "^/api/song\\-request\\-status(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/song\\-request\\-status(?:/)?$"
     },
     {
       "page": "/api/stripe-webhook",
