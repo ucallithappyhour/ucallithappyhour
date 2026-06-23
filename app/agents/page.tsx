@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -26,24 +27,44 @@ const labelStyle: React.CSSProperties = {
 
 export default function AgentsPage() {
   const router = useRouter();
-  const [agentCode, setAgentCode] = useState("");
-  const [message, setMessage] = useState("");
 
-  function openDashboard(e: React.FormEvent) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function loginAgent(e: React.FormEvent) {
     e.preventDefault();
     setMessage("");
+    setLoading(true);
 
-    const cleanedCode = agentCode
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9]/g, "");
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password
+    });
 
-    if (!cleanedCode) {
-      setMessage("Enter your agent code to open your dashboard.");
+    if (error || !data?.user?.email) {
+      setLoading(false);
+      setMessage(error?.message || "Login failed. Please try again.");
       return;
     }
 
-    router.push(`/agents/${cleanedCode}`);
+    const { data: agent, error: agentError } = await supabase
+      .from("booking_agents")
+      .select("id")
+      .eq("email", data.user.email)
+      .maybeSingle();
+
+    setLoading(false);
+
+    if (agentError || !agent) {
+      setMessage(
+        "Login worked, but no booking agent account was found for this email."
+      );
+      return;
+    }
+
+    router.push("/agents/dashboard");
   }
 
   return (
@@ -59,8 +80,8 @@ export default function AgentsPage() {
             <h1 className="title">Booking Agent Portal</h1>
 
             <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.9 }}>
-              Open your dashboard to track referred artists, signup status,
-              referral links, QR codes, and estimated commissions.
+              Log in to track referred artists, signup status, referral links,
+              QR codes, and estimated commissions.
             </p>
 
             <div
@@ -72,21 +93,32 @@ export default function AgentsPage() {
                 marginTop: 30
               }}
             >
-              <h2 style={{ marginTop: 0, color: "#111" }}>
-                Agent Dashboard Lookup
-              </h2>
+              <h2 style={{ marginTop: 0, color: "#111" }}>Agent Login</h2>
 
-              <form onSubmit={openDashboard}>
-                <label style={labelStyle}>Agent Code</label>
+              <form onSubmit={loginAgent}>
+                <label style={labelStyle}>Email</label>
                 <input
                   style={inputStyle}
-                  value={agentCode}
-                  onChange={(e) => setAgentCode(e.target.value)}
-                  placeholder="ABC25"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="agent@example.com"
+                  autoComplete="email"
+                />
+
+                <label style={labelStyle}>Password</label>
+                <input
+                  style={inputStyle}
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
                 />
 
                 <button
                   type="submit"
+                  disabled={loading}
                   style={{
                     width: "100%",
                     marginTop: 8,
@@ -97,10 +129,11 @@ export default function AgentsPage() {
                     color: "#000",
                     fontWeight: "bold",
                     fontSize: 17,
-                    cursor: "pointer"
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.75 : 1
                   }}
                 >
-                  Open Agent Dashboard
+                  {loading ? "Logging In..." : "Log In"}
                 </button>
               </form>
 
@@ -111,8 +144,8 @@ export default function AgentsPage() {
               )}
 
               <p style={{ marginTop: 16, color: "#333", lineHeight: 1.6 }}>
-                Your agent code is the code at the end of your dashboard link.
-                Example: <strong>ABC25</strong>
+                Use the email and password connected to your booking agent
+                account.
               </p>
             </div>
 
@@ -130,13 +163,13 @@ export default function AgentsPage() {
               </h2>
 
               <p style={{ fontSize: 18, lineHeight: 1.6 }}>
-                Request an agent link, share it with artists in your roster,
-                and earn <strong>$25</strong> for every artist who completes
-                setup.
+                Request an agent account, share your referral link with artists
+                in your roster, and earn <strong>$25</strong> for every artist
+                who completes setup.
               </p>
 
               <Link className="btn" href="/agents/register">
-                Request Agent Link
+                Request Agent Account
               </Link>
             </div>
 
