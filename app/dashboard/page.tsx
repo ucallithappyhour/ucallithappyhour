@@ -17,6 +17,16 @@ type Gig = {
   end_time: string | null;
 };
 
+type PlaylistSong = {
+  id: number;
+  gig_id: number;
+  artist_slug: string;
+  song: string;
+  artist: string | null;
+  position: number | null;
+  created_at: string;
+};
+
 type SongRequest = {
   id: number;
   song: string;
@@ -41,10 +51,12 @@ type GigRequestGroup = {
   gigId: number;
   gig: Gig | null;
   groups: RequestGroup[];
+  playlist: PlaylistSong[];
 };
 
 export default function DashboardPage() {
   const [requests, setRequests] = useState<SongRequest[]>([]);
+  const [playlistSongs, setPlaylistSongs] = useState<PlaylistSong[]>([]);
   const [gigsById, setGigsById] = useState<Record<number, Gig>>({});
   const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
@@ -69,6 +81,7 @@ export default function DashboardPage() {
       if (error || !data) {
         setArtist(null);
         setRequests([]);
+        setPlaylistSongs([]);
         setMessage("Could not load that artist dashboard.");
         setLoading(false);
         return;
@@ -83,6 +96,7 @@ export default function DashboardPage() {
       if (!user?.email) {
         setArtist(null);
         setRequests([]);
+        setPlaylistSongs([]);
         setMessage("Please log in to view your dashboard.");
         setLoading(false);
         return;
@@ -97,6 +111,7 @@ export default function DashboardPage() {
       if (error || !data) {
         setArtist(null);
         setRequests([]);
+        setPlaylistSongs([]);
         setMessage("No artist profile is linked to this login.");
         setLoading(false);
         return;
@@ -116,20 +131,41 @@ export default function DashboardPage() {
 
     if (requestError) {
       setRequests([]);
+      setPlaylistSongs([]);
       setGigsById({});
       setMessage(`Could not load song requests: ${requestError.message}`);
       setLoading(false);
       return;
     }
 
+    const { data: playlistData, error: playlistError } = await supabase
+      .from("gig_playlists")
+      .select("*")
+      .eq("artist_slug", artistData.artist_slug)
+      .order("position", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (playlistError) {
+      setRequests([]);
+      setPlaylistSongs([]);
+      setGigsById({});
+      setMessage(`Could not load playlists: ${playlistError.message}`);
+      setLoading(false);
+      return;
+    }
+
     const loadedRequests = (requestData || []) as SongRequest[];
+    const loadedPlaylistSongs = (playlistData || []) as PlaylistSong[];
+
     setRequests(loadedRequests);
+    setPlaylistSongs(loadedPlaylistSongs);
 
     const gigIds = Array.from(
       new Set(
-        loadedRequests
-          .map((request) => request.gig_id)
-          .filter((gigId): gigId is number => typeof gigId === "number")
+        [
+          ...loadedRequests.map((request) => request.gig_id),
+          ...loadedPlaylistSongs.map((song) => song.gig_id)
+        ].filter((gigId): gigId is number => typeof gigId === "number")
       )
     );
 
@@ -168,6 +204,17 @@ export default function DashboardPage() {
           event: "INSERT",
           schema: "public",
           table: "song_requests"
+        },
+        () => {
+          loadArtistAndRequests();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "gig_playlists"
         },
         () => {
           loadArtistAndRequests();
@@ -240,22 +287,30 @@ export default function DashboardPage() {
       (request) => request.request_type === "future" && request.gig_id
     );
 
-    const byGig: Record<number, SongRequest[]> = {};
+    const gigIds = Array.from(
+      new Set([
+        ...futureWithGig
+          .map((request) => request.gig_id)
+          .filter((gigId): gigId is number => typeof gigId === "number"),
+        ...playlistSongs.map((song) => song.gig_id)
+      ])
+    );
 
-    futureWithGig.forEach((request) => {
-      if (!request.gig_id) return;
-      if (!byGig[request.gig_id]) byGig[request.gig_id] = [];
-      byGig[request.gig_id].push(request);
-    });
+    return gigIds
+      .map((gigId) => {
+        const gigRequests = futureWithGig.filter(
+          (request) => request.gig_id === gigId
+        );
 
-    return Object.entries(byGig)
-      .map(([gigId, gigRequests]) => {
-        const numericGigId = Number(gigId);
+        const gigPlaylist = playlistSongs.filter(
+          (playlistSong) => playlistSong.gig_id === gigId
+        );
 
         return {
-          gigId: numericGigId,
-          gig: gigsById[numericGigId] || null,
-          groups: groupRequests(gigRequests)
+          gigId,
+          gig: gigsById[gigId] || null,
+          groups: groupRequests(gigRequests),
+          playlist: gigPlaylist
         };
       })
       .sort((a, b) => {
@@ -263,7 +318,7 @@ export default function DashboardPage() {
         const bDate = b.gig?.gig_date || "";
         return aDate.localeCompare(bDate);
       });
-  }, [requests, gigsById]);
+  }, [requests, playlistSongs, gigsById]);
 
   const unassignedFutureGroups = useMemo(
     () =>
@@ -303,35 +358,38 @@ export default function DashboardPage() {
     }
   }
 
-async function addGroupToPlaylist(group: RequestGroup) {
-  if (!artist?.artist_slug) return;
+  async function addGroupToPlaylist(group: RequestGroup) {
+    if (!artist?.artist_slug) return;
 
-  const firstRequest = group.items[0];
+    const firstRequest = group.items[0];
 
-  if (!firstRequest?.gig_id) {
-    setMessage("This request is not tied to a gig yet.");
-    return;
-  }
+    if (!firstRequest?.gig_id) {
+      setMessage("This request is not tied to a gig yet.");
+      return;
+    }
 
-  const { error: playlistError } = await supabase
-    .from("gig_playlists")
-    .insert({
-      gig_id: firstRequest.gig_id,
-      artist_slug: artist.artist_slug,
-      song: group.song,
-      artist: group.artist || "",
-      position: 0
-    });
-
-  if (playlistError) {
-    setMessage(
-      `Could not add song to playlist: ${playlistError.message}`
+    const existingForGig = playlistSongs.filter(
+      (song) => song.gig_id === firstRequest.gig_id
     );
-    return;
-  }
 
-  await updateGroup(group, "added_to_playlist");
-}
+    const { error: playlistError } = await supabase
+      .from("gig_playlists")
+      .insert({
+        gig_id: firstRequest.gig_id,
+        artist_slug: artist.artist_slug,
+        song: group.song,
+        artist: group.artist || "",
+        position: existingForGig.length + 1
+      });
+
+    if (playlistError) {
+      setMessage(`Could not add song to playlist: ${playlistError.message}`);
+      return;
+    }
+
+    await updateGroup(group, "added_to_playlist");
+    await loadArtistAndRequests();
+  }
 
   function RequestGroupCard({ group }: { group: RequestGroup }) {
     const isFuture = group.requestType === "future";
@@ -441,6 +499,65 @@ async function addGroupToPlaylist(group: RequestGroup) {
     );
   }
 
+  function GigPlaylist({ songs }: { songs: PlaylistSong[] }) {
+    if (songs.length === 0) {
+      return (
+        <div
+          style={{
+            background: "#101010",
+            border: "1px solid #333",
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 18
+          }}
+        >
+          <h3 style={{ marginTop: 0 }}>🎵 Playlist</h3>
+          <p style={{ marginBottom: 0, opacity: 0.75 }}>
+            No songs added to this playlist yet.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        style={{
+          background: "#101010",
+          border: "1px solid #333",
+          borderRadius: 12,
+          padding: 16,
+          marginBottom: 18
+        }}
+      >
+        <h3 style={{ marginTop: 0 }}>🎵 Playlist</h3>
+
+        {songs.map((song, index) => (
+          <div
+            key={song.id}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 12,
+              borderTop: index === 0 ? "0" : "1px solid #333",
+              paddingTop: index === 0 ? 0 : 10,
+              marginTop: index === 0 ? 0 : 10
+            }}
+          >
+            <div>
+              <strong>
+                {index + 1}. {song.song}
+              </strong>
+              <br />
+              <span style={{ opacity: 0.8 }}>
+                {song.artist || "Unknown Artist"}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   function GigRequestCard({ gigGroup }: { gigGroup: GigRequestGroup }) {
     const gigTime = formatGigTime(gigGroup.gig);
 
@@ -479,7 +596,7 @@ async function addGroupToPlaylist(group: RequestGroup) {
 
           <button
             onClick={() =>
-              alert("Playlist builder is next. Requests are now grouped by gig.")
+              alert("Next step: reorder and edit this playlist.")
             }
             style={{
               padding: "10px 16px",
@@ -491,16 +608,24 @@ async function addGroupToPlaylist(group: RequestGroup) {
               border: 0
             }}
           >
-            Build Playlist
+            Edit Playlist
           </button>
         </div>
 
-        {gigGroup.groups.map((group) => (
-          <RequestGroupCard
-            key={`${gigGroup.gigId}-${group.song}-${group.artist}`}
-            group={group}
-          />
-        ))}
+        <GigPlaylist songs={gigGroup.playlist} />
+
+        {gigGroup.groups.length > 0 && (
+          <>
+            <h3>Audience Suggestions</h3>
+
+            {gigGroup.groups.map((group) => (
+              <RequestGroupCard
+                key={`${gigGroup.gigId}-${group.song}-${group.artist}`}
+                group={group}
+              />
+            ))}
+          </>
+        )}
       </div>
     );
   }
