@@ -124,11 +124,8 @@ export default function AgentDashboard() {
                 </h1>
 
                 <p style={{ fontSize: 18, lineHeight: 1.5, opacity: 0.9 }}>
-                  Welcome back
-                  {agent.contact_name ? `, ${agent.contact_name}` : ""}.
-                  Track your referral link, QR code, artist signups, and
-                  estimated commissions.
-                </p>
+  Manage referrals, track artist signups, and monitor commissions.
+</p>
               </div>
 
               <button
@@ -147,25 +144,51 @@ export default function AgentDashboard() {
               </button>
             </div>
 
-{agent.logo_url && (
-  <div
+<div
+  style={{
+    background: "#181818",
+    border: "1px solid #333",
+    borderRadius: 16,
+    padding: 24,
+    marginTop: 24,
+    marginBottom: 24,
+    textAlign: "center"
+  }}
+>
+  <h2
     style={{
-      textAlign: "center",
-      marginTop: 24,
-      marginBottom: 8
+      color: "#ffd84d",
+      marginTop: 0,
+      marginBottom: 20
     }}
   >
+    Agency Branding
+  </h2>
+
+  {agent.logo_url ? (
     <img
       src={agent.logo_url}
       alt="Agency Logo"
       style={{
-        maxHeight: 120,
+        maxHeight: 220,
         maxWidth: "100%",
-        objectFit: "contain"
+        objectFit: "contain",
+        marginBottom: 20
       }}
     />
-  </div>
-)}
+  ) : (
+    <p style={{ opacity: 0.8, marginBottom: 20 }}>
+      No logo uploaded yet.
+    </p>
+  )}
+
+  <Link
+    href="/agents/artwork"
+    className="btn"
+  >
+    Manage Branding
+  </Link>
+</div>
 
             <div
               style={{
