@@ -11,11 +11,15 @@ export default function RegisterPage() {
   const [artistType, setArtistType] = useState("Solo Artist");
   const [notes, setNotes] = useState("");
   const [referredBy, setReferredBy] = useState("");
+  const [referringAgent, setReferringAgent] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const hasReferral = referredBy.trim() !== "";
-  const setupFee = hasReferral ? 79 : 99;
+  const hasArtistReferral = referredBy.trim() !== "";
+  const hasAgentReferral = referringAgent.trim() !== "";
+
+  const setupFee = hasAgentReferral ? 74 : hasArtistReferral ? 79 : 99;
+  const savings = hasAgentReferral ? 25 : hasArtistReferral ? 20 : 0;
 
   const requiredFieldsComplete =
     artistName.trim() !== "" &&
@@ -25,10 +29,10 @@ export default function RegisterPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("ref");
+    const agent = params.get("agent");
 
-    if (ref) {
-      setReferredBy(ref);
-    }
+    if (ref) setReferredBy(ref);
+    if (agent) setReferringAgent(agent);
   }, []);
 
   async function submitRegistration() {
@@ -54,7 +58,8 @@ export default function RegisterPage() {
           phone,
           artistType,
           notes,
-          referredBy
+          referredBy,
+          referringAgent
         })
       });
 
@@ -75,7 +80,8 @@ export default function RegisterPage() {
           registrationId: registrationResult.registrationId,
           artistName,
           email,
-          referredBy
+          referredBy,
+          referringAgent
         })
       });
 
@@ -168,7 +174,7 @@ export default function RegisterPage() {
             <section className="accountCard" style={{ marginBottom: 24 }}>
               <h2>Investment</h2>
 
-              {hasReferral ? (
+              {hasAgentReferral || hasArtistReferral ? (
                 <>
                   <p
                     style={{
@@ -177,7 +183,10 @@ export default function RegisterPage() {
                       marginTop: 12
                     }}
                   >
-                    🎉 Referred by another artist
+                    🎉{" "}
+                    {hasAgentReferral
+                      ? "Booking agent referral applied"
+                      : "Artist referral applied"}
                   </p>
 
                   <p
@@ -195,11 +204,14 @@ export default function RegisterPage() {
                   </p>
 
                   <p style={{ color: "#4ade80", marginTop: 8 }}>
-                    You save $20 today.
+                    You save ${savings} today.
                   </p>
 
                   <p style={{ marginTop: 8, opacity: 0.85 }}>
-                    Referral code: <strong>{referredBy}</strong>
+                    Referral code:{" "}
+                    <strong>
+                      {hasAgentReferral ? referringAgent : referredBy}
+                    </strong>
                   </p>
                 </>
               ) : (
@@ -232,7 +244,7 @@ export default function RegisterPage() {
                 email are required. Notes are optional.
               </p>
 
-              {hasReferral && (
+              {(hasAgentReferral || hasArtistReferral) && (
                 <div
                   style={{
                     marginTop: 18,
@@ -245,7 +257,7 @@ export default function RegisterPage() {
                 >
                   <strong>Referral discount applied.</strong>
                   <br />
-                  You save $20 today. Your setup fee will be ${setupFee}.
+                  You save ${savings} today. Your setup fee will be ${setupFee}.
                 </div>
               )}
 

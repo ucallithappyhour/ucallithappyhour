@@ -7,7 +7,13 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { registrationId, artistName, email, referredBy } = body;
+    const {
+      registrationId,
+      artistName,
+      email,
+      referredBy,
+      referringAgent
+    } = body;
 
     if (!registrationId) {
       return NextResponse.json(
@@ -17,15 +23,28 @@ export async function POST(request: Request) {
     }
 
     const registrationIdString = String(registrationId);
-    const hasReferral =
+
+    const hasArtistReferral =
       typeof referredBy === "string" && referredBy.trim() !== "";
-    const setupAmount = hasReferral ? 7900 : 9900;
+
+    const hasAgentReferral =
+      typeof referringAgent === "string" && referringAgent.trim() !== "";
+
+    const setupAmount = hasAgentReferral ? 7400 : hasArtistReferral ? 7900 : 9900;
+
+    const discountType = hasAgentReferral
+      ? "agent"
+      : hasArtistReferral
+      ? "artist"
+      : "none";
 
     console.log("Creating checkout session for registration:", {
       registrationId: registrationIdString,
       artistName,
       email,
       referredBy,
+      referringAgent,
+      discountType,
       setupAmount
     });
 
@@ -38,12 +57,18 @@ export async function POST(request: Request) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: hasReferral
-                ? "U Call It Happy Hour Artist Setup - Referral Discount"
-                : "U Call It Happy Hour Artist Setup",
-              description: hasReferral
-                ? "Personalized artist page, QR starter kit, dashboard access, referral program, and fan engagement tools. Referral discount applied."
-                : "Personalized artist page, QR starter kit, dashboard access, referral program, and fan engagement tools."
+              name:
+                discountType === "agent"
+                  ? "U Call It Happy Hour Artist Setup - Agent Referral Discount"
+                  : discountType === "artist"
+                  ? "U Call It Happy Hour Artist Setup - Artist Referral Discount"
+                  : "U Call It Happy Hour Artist Setup",
+              description:
+                discountType === "agent"
+                  ? "Personalized artist page, QR starter kit, dashboard access, referral program, and fan engagement tools. Agent referral discount applied."
+                  : discountType === "artist"
+                  ? "Personalized artist page, QR starter kit, dashboard access, referral program, and fan engagement tools. Artist referral discount applied."
+                  : "Personalized artist page, QR starter kit, dashboard access, referral program, and fan engagement tools."
             },
             unit_amount: setupAmount
           },
@@ -59,13 +84,20 @@ export async function POST(request: Request) {
         email: email || "",
         referred_by: referredBy || "",
         referredBy: referredBy || "",
+        referring_agent: referringAgent || "",
+        referringAgent: referringAgent || "",
+        discount_type: discountType,
         setup_amount: String(setupAmount)
       },
 
       success_url:
         "https://www.ucallithappyhour.com/register/success?session_id={CHECKOUT_SESSION_ID}",
 
-      cancel_url: hasReferral
+      cancel_url: hasAgentReferral
+        ? `https://www.ucallithappyhour.com/register?agent=${encodeURIComponent(
+            referringAgent
+          )}`
+        : hasArtistReferral
         ? `https://www.ucallithappyhour.com/register?ref=${encodeURIComponent(
             referredBy
           )}`
