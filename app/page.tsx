@@ -398,11 +398,56 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="actions" style={{ marginTop: 18 }}>
+                            <div className="actions" style={{ marginTop: 18 }}>
                 <Link className="btn secondary" href="/account">
                   Artist Login
                 </Link>
               </div>
+            </div>
+          </div>
+
+          {/* FOR BOOKING AGENTS */}
+          <div className="section">
+            <h2>For Booking Agents & Talent Buyers</h2>
+
+            <div className="event-card">
+              <p className="performer">Earn $25 Every Time an Artist Joins</p>
+
+              <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
+                Give your artists a smarter way to engage fans.
+              </p>
+
+              <p style={{ marginTop: 14, lineHeight: 1.7 }}>
+                Share your referral link with artists in your roster. When they
+                complete setup, they receive a discount and you earn a $25
+                referral commission.
+              </p>
+
+              <div style={{ marginTop: 18, lineHeight: 1.9, fontSize: 14, fontWeight: 700 }}>
+                <div>✓ Earn $25 per completed artist setup</div>
+                <div>✓ Give artists a referral discount</div>
+                <div>✓ Track signups from your own dashboard</div>
+                <div>✓ Share referral links and QR codes</div>
+                <div>✓ Monitor pending and completed registrations</div>
+                <div>✓ Build recurring revenue</div>
+              </div>
+
+              <div className="details" style={{ marginTop: 18 }}>
+                Referral links • QR codes • Agent dashboard • Commission tracking
+              </div>
+
+              <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
+                Perfect for booking agents, talent buyers, artist managers,
+                entertainment companies, and venue managers.
+              </p>
+
+              <p style={{ marginTop: 16, fontWeight: 900, fontSize: "1.05rem" }}>
+                Refer 10 artists = $250 in commissions.
+              </p>
+
+              <Link className="btn" href="/agents">
+                Get Your Agent Link
+              </Link>
             </div>
           </div>
         </div>

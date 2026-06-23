@@ -31,12 +31,12 @@
     ]
   },
   {
-    "route": "/account/marketing-kit",
-    "firstLoadUncompressedJsBytes": 756305,
+    "route": "/",
+    "firstLoadUncompressedJsBytes": 757238,
     "firstLoadChunkPaths": [
       ".next\\static\\chunks\\05-c3ty_6dwfk.js",
       ".next\\static\\chunks\\2rjht1i8j1gsp.js",
-      ".next\\static\\chunks\\0eoa1rxm8e8j-.js",
+      ".next\\static\\chunks\\1f7aihdhshmq2.js",
       ".next\\static\\chunks\\0byta0t64wukb.js",
       ".next\\static\\chunks\\0vm21_1eh7154.js",
       ".next\\static\\chunks\\3krfs4awckr-k.js",
@@ -46,12 +46,12 @@
     ]
   },
   {
-    "route": "/",
-    "firstLoadUncompressedJsBytes": 755600,
+    "route": "/account/marketing-kit",
+    "firstLoadUncompressedJsBytes": 756305,
     "firstLoadChunkPaths": [
       ".next\\static\\chunks\\05-c3ty_6dwfk.js",
       ".next\\static\\chunks\\2rjht1i8j1gsp.js",
-      ".next\\static\\chunks\\2hrshnis_q-74.js",
+      ".next\\static\\chunks\\0eoa1rxm8e8j-.js",
       ".next\\static\\chunks\\0byta0t64wukb.js",
       ".next\\static\\chunks\\0vm21_1eh7154.js",
       ".next\\static\\chunks\\3krfs4awckr-k.js",
