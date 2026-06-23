@@ -49,6 +49,7 @@ type NewGig = {
   end_time: string;
   recurring_type: string;
   special_note: string;
+  allow_requests: boolean;
 
 };
 
