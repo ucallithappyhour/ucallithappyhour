@@ -459,13 +459,13 @@ export default function Home() {
               </p>
 
               <Link className="btn" href="/agents">
-                                Get Your Agent Link
+                                Request Agent Account
               </Link>
 
               <div className="actions" style={{ marginTop: 18 }}>
                 <Link className="btn secondary" href="/agents">
-                  Agent Dashboard / Lookup
-                </Link>
+  Agent Login
+</Link>
               </div>
             </div>
           </div>
