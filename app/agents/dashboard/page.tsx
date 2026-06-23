@@ -107,7 +107,6 @@ export default function AgentDashboard() {
             className="accountCard"
             style={{ maxWidth: 980, margin: "0 auto" }}
           >
-            <div className="brand">U CALL IT HAPPY HOUR</div>
 
             <div
               style={{
@@ -154,16 +153,7 @@ export default function AgentDashboard() {
     marginBottom: 24,
     textAlign: "center"
   }}
->
-  <h2
-    style={{
-      color: "#ffd84d",
-      marginTop: 0,
-      marginBottom: 20
-    }}
-  >
-    Agency Branding
-  </h2>
+
 
 {agent.logo_url ? (
   <img
