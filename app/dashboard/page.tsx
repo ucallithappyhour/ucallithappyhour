@@ -303,23 +303,35 @@ export default function DashboardPage() {
     }
   }
 
-  async function addGroupToLibrary(group: RequestGroup) {
-    if (!artist?.artist_slug) return;
+async function addGroupToPlaylist(group: RequestGroup) {
+  if (!artist?.artist_slug) return;
 
-    const { error: songError } = await supabase.from("songs").insert({
-      title: group.song,
-      artist: group.artist || "",
+  const firstRequest = group.items[0];
+
+  if (!firstRequest?.gig_id) {
+    setMessage("This request is not tied to a gig yet.");
+    return;
+  }
+
+  const { error: playlistError } = await supabase
+    .from("gig_playlists")
+    .insert({
+      gig_id: firstRequest.gig_id,
       artist_slug: artist.artist_slug,
-      is_active: true
+      song: group.song,
+      artist: group.artist || "",
+      position: 0
     });
 
-    if (songError) {
-      setMessage(`Could not add song to library: ${songError.message}`);
-      return;
-    }
-
-    await updateGroup(group, "added_to_library");
+  if (playlistError) {
+    setMessage(
+      `Could not add song to playlist: ${playlistError.message}`
+    );
+    return;
   }
+
+  await updateGroup(group, "added_to_playlist");
+}
 
   function RequestGroupCard({ group }: { group: RequestGroup }) {
     const isFuture = group.requestType === "future";
@@ -388,7 +400,7 @@ export default function DashboardPage() {
 
         {isFuture ? (
           <button
-            onClick={() => addGroupToLibrary(group)}
+            onClick={() => addGroupToPlaylist(group)}
             style={{
               padding: "10px 16px",
               marginRight: 10,
