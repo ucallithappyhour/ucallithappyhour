@@ -23,6 +23,14 @@
   },
   "dynamicRoutes": [
     {
+      "page": "/agents/[agentCode]",
+      "regex": "^/agents/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPagentCode": "nxtPagentCode"
+      },
+      "namedRegex": "^/agents/(?<nxtPagentCode>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/[artistSlug]",
       "regex": "^/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -111,6 +119,12 @@
       "regex": "^/account/setup/next(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/account/setup/next(?:/)?$"
+    },
+    {
+      "page": "/admin/agents",
+      "regex": "^/admin/agents(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/agents(?:/)?$"
     },
     {
       "page": "/admin/registrations",
