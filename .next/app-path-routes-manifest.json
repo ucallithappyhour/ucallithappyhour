@@ -16,6 +16,7 @@
   "/admin/registrations/page": "/admin/registrations",
   "/agents/[agentCode]/page": "/agents/[agentCode]",
   "/agents/page": "/agents",
+  "/agents/register/page": "/agents/register",
   "/api/agent-register/route": "/api/agent-register",
   "/api/create-checkout-session/route": "/api/create-checkout-session",
   "/api/get-setup-link/route": "/api/get-setup-link",

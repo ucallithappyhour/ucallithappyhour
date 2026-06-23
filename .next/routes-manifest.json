@@ -139,6 +139,12 @@
       "namedRegex": "^/agents(?:/)?$"
     },
     {
+      "page": "/agents/register",
+      "regex": "^/agents/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents/register(?:/)?$"
+    },
+    {
       "page": "/api/agent-register",
       "regex": "^/api/agent\\-register(?:/)?$",
       "routeKeys": {},
