@@ -166,8 +166,7 @@ const normalizedArtist = String(songArtist || "")
 
 if (
   artistSlug === "brian-quinn" &&
-  normalizedTitle.includes("freebird") &&
-  normalizedArtist.includes("lynyrdskynyrd")
+  normalizedTitle.includes("freebird")
 ) {
   alert(
     "🦅 Brian will gladly play Free Bird... for a $1,000 tip."
