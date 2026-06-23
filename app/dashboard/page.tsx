@@ -767,6 +767,78 @@ async function addManualSongToPlaylist() {
           )}
         </>
       )}
+      {manualSongGigId && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.8)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9999
+    }}
+  >
+    <div
+      style={{
+        background: "#181818",
+        padding: 24,
+        borderRadius: 12,
+        width: 420,
+        maxWidth: "90%"
+      }}
+    >
+      <h2>Add Song To Playlist</h2>
+
+      <input
+        placeholder="Song title"
+        value={manualSongTitle}
+        onChange={(e) => setManualSongTitle(e.target.value)}
+        style={{
+          width: "100%",
+          padding: 12,
+          marginBottom: 12
+        }}
+      />
+
+      <input
+        placeholder="Artist (optional)"
+        value={manualSongArtist}
+        onChange={(e) => setManualSongArtist(e.target.value)}
+        style={{
+          width: "100%",
+          padding: 12,
+          marginBottom: 16
+        }}
+      />
+
+      <div style={{ display: "flex", gap: 10 }}>
+        <button
+          onClick={addManualSongToPlaylist}
+          style={{
+            padding: "12px 16px",
+            fontWeight: "bold"
+          }}
+        >
+          Add Song
+        </button>
+
+        <button
+          onClick={() => {
+            setManualSongGigId(null);
+            setManualSongTitle("");
+            setManualSongArtist("");
+          }}
+          style={{
+            padding: "12px 16px"
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </main>
   );
 }
