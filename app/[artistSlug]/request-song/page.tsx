@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 
@@ -18,14 +18,23 @@ type Artist = {
 
 export default function DynamicRequestSongPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+
   const artistSlug = String(params.artistSlug || "");
+  const requestTypeFromUrl = searchParams.get("type");
+  const gigIdFromUrl = searchParams.get("gig");
+
+  const isGigFutureRequest =
+    requestTypeFromUrl === "future" && Boolean(gigIdFromUrl);
 
   const [artist, setArtist] = useState<Artist | null>(null);
   const [query, setQuery] = useState("");
   const [songs, setSongs] = useState<Song[]>([]);
   const [songsLoading, setSongsLoading] = useState(true);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
-  const [mode, setMode] = useState<"tonight" | "future">("tonight");
+  const [mode, setMode] = useState<"tonight" | "future">(
+    requestTypeFromUrl === "future" ? "future" : "tonight"
+  );
   const [futureTitle, setFutureTitle] = useState("");
   const [futureArtist, setFutureArtist] = useState("");
   const [name, setName] = useState("");
@@ -36,22 +45,19 @@ export default function DynamicRequestSongPage() {
   );
 
   const artistName = artist?.artist_name || "the artist";
-
-  console.log("ARTIST STATE", artist);
+  const resolvedArtistSlug = artist?.artist_slug || artistSlug;
 
   useEffect(() => {
     async function loadArtistAndSongs() {
       setSongsLoading(true);
 
-const { data: artistData } = await supabase
-  .from("artists")
-  .select("artist_slug, artist_name, tip_type, tip_link")
-  .eq("artist_slug", artistSlug)
-  .single();
+      const { data: artistData } = await supabase
+        .from("artists")
+        .select("artist_slug, artist_name, tip_type, tip_link")
+        .eq("artist_slug", artistSlug)
+        .single();
 
-console.log("ARTIST DATA", artistData);
-
-setArtist(artistData || null);
+      setArtist(artistData || null);
 
       const { data, error } = await supabase
         .from("songs")
@@ -77,6 +83,13 @@ setArtist(artistData || null);
     }
   }, [artistSlug]);
 
+  useEffect(() => {
+    if (requestTypeFromUrl === "future") {
+      setMode("future");
+      setSelectedSong(null);
+    }
+  }, [requestTypeFromUrl]);
+
   const matches = useMemo(() => {
     const normalize = (text: string) =>
       text.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -98,7 +111,7 @@ setArtist(artistData || null);
 
   function resetToCatalog() {
     setSelectedSong(null);
-    setMode("tonight");
+    setMode(requestTypeFromUrl === "future" ? "future" : "tonight");
     setFutureTitle("");
     setFutureArtist("");
     setName("");
@@ -154,10 +167,11 @@ setArtist(artistData || null);
         body: JSON.stringify({
           song: title,
           artist: songArtist,
-          artist_slug: artistSlug,
+          artist_slug: resolvedArtistSlug,
           requester_name: name.trim() || null,
           dedication: dedication.trim() || null,
-          request_type: mode
+          request_type: mode,
+          gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null
         })
       });
 
@@ -202,7 +216,9 @@ setArtist(artistData || null);
             textAlign: "center"
           }}
         >
-          Request tonight&apos;s songs.
+          {isGigFutureRequest
+            ? "Help build this show's setlist."
+            : "Request tonight's songs."}
         </h1>
 
         <p
@@ -213,7 +229,9 @@ setArtist(artistData || null);
             marginBottom: 24
           }}
         >
-          Search by song or artist.
+          {isGigFutureRequest
+            ? "Suggest songs for this upcoming performance."
+            : "Search by song or artist."}
         </p>
 
         <input
@@ -249,7 +267,15 @@ setArtist(artistData || null);
               {matches.map((song) => (
                 <button
                   key={`${song.title}-${song.artist}`}
-                  onClick={() => openTonightRequest(song)}
+                  onClick={() =>
+                    isGigFutureRequest
+                      ? (setSelectedSong(song),
+                        setMode("future"),
+                        setFutureTitle(song.title),
+                        setFutureArtist(song.artist),
+                        setSuccessMode(null))
+                      : openTonightRequest(song)
+                  }
                   style={{
                     display: "block",
                     width: "100%",
@@ -367,81 +393,81 @@ setArtist(artistData || null);
             }}
           >
             <button
-  onClick={resetToCatalog}
-  style={{
-    float: "right",
-    fontSize: 22,
-    background: "transparent",
-    color: "#fff",
-    border: 0,
-    cursor: "pointer"
-  }}
->
-  ×
-</button>
+              onClick={resetToCatalog}
+              style={{
+                float: "right",
+                fontSize: 22,
+                background: "transparent",
+                color: "#fff",
+                border: 0,
+                cursor: "pointer"
+              }}
+            >
+              ×
+            </button>
 
-{successMode ? (
-  <>
-    <h2 style={{ marginTop: 0 }}>
-      {successMode === "tonight"
-        ? "🎵 Request Sent!"
-        : "🎵 Suggestion Received!"}
-    </h2>
+            {successMode ? (
+              <>
+                <h2 style={{ marginTop: 0 }}>
+                  {successMode === "tonight"
+                    ? "🎵 Request Sent!"
+                    : "🎵 Suggestion Received!"}
+                </h2>
 
-    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
-      {successMode === "tonight"
-        ? "Thanks for helping shape tonight's setlist."
-        : `We'll pass your suggestion along to ${artistName} for future shows.`}
-    </p>
+                <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+                  {successMode === "tonight"
+                    ? "Thanks for helping shape tonight's setlist."
+                    : `We'll pass your suggestion along to ${artistName} for future shows.`}
+                </p>
 
-    {successMode === "tonight" && (
-      <p
-        style={{
-          fontSize: 15,
-          lineHeight: 1.5,
-          color: "#bbb",
-          marginBottom: 18
-        }}
-      >
-        Your request has been sent to the artist. They'll do their best
-        to play it, depending on timing, audience requests, and the flow
-        of the show.
-      </p>
-    )}
+                {successMode === "tonight" && (
+                  <p
+                    style={{
+                      fontSize: 15,
+                      lineHeight: 1.5,
+                      color: "#bbb",
+                      marginBottom: 18
+                    }}
+                  >
+                    Your request has been sent to the artist. They'll do their
+                    best to play it, depending on timing, audience requests, and
+                    the flow of the show.
+                  </p>
+                )}
 
-    {artist?.tip_link && (
-      <>
-        <p style={{ fontSize: 17, lineHeight: 1.5 }}>
-          {successMode === "tonight"
-            ? `Enjoying ${artistName}'s music?`
-            : `Love what ${artistName} does?`}
-        </p>
+                {artist?.tip_link && (
+                  <>
+                    <p style={{ fontSize: 17, lineHeight: 1.5 }}>
+                      {successMode === "tonight"
+                        ? `Enjoying ${artistName}'s music?`
+                        : `Love what ${artistName} does?`}
+                    </p>
 
-        <button
-          onClick={openTipLink}
-          style={{
-            width: "100%",
-            padding: "15px 18px",
-            fontSize: 18,
-            borderRadius: 10,
-            border: 0,
-            background: "#ffd84d",
-            color: "#000",
-            cursor: "pointer",
-            fontWeight: "bold",
-            marginBottom: 12
-          }}
-        >
-          💵 Tip {artistName}
-        </button>
-      </>
-    )}
+                    <button
+                      onClick={openTipLink}
+                      style={{
+                        width: "100%",
+                        padding: "15px 18px",
+                        fontSize: 18,
+                        borderRadius: 10,
+                        border: 0,
+                        background: "#ffd84d",
+                        color: "#000",
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        marginBottom: 12
+                      }}
+                    >
+                      💵 Tip {artistName}
+                    </button>
+                  </>
+                )}
 
-    <p style={{ opacity: 0.75, fontSize: 14, lineHeight: 1.4 }}>
-      No pressure — your{" "}
-      {successMode === "tonight" ? "request" : "suggestion"} has
-      already been submitted.
-    </p>
+                <p style={{ opacity: 0.75, fontSize: 14, lineHeight: 1.4 }}>
+                  No pressure — your{" "}
+                  {successMode === "tonight" ? "request" : "suggestion"} has
+                  already been submitted.
+                </p>
 
                 <button
                   onClick={resetToCatalog}
@@ -462,6 +488,8 @@ setArtist(artistData || null);
                 <h2>
                   {mode === "tonight"
                     ? "Request for Tonight"
+                    : isGigFutureRequest
+                    ? "Request for This Future Gig"
                     : "Suggest for Future Show"}
                 </h2>
 
@@ -543,6 +571,8 @@ setArtist(artistData || null);
                     ? "Sending..."
                     : mode === "tonight"
                     ? "Submit Tonight's Request"
+                    : isGigFutureRequest
+                    ? "Submit Future Gig Request"
                     : "Suggest for Future Show"}
                 </button>
               </>
