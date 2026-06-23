@@ -18,6 +18,7 @@ type Gig = {
   start_time: string | null;
   end_time: string | null;
   recurring_type: string | null;
+  allow_requests: boolean | null;
 };
 
 export default function GigsPage() {
@@ -32,6 +33,7 @@ export default function GigsPage() {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [recurringType, setRecurringType] = useState("One-Time");
+  const [allowRequests, setAllowRequests] = useState(true);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function GigsPage() {
     const { data, error } = await supabase
       .from("gigs")
       .select(
-        "id, artist_slug, venue_name, venue_address, gig_date, start_time, end_time, recurring_type"
+        "id, artist_slug, venue_name, venue_address, gig_date, start_time, end_time, recurring_type, allow_requests"
       )
       .eq("artist_slug", slug)
       .order("gig_date", { ascending: true });
@@ -88,6 +90,7 @@ export default function GigsPage() {
     setStartTime("");
     setEndTime("");
     setRecurringType("One-Time");
+    setAllowRequests(true);
   }
 
   function editGig(gig: Gig) {
@@ -98,6 +101,7 @@ export default function GigsPage() {
     setStartTime(gig.start_time || "");
     setEndTime(gig.end_time || "");
     setRecurringType(gig.recurring_type || "One-Time");
+    setAllowRequests(gig.allow_requests !== false);
     setMessage("Editing gig. Make changes, then save.");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -119,7 +123,8 @@ export default function GigsPage() {
           gig_date: gigDate || null,
           start_time: startTime || null,
           end_time: endTime || null,
-          recurring_type: recurringType
+          recurring_type: recurringType,
+          allow_requests: allowRequests
         })
         .eq("id", editingGigId)
         .eq("artist_slug", artist.artist_slug);
@@ -138,7 +143,8 @@ export default function GigsPage() {
         gig_date: gigDate || null,
         start_time: startTime || null,
         end_time: endTime || null,
-        recurring_type: recurringType
+        recurring_type: recurringType,
+        allow_requests: allowRequests
       });
 
       if (error) {
@@ -264,6 +270,37 @@ export default function GigsPage() {
                 <option>Monthly</option>
               </select>
 
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginTop: 14,
+                  marginBottom: 18,
+                  fontWeight: 800
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={allowRequests}
+                  onChange={(e) => setAllowRequests(e.target.checked)}
+                  style={{ width: 18, height: 18 }}
+                />
+                Allow song requests for this gig
+              </label>
+
+              <p
+                className="details"
+                style={{
+                  marginTop: -8,
+                  marginBottom: 18,
+                  opacity: 0.8
+                }}
+              >
+                Turn this off for ticketed shows, fixed setlists, tribute nights,
+                or performances where requests are not a good fit.
+              </p>
+
               <button className="btn" type="button" onClick={saveGig}>
                 {editingGigId ? "Save Changes" : "Save Gig"}
               </button>
@@ -298,6 +335,17 @@ export default function GigsPage() {
 
                     <p className="details">
                       Recurring: {gig.recurring_type || "One-Time"}
+                    </p>
+
+                    <p
+                      className="details"
+                      style={{
+                        color: gig.allow_requests === false ? "#ff8a8a" : "#8affb2",
+                        fontWeight: 800
+                      }}
+                    >
+                      Requests:{" "}
+                      {gig.allow_requests === false ? "Off for this gig" : "On"}
                     </p>
 
                     <button
