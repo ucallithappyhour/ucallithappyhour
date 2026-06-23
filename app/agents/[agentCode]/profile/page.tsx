@@ -129,7 +129,7 @@ export default function AgentProfilePage() {
     setMessage("");
 
     const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const filePath = `${agentCode}/logo.${fileExt}`;
+    const filePath = `${agentCode}/logo-${Date.now()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from("agent-artwork")
