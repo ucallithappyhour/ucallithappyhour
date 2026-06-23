@@ -128,7 +128,6 @@ export default function DynamicRequestSongPage() {
   }
 
 function openTonightRequest(song: Song) {
-  alert(`clicked: ${song.title} | slug: ${artistSlug}`);
   const normalizedTitle = song.title.toLowerCase().replace(/[^a-z0-9]/g, "");
   const normalizedSlug = String(artistSlug).toLowerCase().trim();
 
@@ -172,18 +171,38 @@ if (
   setMode("tonight");
 }
 
-  function openFutureSuggestion() {
-    setSelectedSong(null);
-    setMode("future");
-    setFutureTitle(query.trim());
-    setFutureArtist("");
-    setName("");
-    setDedication("");
-    setLoading(false);
-    setFreeBirdMode(false);
-    setPremiumSongMode(false);
-    setSuccessMode(null);
+function openFutureSuggestion() {
+  const normalizedTitle = query.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const normalizedSlug = String(artistSlug).toLowerCase().trim();
+
+  setSelectedSong(null);
+  setMode("future");
+  setFutureTitle(query.trim());
+  setFutureArtist("");
+  setName("");
+  setDedication("");
+  setLoading(false);
+  setFreeBirdMode(false);
+  setPremiumSongMode(false);
+  setSuccessMode(null);
+
+  if (normalizedSlug === "brian-quinn") {
+    if (normalizedTitle.includes("freebird")) {
+      setFreeBirdMode(true);
+      return;
+    }
+
+    if (normalizedTitle.includes("browneyedgirl")) {
+      setPremiumSongMode("browneyedgirl");
+      return;
+    }
+
+    if (normalizedTitle.includes("wagonwheel")) {
+      setPremiumSongMode("wagonwheel");
+      return;
+    }
   }
+}
 
   function openTipLink() {
     if (!artist?.tip_link) return;
