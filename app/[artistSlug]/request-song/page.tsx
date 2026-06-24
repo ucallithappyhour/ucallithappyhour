@@ -48,6 +48,11 @@ export default function DynamicRequestSongPage() {
     null
 );
 
+const [audienceEmail, setAudienceEmail] = useState("");
+const [audienceMessage, setAudienceMessage] = useState("");
+const [savingAudience, setSavingAudience] = useState(false);
+const [audienceSaved, setAudienceSaved] = useState(false);
+
   const artistName = artist?.artist_name || "the artist";
   const resolvedArtistSlug = artist?.artist_slug || artistSlug;
 
@@ -214,6 +219,35 @@ function openFutureSuggestion() {
     if (!artist?.tip_link) return;
     window.open(artist.tip_link, "_blank", "noopener,noreferrer");
   }
+
+async function saveAudienceEmail() {
+  setAudienceMessage("");
+
+  const cleanEmail = audienceEmail.trim().toLowerCase();
+
+  if (!cleanEmail || !cleanEmail.includes("@")) {
+    setAudienceMessage("Please enter a valid email address.");
+    return;
+  }
+
+  setSavingAudience(true);
+
+  const { error } = await supabase.from("audience_members").insert({
+    email: cleanEmail,
+    artist_slug: resolvedArtistSlug,
+    source: "request_confirmation"
+  });
+
+  setSavingAudience(false);
+
+  if (error) {
+    setAudienceMessage("Could not save your email. Please try again.");
+    return;
+  }
+
+  setAudienceSaved(true);
+  setAudienceMessage("You're on the list!");
+}
 
   async function submitRequest() {
     const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
