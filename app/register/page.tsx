@@ -111,69 +111,98 @@ export default function RegisterPage() {
           <div className="hero">
             <div className="brand">U Call It Happy Hour</div>
 
-            <h1 className="title">Become a U Call It Happy Hour Artist</h1>
+            <h1 className="title">Turn Your Crowd Into Part of the Show</h1>
 
-            <p className="tagline">
-              Turn your live shows into an interactive request experience.
-            </p>
+<p className="tagline">
+  Give fans a way to request songs, support you directly, and stay connected
+  after the music stops.
+</p>
 
-            <section className="accountCard" style={{ marginBottom: 24 }}>
-              <h2>Artist Setup Includes</h2>
+<section className="accountCard" style={{ marginBottom: 24 }}>
+  <h2>What You Get</h2>
 
-              <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
-                Everything you need to launch.
-              </p>
+  <div
+    style={{
+      display: "grid",
+      gap: 14,
+      marginTop: 18
+    }}
+  >
+    <div>
+      <strong>🎵 Personalized Artist Page</strong>
+      <p className="details">A simple page your fans can open from any phone.</p>
+    </div>
 
-              <ul
-                style={{
-                  marginTop: 18,
-                  lineHeight: 1.9,
-                  fontSize: 14,
-                  fontWeight: 700,
-                  paddingLeft: 24
-                }}
-              >
-                <li>Personalized artist page for your fans</li>
-                <li>QR starter kit for tables, flyers, and signs</li>
-                <li>Fan song request dashboard</li>
-                <li>Future setlist insights</li>
-                <li>Venmo or Cash App tip integration</li>
-                <li>Ongoing platform updates and improvements</li>
-              </ul>
+    <div>
+      <strong>📚 Searchable Song Library</strong>
+      <p className="details">
+        Upload and manage your live performance catalog in minutes.
+      </p>
+    </div>
 
-              <div className="details" style={{ marginTop: 20 }}>
-                Your page gives fans one simple place to request songs, support
-                you directly, and stay connected to your live shows.
-              </div>
-            </section>
+    <div>
+      <strong>📱 QR Marketing Kit</strong>
+      <p className="details">
+        Table tents, flyers, social graphics, and QR codes included.
+      </p>
+    </div>
 
-            <section className="accountCard" style={{ marginBottom: 24 }}>
-              <h2>Why Artists Use It</h2>
+    <div>
+      <strong>💵 Tip Integration</strong>
+      <p className="details">
+        Connect Venmo or Cash App and collect more tips.
+      </p>
+    </div>
 
-              <ul
-                style={{
-                  marginTop: 16,
-                  lineHeight: 1.9,
-                  fontSize: 14,
-                  fontWeight: 700,
-                  paddingLeft: 24
-                }}
-              >
-                <li>Engage your crowd in a new way</li>
-                <li>Discover what fans actually want to hear</li>
-                <li>Create a more memorable venue experience</li>
-                <li>Encourage repeat attendance</li>
-                <li>Increase tip opportunities</li>
-              </ul>
+    <div>
+      <strong>📧 Fan Email Collection</strong>
+      <p className="details">
+        Build your audience list automatically as fans interact with your page.
+      </p>
+    </div>
 
-              <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
-                One extra booking pays for itself.
-              </p>
-            </section>
+    <div>
+      <strong>🎤 Live Request Dashboard</strong>
+      <p className="details">
+        Receive song requests in real time during your performances.
+      </p>
+    </div>
 
-            <section className="accountCard" style={{ marginBottom: 24 }}>
-              <h2>Investment</h2>
+    <div>
+      <strong>📊 Audience Insights</strong>
+      <p className="details">
+        See what fans request most and discover future setlist opportunities.
+      </p>
+    </div>
+  </div>
+</section>
 
+<section className="accountCard" style={{ marginBottom: 24 }}>
+  <h2>Why Artists Use It</h2>
+
+  <div
+    style={{
+      display: "grid",
+      gap: 10,
+      marginTop: 16,
+      fontWeight: 800
+    }}
+  >
+    <div>✓ Let fans request songs directly from their phones</div>
+    <div>✓ Build your fan email list automatically</div>
+    <div>✓ Create a searchable song catalog for every show</div>
+    <div>✓ Increase tips with one-click payment links</div>
+    <div>✓ Discover what your audience actually wants to hear</div>
+    <div>✓ Give venues a more interactive experience</div>
+    <div>✓ Encourage repeat attendance and future bookings</div>
+  </div>
+
+  <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
+    One extra booking pays for itself.
+  </p>
+</section>
+<section className="accountCard" style={{ marginBottom: 24 }}>
+  <h2>Investment</h2>
               {hasAgentReferral || hasArtistReferral ? (
                 <>
                   <p
