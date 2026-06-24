@@ -283,7 +283,6 @@ async function submitRequest() {
     localStorage.getItem(requestLimitKey) || "0"
   );
 
-  alert(`Key: ${requestLimitKey} Count: ${currentRequestCount}`);
 
   if (currentRequestCount >= 5) {
     alert("🎵 You've reached tonight's request limit of 5 songs. Enjoy the show!");
