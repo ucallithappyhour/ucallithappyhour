@@ -249,68 +249,80 @@ async function saveAudienceEmail() {
   setAudienceMessage("You're on the list!");
 }
 
-  async function submitRequest() {
-    const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
+async function submitRequest() {
+  const title = mode === "tonight" ? selectedSong?.title : futureTitle.trim();
 
-    const songArtist =
-      mode === "tonight"
-        ? selectedSong?.artist
-        : futureArtist.trim() || "Unknown Artist";
+  const songArtist =
+    mode === "tonight"
+      ? selectedSong?.artist
+      : futureArtist.trim() || "Unknown Artist";
 
-    if (!title) return;
+  if (!title) return;
 
-    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-if (artistSlug === "brian-quinn") {
-  if (normalizedTitle.includes("freebird")) {
-    setFreeBirdMode(true);
+  if (artistSlug === "brian-quinn") {
+    if (normalizedTitle.includes("freebird")) {
+      setFreeBirdMode(true);
+      return;
+    }
+  }
+
+  if (normalizedTitle.includes("browneyedgirl")) {
+    setPremiumSongMode("browneyedgirl");
     return;
   }
 
+  if (normalizedTitle.includes("wagonwheel")) {
+    setPremiumSongMode("wagonwheel");
+    return;
+  }
 
-}
+  const requestLimitKey = `ucihh-request-count-${resolvedArtistSlug}`;
+  const currentRequestCount = Number(
+    localStorage.getItem(requestLimitKey) || "0"
+  );
 
-setLoading(true);if (normalizedTitle.includes("browneyedgirl")) {
-  setPremiumSongMode("browneyedgirl");
-  return;
-}
+  if (currentRequestCount >= 5) {
+    alert("🎵 You've reached tonight's request limit of 5 songs. Enjoy the show!");
+    return;
+  }
 
-if (normalizedTitle.includes("wagonwheel")) {
-  setPremiumSongMode("wagonwheel");
-  return;
-}
-    try {
-      const response = await fetch("/api/song-request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          song: title,
-          artist: songArtist,
-          artist_slug: resolvedArtistSlug,
-          requester_name: name.trim() || null,
-          dedication: dedication.trim() || null,
-          request_type: mode,
-          gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null
-        })
-      });
+  setLoading(true);
 
-      const data = await response.json();
+  try {
+    const response = await fetch("/api/song-request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        song: title,
+        artist: songArtist,
+        artist_slug: resolvedArtistSlug,
+        requester_name: name.trim() || null,
+        dedication: dedication.trim() || null,
+        request_type: mode,
+        gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null
+      })
+    });
 
-      if (!response.ok) {
-        alert("Request did not send: " + data.error);
-        setLoading(false);
-        return;
-      }
+    const data = await response.json();
 
-      setSuccessMode(mode);
-    } catch (err) {
-      alert("Request did not send. Please try again.");
+    if (!response.ok) {
+      alert("Request did not send: " + data.error);
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
+    localStorage.setItem(requestLimitKey, String(currentRequestCount + 1));
+    setSuccessMode(mode);
+  } catch (err) {
+    alert("Request did not send. Please try again.");
   }
+
+  setLoading(false);
+}
 
   return (
     <main
