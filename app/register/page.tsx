@@ -109,8 +109,7 @@ export default function RegisterPage() {
       <div className="overlay">
         <div className="container">
           <div className="hero">
-            <div className="brand">U Call It Happy Hour</div>
-
+            
             <h1 className="title">Turn Your Crowd Into Part of the Show</h1>
 
 <p className="tagline">
@@ -119,7 +118,7 @@ export default function RegisterPage() {
 </p>
 
 <section className="accountCard" style={{ marginBottom: 24 }}>
-  <h2>What You Get</h2>
+  <h2 style={{ color: "#ffd84d" }}>What You Get</h2>
 
   <div
     style={{
@@ -178,7 +177,7 @@ export default function RegisterPage() {
 </section>
 
 <section className="accountCard" style={{ marginBottom: 24 }}>
-  <h2>Why Artists Use It</h2>
+  <h2 style={{ color: "#ffd84d" }}>Why Artists Use It</h2>
 
   <div
     style={{
@@ -202,7 +201,7 @@ export default function RegisterPage() {
   </p>
 </section>
 <section className="accountCard" style={{ marginBottom: 24 }}>
-  <h2>Investment</h2>
+  <h2 style={{ color: "#ffd84d" }}>Investment</h2>
               {hasAgentReferral || hasArtistReferral ? (
                 <>
                   <p
