@@ -265,7 +265,7 @@ export default function RegisterPage() {
               className="accountCard"
               style={{ maxWidth: 620, margin: "0 auto" }}
             >
-              <h2>Ready to Get Started?</h2>
+              <h2 style={{ color: "#ffd84d" }}>Ready to Get Started?</h2>
 
               <p className="empty">
                 Fill out the short form below. Artist name, contact name, and
