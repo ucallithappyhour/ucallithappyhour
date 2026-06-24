@@ -163,8 +163,8 @@ export default function RegisterPage() {
     <div>
       <strong>🎤 Live Request Dashboard</strong>
       <p className="details">
-        Receive song requests in real time during your performances.
-      </p>
+  Receive, manage, and respond to song requests in real time during your performances.
+</p>
     </div>
 
     <div>
@@ -200,6 +200,46 @@ export default function RegisterPage() {
     One extra booking pays for itself.
   </p>
 </section>
+
+<section className="accountCard" style={{ marginBottom: 24 }}>
+  <h2 style={{ color: "#ffd84d" }}>🎤 Your Artist Dashboard</h2>
+
+  <p style={{ marginTop: 12, lineHeight: 1.7 }}>
+    Every song request and future song suggestion appears instantly in your
+    dashboard, giving you complete control over what gets played.
+  </p>
+
+  <div
+    style={{
+      display: "grid",
+      gap: 12,
+      marginTop: 18,
+      fontWeight: 700
+    }}
+  >
+    <div>✓ View live song requests during performances</div>
+    <div>✓ See who requested each song</div>
+    <div>✓ Read dedications and special messages</div>
+    <div>✓ Mark songs as played</div>
+    <div>✓ Review future song suggestions from fans</div>
+    <div>✓ Use audience demand to help shape your setlist</div>
+  </div>
+
+  <div
+    style={{
+      marginTop: 20,
+      padding: 16,
+      borderRadius: 12,
+      background: "rgba(255,216,77,0.08)",
+      border: "1px solid rgba(255,216,77,0.25)"
+    }}
+  >
+    <strong style={{ color: "#ffd84d" }}>
+      Fans can request songs. You decide what gets played.
+    </strong>
+  </div>
+</section>
+
 <section className="accountCard" style={{ marginBottom: 24 }}>
   <h2 style={{ color: "#ffd84d" }}>Investment</h2>
               {hasAgentReferral || hasArtistReferral ? (
