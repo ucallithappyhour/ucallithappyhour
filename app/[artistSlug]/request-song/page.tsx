@@ -676,6 +676,76 @@ if (normalizedTitle.includes("wagonwheel")) {
                   </>
                 )}
 
+{!audienceSaved ? (
+  <div
+    style={{
+      background: "#181818",
+      padding: 18,
+      borderRadius: 12,
+      border: "1px solid #333",
+      marginTop: 16,
+      marginBottom: 16
+    }}
+  >
+    <p style={{ fontWeight: "bold", fontSize: 17, marginBottom: 8 }}>
+      Want to know when {artistName} plays again?
+    </p>
+
+    <p style={{ color: "#bbb", lineHeight: 1.5, marginBottom: 12 }}>
+      Enter your email and we'll keep you posted about future shows.
+    </p>
+
+    <input
+      value={audienceEmail}
+      onChange={(e) => setAudienceEmail(e.target.value)}
+      placeholder="Email address"
+      type="email"
+      style={{
+        width: "100%",
+        padding: 14,
+        fontSize: 16,
+        borderRadius: 8,
+        marginBottom: 10
+      }}
+    />
+
+    <button
+      onClick={saveAudienceEmail}
+      disabled={savingAudience}
+      style={{
+        width: "100%",
+        padding: "14px 18px",
+        fontSize: 16,
+        borderRadius: 8,
+        border: 0,
+        background: "#ffd84d",
+        color: "#000",
+        cursor: "pointer",
+        fontWeight: "bold"
+      }}
+    >
+      {savingAudience ? "Saving..." : "Keep Me Updated"}
+    </button>
+
+    {audienceMessage && (
+      <p style={{ marginTop: 10, color: "#ffd84d" }}>
+        {audienceMessage}
+      </p>
+    )}
+  </div>
+) : (
+  <p
+    style={{
+      color: "#7ee787",
+      fontWeight: "bold",
+      marginTop: 16,
+      marginBottom: 16
+    }}
+  >
+    ✅ You're on the list!
+  </p>
+)}
+
                 <p style={{ opacity: 0.75, fontSize: 14, lineHeight: 1.4 }}>
                   No pressure — your{" "}
                   {successMode === "tonight" ? "request" : "suggestion"} has
