@@ -742,7 +742,7 @@ if (normalizedTitle.includes("wagonwheel")) {
       marginBottom: 16
     }}
   >
-    ✅ You're on the list!
+    ✅ Thanks! We'll keep you posted on future shows.
   </p>
 )}
 
