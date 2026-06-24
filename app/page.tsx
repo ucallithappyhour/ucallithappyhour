@@ -245,7 +245,7 @@ export default function Home() {
 </p>
 
             <div className="section">
-              <h2>Available Artists</h2>
+              <h2 style={{ color: "#ffd84d" }}>Available Artists</h2>
 
               <input
                 value={query}
@@ -336,80 +336,81 @@ export default function Home() {
             </div>
 
             <div className="section">
-              <h2>For Artists</h2>
+              <h2 style={{ color: "#ffd84d" }}>For Artists</h2>
 
               <div className="event-card">
-                <p className="performer">
-                  Bring U Call It Happy Hour to Your Shows
-                </p>
+  <p className="performer">
+    Your Fans Already Have Their Phones Out. Use Them.
+  </p>
 
-                <p
-                  style={{
-                    fontSize: "1.1rem",
-                    fontWeight: 800,
-                    marginTop: 12,
-                  }}
-                >
-                  Turn your crowd into part of the show.
-                </p>
+  <div
+    style={{
+      width: 80,
+      height: 4,
+      background: "#ffd84d",
+      borderRadius: 999,
+      margin: "12px 0 18px"
+    }}
+  />
 
-                <p style={{ marginTop: 14, lineHeight: 1.7 }}>
-                  Fans request songs, leave tips, and shape future setlists — all
-                  from their phones. Gain insight into what your audience loves,
-                  create a more interactive experience for venues, and give fans a
-                  reason to come back.
-                </p>
+  <p
+    style={{
+      fontSize: "1.1rem",
+      fontWeight: 800,
+      marginTop: 12
+    }}
+  >
+    Turn every show into an interactive experience.
+  </p>
 
-                <div
-                  style={{
-                    marginTop: 18,
-                    lineHeight: 1.9,
-                    fontSize: 14,
-                    fontWeight: 700,
-                  }}
-                >
-                  <div>✓ Let fans request songs from their phones</div>
-                  <div>✓ Discover what your audience actually wants to hear</div>
-                  <div>✓ Capture future requests before they walk out the door</div>
-                  <div>✓ Increase tips with built-in Venmo or Cash App links</div>
-                  <div>
-                    ✓ Stand out with your own personalized artist page and QR code
-                  </div>
-                  <div>
-                    ✓ Give venues an interactive experience they&apos;ll remember
-                  </div>
-                </div>
+  <p style={{ marginTop: 14, lineHeight: 1.7 }}>
+    Give fans a simple way to request songs, tip you directly, and stay
+    connected after the music stops.
+  </p>
 
-                <div className="details" style={{ marginTop: 18 }}>
-                  Personalized artist page • Request dashboard • QR starter kit •
-                  Tip integration
-                </div>
+  <div
+    style={{
+      marginTop: 18,
+      lineHeight: 1.9,
+      fontSize: 14,
+      fontWeight: 700
+    }}
+  >
+    <div>✓ Personalized artist page</div>
+    <div>✓ Searchable song library</div>
+    <div>✓ Live request dashboard</div>
+    <div>✓ Fan email collection</div>
+    <div>✓ Venmo & Cash App integration</div>
+    <div>✓ QR marketing kit included</div>
+    <div>✓ Audience insights & future setlist data</div>
+  </div>
 
-                <p
-                  style={{
-                    marginTop: 18,
-                    fontStyle: "italic",
-                    opacity: 0.9,
-                  }}
-                >
-                  Venues love artists who keep crowds engaged and customers
-                  staying longer.
-                </p>
+  <p
+    style={{
+      marginTop: 18,
+      fontStyle: "italic",
+      opacity: 0.9
+    }}
+  >
+    Build your audience, increase tips, and give venues a reason to bring you back.
+  </p>
 
-                <p
-                  style={{
-                    marginTop: 16,
-                    fontWeight: 900,
-                    fontSize: "1.05rem",
-                  }}
-                >
-                  One extra booking pays for itself.
-                </p>
+  <p
+    style={{
+      marginTop: 16,
+      fontWeight: 900,
+      fontSize: "1.05rem",
+      color: "#ffd84d"
+    }}
+  >
+    🎤 One extra booking can pay for your entire setup.
+  </p>
 
-                <Link className="btn" href="/register">
-                  Apply for Artist Setup
-                </Link>
-              </div>
+  <Link className="btn" href="/register">
+    Apply for Artist Setup
+  </Link>
+</div>
+
 
                             <div className="actions" style={{ marginTop: 18 }}>
                 <Link className="btn secondary" href="/account">
@@ -421,7 +422,7 @@ export default function Home() {
 
           {/* FOR BOOKING AGENTS */}
           <div className="section">
-            <h2>For Booking Agents & Talent Buyers</h2>
+            <h2 style={{ color: "#ffd84d" }}>For Booking Agents & Talent Buyers</h2>
 
             <div className="event-card">
               <p className="performer">
@@ -429,7 +430,7 @@ export default function Home() {
               </p>
 
               <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
-                Give your artists a smarter way to engage fans.
+                Help artists grow their audience while earning commissions.
               </p>
 
               <p style={{ marginTop: 14, lineHeight: 1.7 }}>
@@ -474,7 +475,7 @@ export default function Home() {
                   fontSize: "1.05rem"
                 }}
               >
-                Refer 10 artists = $250 in commissions.
+                💰 Refer 10 artists. Earn $250.
               </p>
 
               <p style={{ opacity: 0.9, marginTop: 12 }}>
