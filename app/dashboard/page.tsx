@@ -64,8 +64,9 @@ export default function DashboardPage() {
 const [manualSongGigId, setManualSongGigId] = useState<number | null>(null);
 const [manualSongTitle, setManualSongTitle] = useState("");
 const [manualSongArtist, setManualSongArtist] = useState("");
-  async function loadArtistAndRequests() {
-    setLoading(true);
+  async function loadArtistAndRequests(showLoading = true) {
+  if (showLoading) setLoading(true);
+  setMessage("");
     setMessage("");
 
     const params = new URLSearchParams(window.location.search);
@@ -196,7 +197,7 @@ const [manualSongArtist, setManualSongArtist] = useState("");
   }
 
   useEffect(() => {
-  loadArtistAndRequests();
+  loadArtistAndRequests(false);
 
   const channel = supabase
     .channel("song-request-updates")
@@ -228,8 +229,8 @@ const [manualSongArtist, setManualSongArtist] = useState("");
     });
 
   const interval = window.setInterval(() => {
-    loadArtistAndRequests();
-  }, 3000);
+  loadArtistAndRequests(false);
+}, 3000);
 
   return () => {
     window.clearInterval(interval);
