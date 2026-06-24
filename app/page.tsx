@@ -426,7 +426,7 @@ export default function Home() {
 
             <div className="event-card">
               <p className="performer">
-                Earn $25 Per Artist Referral
+                Earn $25 Per Completed Artist Setup
               </p>
 
 <div
