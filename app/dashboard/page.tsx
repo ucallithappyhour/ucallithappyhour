@@ -203,7 +203,7 @@ const [manualSongArtist, setManualSongArtist] = useState("");
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*",
           schema: "public",
           table: "song_requests"
         },
@@ -222,7 +222,9 @@ const [manualSongArtist, setManualSongArtist] = useState("");
           loadArtistAndRequests();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+  console.log("Realtime status:", status);
+});
 
     return () => {
       supabase.removeChannel(channel);
