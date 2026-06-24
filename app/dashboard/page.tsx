@@ -208,8 +208,9 @@ const [manualSongArtist, setManualSongArtist] = useState("");
           table: "song_requests"
         },
         () => {
-          loadArtistAndRequests();
-        }
+  console.log("song_requests realtime fired");
+  loadArtistAndRequests();
+}
       )
       .on(
         "postgres_changes",
