@@ -196,41 +196,47 @@ const [manualSongArtist, setManualSongArtist] = useState("");
   }
 
   useEffect(() => {
-    loadArtistAndRequests();
-
-    const channel = supabase
-      .channel("song-request-updates")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "song_requests"
-        },
-        () => {
-  console.log("song_requests realtime fired");
   loadArtistAndRequests();
-}
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "gig_playlists"
-        },
-        () => {
-          loadArtistAndRequests();
-        }
-      )
-      .subscribe((status) => {
-  console.log("Realtime status:", status);
-});
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  const channel = supabase
+    .channel("song-request-updates")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "song_requests"
+      },
+      () => {
+        console.log("song_requests realtime fired");
+        loadArtistAndRequests();
+      }
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "gig_playlists"
+      },
+      () => {
+        loadArtistAndRequests();
+      }
+    )
+    .subscribe((status) => {
+      console.log("Realtime status:", status);
+    });
+
+  const interval = window.setInterval(() => {
+    loadArtistAndRequests();
+  }, 3000);
+
+  return () => {
+    window.clearInterval(interval);
+    supabase.removeChannel(channel);
+  };
+}, []);
+
 
   function groupRequests(items: SongRequest[]) {
     const groups: Record<string, SongRequest[]> = {};
