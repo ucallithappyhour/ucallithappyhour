@@ -426,8 +426,18 @@ export default function Home() {
 
             <div className="event-card">
               <p className="performer">
-                Earn $25 Every Time an Artist Completes Setup
+                Earn $25 Per Artist Referral
               </p>
+
+<div
+  style={{
+    width: 80,
+    height: 4,
+    background: "#ffd84d",
+    borderRadius: 999,
+    margin: "12px 0 18px"
+  }}
+/>
 
               <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
                 Help artists grow their audience while earning commissions.
