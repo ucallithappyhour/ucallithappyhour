@@ -698,7 +698,7 @@ export default function AccountPage() {
 
             <div className="actions">
               <Link className="btn secondary" href="/dashboard">
-                Back to Dashboard
+                Dashboard
               </Link>
 
               <button className="btn secondary" type="button" onClick={handleLogout}>
