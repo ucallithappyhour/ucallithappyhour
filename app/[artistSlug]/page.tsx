@@ -276,9 +276,16 @@ export default function DynamicArtistPage() {
                   : "Upcoming gigs coming soon"}
               </div>
 
-              <Link className="btn" href={`/${artist.artist_slug}/request-song`}>
-                Request a Song
-              </Link>
+<Link
+  className="btn"
+  href={
+    nextOccurrence
+      ? `/${artist.artist_slug}/request-song?gig=${nextOccurrence.gig.id}`
+      : `/${artist.artist_slug}/request-song`
+  }
+>
+  Request a Song
+</Link>
 
               {logo && (
                 <div
