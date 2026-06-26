@@ -278,16 +278,18 @@ async function submitRequest() {
     return;
   }
 
-  const requestLimitKey = `ucihh-request-count-${resolvedArtistSlug}`;
-  const currentRequestCount = Number(
-    localStorage.getItem(requestLimitKey) || "0"
+const requestLimitKey = `ucihh-request-count-${resolvedArtistSlug}-${gigIdFromUrl || "no-gig"}`;
+
+const currentRequestCount = Number(
+  localStorage.getItem(requestLimitKey) || "0"
+);
+
+if (mode === "tonight" && currentRequestCount >= 3) {
+  alert(
+    "You've reached the maximum of 3 requests for this performance. Thanks for helping shape tonight's setlist! We hope you'll join us again at the next show. 🎵"
   );
-
-
-  if (currentRequestCount >= 5) {
-    alert("🎵 You've reached tonight's request limit of 5 songs. Enjoy the show!");
-    return;
-  }
+  return;
+}
 
   setLoading(true);
 
