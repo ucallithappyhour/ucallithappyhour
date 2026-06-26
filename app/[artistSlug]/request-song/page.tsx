@@ -660,44 +660,47 @@ visitor_id: visitorId,
                     : `We'll pass your suggestion along to ${artistName} for future shows.`}
                 </p>
 
-                {successMode === "tonight" && (
-                  <p
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.5,
-                      color: "#bbb",
-                      marginBottom: 18
-                    }}
-                  >
-                    Your request has been sent to the artist. They'll do their
-                    best to play it, depending on timing, audience requests, and
-                    the flow of the show.
-                  </p>
-                  {limitReached && (
-  <div
-    style={{
-      background: "#2a2200",
-      border: "1px solid #ffd84d",
-      color: "#ffd84d",
-      padding: 14,
-      borderRadius: 10,
-      marginBottom: 18,
-      lineHeight: 1.5
-    }}
-  >
-    <strong>🎉 You've reached your limit for tonight!</strong>
+{successMode === "tonight" && (
+  <>
+    <p
+      style={{
+        fontSize: 15,
+        lineHeight: 1.5,
+        color: "#bbb",
+        marginBottom: 18
+      }}
+    >
+      Your request has been sent to the artist. They'll do their best to play
+      it, depending on timing, audience requests, and the flow of the show.
+    </p>
 
-    <br />
-    <br />
+    {limitReached && (
+      <div
+        style={{
+          background: "#2a2200",
+          border: "1px solid #ffd84d",
+          color: "#ffd84d",
+          padding: 14,
+          borderRadius: 10,
+          marginBottom: 18,
+          lineHeight: 1.5
+        }}
+      >
+        <strong>🎉 You've reached your limit for tonight!</strong>
 
-    You've used all 3 song requests for this performance. Thanks for helping
-    shape tonight's setlist!
+        <br />
+        <br />
 
-    <br />
-    <br />
+        You've used all 3 song requests for this performance. Thanks for helping
+        shape tonight's setlist!
 
-    You'll be able to request 3 more songs at the next show.
-  </div>
+        <br />
+        <br />
+
+        You'll be able to request 3 more songs at the next show.
+      </div>
+    )}
+  </>
 )}
 
                 {artist?.tip_link && (
