@@ -47,7 +47,7 @@ export default function DynamicRequestSongPage() {
   const [successMode, setSuccessMode] = useState<"tonight" | "future" | null>(
     null
 );
-
+const [limitReached, setLimitReached] = useState(false);
 const [audienceEmail, setAudienceEmail] = useState("");
 const [audienceMessage, setAudienceMessage] = useState("");
 const [savingAudience, setSavingAudience] = useState(false);
@@ -130,6 +130,7 @@ const [audienceSaved, setAudienceSaved] = useState(false);
     setFreeBirdMode(false);
     setPremiumSongMode(false);
     setSuccessMode(null);
+    setLimitReached(false);
   }
 
 function openTonightRequest(song: Song) {
@@ -327,6 +328,9 @@ visitor_id: visitorId,
     }
 
     localStorage.setItem(requestLimitKey, String(currentRequestCount + 1));
+    if (mode === "tonight" && currentRequestCount + 1 >= 3) {
+  setLimitReached(true);
+}
     setSuccessMode(mode);
   } catch (err) {
     alert("Request did not send. Please try again.");
@@ -669,7 +673,32 @@ visitor_id: visitorId,
                     best to play it, depending on timing, audience requests, and
                     the flow of the show.
                   </p>
-                )}
+                  {limitReached && (
+  <div
+    style={{
+      background: "#2a2200",
+      border: "1px solid #ffd84d",
+      color: "#ffd84d",
+      padding: 14,
+      borderRadius: 10,
+      marginBottom: 18,
+      lineHeight: 1.5
+    }}
+  >
+    <strong>🎉 You've reached your limit for tonight!</strong>
+
+    <br />
+    <br />
+
+    You've used all 3 song requests for this performance. Thanks for helping
+    shape tonight's setlist!
+
+    <br />
+    <br />
+
+    You'll be able to request 3 more songs at the next show.
+  </div>
+)}
 
                 {artist?.tip_link && (
                   <>
