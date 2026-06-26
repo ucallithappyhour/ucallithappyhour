@@ -261,6 +261,13 @@ async function submitRequest() {
 
   const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9]/g, "");
 
+  let visitorId = localStorage.getItem("ucihh-visitor-id");
+
+if (!visitorId) {
+  visitorId = crypto.randomUUID();
+  localStorage.setItem("ucihh-visitor-id", visitorId);
+}
+
   if (artistSlug === "brian-quinn") {
     if (normalizedTitle.includes("freebird")) {
       setFreeBirdMode(true);
@@ -306,7 +313,8 @@ if (mode === "tonight" && currentRequestCount >= 3) {
         requester_name: name.trim() || null,
         dedication: dedication.trim() || null,
         request_type: mode,
-        gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null
+        gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null,
+visitor_id: visitorId,
       })
     });
 

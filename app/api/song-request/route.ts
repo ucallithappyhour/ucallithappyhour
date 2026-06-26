@@ -19,7 +19,8 @@ export async function POST(request: Request) {
       requester_name,
       dedication,
       request_type,
-      gig_id
+      gig_id,
+      visitor_id
     } = body;
 
     const resolvedRequestType = request_type || "tonight";
@@ -32,14 +33,14 @@ export async function POST(request: Request) {
       );
     }
 
-    if (resolvedRequestType === "tonight" && resolvedGigId) {
+    if (resolvedRequestType === "tonight" && resolvedGigId && visitor_id) {
       const { count, error: countError } = await supabase
         .from("song_requests")
         .select("id", { count: "exact", head: true })
         .eq("artist_slug", artist_slug)
         .eq("gig_id", resolvedGigId)
         .eq("request_type", "tonight")
-        .eq("requester_name", requester_name || null);
+        .eq("visitor_id", visitor_id);
 
       if (countError) {
         return NextResponse.json({ error: countError.message }, { status: 500 });
@@ -64,7 +65,8 @@ export async function POST(request: Request) {
       dedication,
       status: "pending",
       request_type: resolvedRequestType,
-      gig_id: resolvedGigId
+      gig_id: resolvedGigId,
+      visitor_id: visitor_id || null
     });
 
     if (error) {
