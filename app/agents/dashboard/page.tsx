@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
+import { buildQrUrl } from "../../../lib/qr";
 
 type BookingAgent = {
   id: string;
@@ -29,13 +30,9 @@ export default function AgentDashboard() {
   }, [agent]);
 
   const qrUrl = useMemo(() => {
-    if (!referralLink) return "";
-    return `https://quickchart.io/qr?text=${encodeURIComponent(
-  referralLink
-)}&size=900&margin=2&centerImageUrl=${encodeURIComponent(
-  "https://www.ucallithappyhour.com/ucallit-qr-logo.png"
-)}&centerImageSizeRatio=0.18`;
-  }, [referralLink]);
+  if (!referralLink) return "";
+  return buildQrUrl(referralLink, 900);
+}, [referralLink]);
 
   useEffect(() => {
     async function loadDashboard() {

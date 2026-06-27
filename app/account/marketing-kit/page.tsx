@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
-
+import { buildQrUrl } from "../../../lib/qr";
 type Artist = {
   artist_slug: string;
   artist_name: string | null;
@@ -89,13 +89,9 @@ export default function MarketingKitPage() {
     artist.referral_code || ""
   }`;
 
-  const artistQrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
-    artistPageUrl
-  )}&size=300`;
+const artistQrUrl = buildQrUrl(artistPageUrl, 300);
 
-  const referralQrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(
-    referralUrl
-  )}&size=300`;
+const referralQrUrl = buildQrUrl(referralUrl, 300);
 
   async function copyReferralMessage() {
     const referralMessage = `Hey! I've been using U Call It Happy Hour to take song requests during my shows.
