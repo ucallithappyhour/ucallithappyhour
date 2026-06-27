@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { createClient } from "@supabase/supabase-js";
-import { buildQrUrl } from "../../../lib/qr";
+import { buildQrUrl } from "../../../../lib/qr";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 
   const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
 
- const qrUrl = buildQrUrl(requestUrl, 900);
+ const qrUrl = buildQrUrl(artistUrl, 900);
 
   const qrBytes = await fetchImageBytes(qrUrl);
 

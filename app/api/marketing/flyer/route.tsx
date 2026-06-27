@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { ImageResponse } from "next/og";
-import { buildQrUrl } from "../../../lib/qr";
+import { buildQrUrl } from "../../../../lib/qr";
 
 export const runtime = "edge";
 
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   const artistName = artist.artist_name || artist.artist_slug;
   const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
 
- const qrUrl = buildQrUrl(requestUrl, 900);
+ const qrUrl = buildQrUrl(artistUrl, 900);
 
   return new ImageResponse(
     (
