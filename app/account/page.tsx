@@ -858,48 +858,41 @@ const visibleGigs = gigs
                   </section>
 
                   <section className="accountCard">
-                    <h2>E-Pay / Tips</h2>
+  <h2>💰 Tip Options</h2>
 
-                    <label>Payment Type</label>
-                    <select
-                      value={profile.tip_type}
-                      onChange={(e) => updateField("tip_type", e.target.value)}
-                    >
-                      <option value="">Choose payment type</option>
-                      <option value="Venmo">Venmo</option>
-                      <option value="Cash App">Cash App</option>
-                      <option value="PayPal">PayPal</option>
-                      <option value="Zelle">Zelle</option>
-                      <option value="Other">Other</option>
-                    </select>
+  <label>Message</label>
+  <textarea
+    value={profile.tip_thank_you}
+    onChange={(e) =>
+      updateField("tip_thank_you", e.target.value)
+    }
+    placeholder="Every tip helps support live music. Cash tips are always appreciated during the show as well!"
+  />
 
-                    <label>Handle or Link</label>
-                    <input
-                      value={profile.tip_link}
-                      onChange={(e) => updateField("tip_link", e.target.value)}
-                      placeholder="Payment handle or link"
-                    />
+  <div style={{ marginTop: 20 }}>
+    <h3 style={{ marginBottom: 12 }}>Payment Methods</h3>
 
-                    <label>Button Text</label>
-                    <input
-                      value={profile.tip_button_text}
-                      onChange={(e) =>
-                        updateField("tip_button_text", e.target.value)
-                      }
-                      placeholder="Tip Me"
-                    />
+    <p
+      style={{
+        color: "#bbb",
+        fontSize: 14,
+        marginBottom: 16
+      }}
+    >
+      Add one or more payment methods for fans to choose from.
+    </p>
 
-                    <label>Thank You Message</label>
-                    <textarea
-                      value={profile.tip_thank_you}
-                      onChange={(e) =>
-                        updateField("tip_thank_you", e.target.value)
-                      }
-                      placeholder="Thanks for supporting live music!"
-                    />
-                  </section>
+    {/* Payment methods will be loaded here */}
+
+    <button
+      type="button"
+      className="btn secondary"
+    >
+      + Add Payment Method
+    </button>
+  </div>
+</section>
 </div>
-
 <div className="accountGrid">
 
      <section className="accountCard">
