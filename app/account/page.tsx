@@ -58,6 +58,22 @@ type NewArtist = {
   owner_email: string;
 };
 
+type PaymentMethod = {
+  id: number;
+  artist_slug: string;
+  payment_type: string;
+  payment_link: string;
+  button_text: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
+type NewPaymentMethod = {
+  payment_type: string;
+  payment_link: string;
+  button_text: string;
+};
+
 const emptyProfile: ArtistProfile = {
   artist_name: "",
   bio: "",
@@ -92,6 +108,12 @@ const emptyArtist: NewArtist = {
   owner_email: ""
 };
 
+const emptyPaymentMethod: NewPaymentMethod = {
+  payment_type: "Venmo",
+  payment_link: "",
+  button_text: ""
+};
+
 export default function AccountPage() {
   const [authMode, setAuthMode] = useState<"login" | "create">("login");
   const [email, setEmail] = useState("");
@@ -107,6 +129,12 @@ export default function AccountPage() {
   const [newGig, setNewGig] = useState<NewGig>(emptyGig);
   const [editingGigId, setEditingGigId] = useState<number | null>(null);
   const [newArtist, setNewArtist] = useState<NewArtist>(emptyArtist);
+
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [newPaymentMethod, setNewPaymentMethod] =
+    useState<NewPaymentMethod>(emptyPaymentMethod);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
   const [message, setMessage] = useState("");
 
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
@@ -285,7 +313,74 @@ export default function AccountPage() {
       referral_earnings: Number(data.referral_earnings || 0)
     });
   }
+async function loadPaymentMethods() {
+  if (!selectedArtist) return;
 
+  const { data, error } = await supabase
+    .from("artist_payment_methods")
+    .select("*")
+    .eq("artist_slug", selectedArtist)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    setMessage(`Could not load payment methods: ${error.message}`);
+    return;
+  }
+
+  setPaymentMethods(data || []);
+}
+
+async function addPaymentMethod() {
+  if (!selectedArtist) return;
+
+  if (
+    !newPaymentMethod.payment_type ||
+    !newPaymentMethod.payment_link.trim()
+  ) {
+    setMessage("Choose a payment type and enter a payment link.");
+    return;
+  }
+
+  setMessage("Saving payment method...");
+
+  const { error } = await supabase
+    .from("artist_payment_methods")
+    .insert({
+      artist_slug: selectedArtist,
+      payment_type: newPaymentMethod.payment_type,
+      payment_link: newPaymentMethod.payment_link.trim(),
+      button_text:
+        newPaymentMethod.button_text.trim() ||
+        newPaymentMethod.payment_type,
+      sort_order: paymentMethods.length + 1,
+      is_active: true
+    });
+
+  if (error) {
+    setMessage(`Could not save payment method: ${error.message}`);
+    return;
+  }
+
+  setNewPaymentMethod(emptyPaymentMethod);
+  setShowPaymentForm(false);
+  setMessage("Payment method added.");
+  loadPaymentMethods();
+}
+
+async function deletePaymentMethod(id: number) {
+  const { error } = await supabase
+    .from("artist_payment_methods")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    setMessage(`Could not remove payment method: ${error.message}`);
+    return;
+  }
+
+  setMessage("Payment method removed.");
+  loadPaymentMethods();
+}
   async function loadGigs() {
     if (!selectedArtist) return;
 
@@ -584,13 +679,14 @@ export default function AccountPage() {
   }, [user]);
 
   useEffect(() => {
-    if (selectedArtist) {
-      loadProfile();
-      loadGigs();
-      setNewGig(emptyGig);
-      setEditingGigId(null);
-    }
-  }, [selectedArtist]);
+  if (selectedArtist) {
+    loadProfile();
+    loadGigs();
+    loadPaymentMethods();
+    setNewGig(emptyGig);
+    setEditingGigId(null);
+  }
+}, [selectedArtist]);
 
   if (checkingAuth) {
     return (
@@ -882,14 +978,127 @@ const visibleGigs = gigs
       Add one or more payment methods for fans to choose from.
     </p>
 
-    {/* Payment methods will be loaded here */}
+    {paymentMethods.length === 0 ? (
+  <p className="empty">No payment methods added yet.</p>
+) : (
+  <div style={{ display: "grid", gap: 12, marginBottom: 18 }}>
+    {paymentMethods.map((method) => (
+      <div
+        key={method.id}
+        style={{
+          padding: 12,
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: 10
+        }}
+      >
+        <strong>{method.payment_type}</strong>
+
+        <p
+          style={{
+            margin: "6px 0",
+            color: "#bbb",
+            overflowWrap: "anywhere"
+          }}
+        >
+          {method.payment_link}
+        </p>
+
+        <p>Button: {method.button_text}</p>
+
+        <button
+          className="smallbtn"
+          type="button"
+          onClick={() => deletePaymentMethod(method.id)}
+        >
+          Remove
+        </button>
+      </div>
+    ))}
+  </div>
+)}
+
+{showPaymentForm && (
+  <div
+    style={{
+      marginBottom: 18,
+      padding: 15,
+      border: "1px solid rgba(255,255,255,.15)",
+      borderRadius: 10
+    }}
+  >
+    <label>Payment Type</label>
+
+    <select
+      value={newPaymentMethod.payment_type}
+      onChange={(e) =>
+        setNewPaymentMethod({
+          ...newPaymentMethod,
+          payment_type: e.target.value
+        })
+      }
+    >
+      <option>Venmo</option>
+      <option>Cash App</option>
+      <option>PayPal</option>
+      <option>Zelle</option>
+      <option>Other</option>
+    </select>
+
+    <label>Payment Link</label>
+
+    <input
+      value={newPaymentMethod.payment_link}
+      onChange={(e) =>
+        setNewPaymentMethod({
+          ...newPaymentMethod,
+          payment_link: e.target.value
+        })
+      }
+    />
+
+    <label>Button Text</label>
+
+    <input
+      value={newPaymentMethod.button_text}
+      onChange={(e) =>
+        setNewPaymentMethod({
+          ...newPaymentMethod,
+          button_text: e.target.value
+        })
+      }
+    />
 
     <button
+      className="btn"
       type="button"
-      className="btn secondary"
+      onClick={addPaymentMethod}
     >
-      + Add Payment Method
+      Save Payment Method
     </button>
+
+    <button
+      className="btn secondary"
+      type="button"
+      style={{ marginLeft: 10 }}
+      onClick={() => {
+        setShowPaymentForm(false);
+        setNewPaymentMethod(emptyPaymentMethod);
+      }}
+    >
+      Cancel
+    </button>
+  </div>
+)}
+
+{!showPaymentForm && (
+  <button
+    className="btn secondary"
+    type="button"
+    onClick={() => setShowPaymentForm(true)}
+  >
+    + Add Payment Method
+  </button>
+)}
   </div>
 </section>
 </div>
