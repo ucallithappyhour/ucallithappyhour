@@ -283,11 +283,13 @@ const [manualSongArtist, setManualSongArtist] = useState("");
 
     return end ? `${start} - ${end}` : start;
   }
-
- const tonightGroups = useMemo(() => {
   const todayKey = new Date().toLocaleDateString("en-CA", {
     timeZone: "America/New_York"
   });
+ 
+
+ const tonightGroups = useMemo(() => {
+
 
   return groupRequests(
     requests.filter((request) => {
@@ -307,9 +309,7 @@ const [manualSongArtist, setManualSongArtist] = useState("");
 }, [requests]);
 
 const upcomingGigGroups = useMemo(() => {
-  const todayKey = new Date().toLocaleDateString("en-CA", {
-    timeZone: "America/New_York"
-  });
+
 
   const futureWithGig = requests.filter(
     (request) => request.request_type === "future" && request.gig_id
@@ -341,11 +341,7 @@ const upcomingGigGroups = useMemo(() => {
         playlist: gigPlaylist
       };
     })
-    .filter((gigGroup) => {
-      if (!gigGroup.gig?.gig_date) return false;
-
-      return gigGroup.gig.gig_date.slice(0, 10) >= todayKey;
-    })
+    
     .sort((a, b) => {
       const aDate = a.gig?.gig_date || "";
       const bDate = b.gig?.gig_date || "";
