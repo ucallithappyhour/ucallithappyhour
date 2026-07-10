@@ -294,53 +294,52 @@ const [manualSongArtist, setManualSongArtist] = useState("");
     [requests]
   );
 
-  const upcomingGigGroups = useMemo(() => {
-    const futureWithGig = requests.filter(
-      (request) => request.request_type === "future" && request.gig_id
-    );
+const upcomingGigGroups = useMemo(() => {
+  const todayKey = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/New_York"
+  });
 
-    const gigIds = Array.from(
-      new Set([
-        ...futureWithGig
-          .map((request) => request.gig_id)
-          .filter((gigId): gigId is number => typeof gigId === "number"),
-        ...playlistSongs.map((song) => song.gig_id)
-      ])
-    );
-
-    return gigIds
-      .map((gigId) => {
-        const gigRequests = futureWithGig.filter(
-          (request) => request.gig_id === gigId
-        );
-
-        const gigPlaylist = playlistSongs.filter(
-          (playlistSong) => playlistSong.gig_id === gigId
-        );
-
-        return {
-          gigId,
-          gig: gigsById[gigId] || null,
-          groups: groupRequests(gigRequests),
-          playlist: gigPlaylist
-        };
-      })
-      .sort((a, b) => {
-        const aDate = a.gig?.gig_date || "";
-        const bDate = b.gig?.gig_date || "";
-        return aDate.localeCompare(bDate);
-      });
-  }, [requests, playlistSongs, gigsById]);
-
-  const unassignedFutureGroups = useMemo(
-    () =>
-      groupRequests(
-        requests.filter(
-          (request) => request.request_type === "future" && !request.gig_id
-        )
-      ),
-    [requests]
+  const futureWithGig = requests.filter(
+    (request) => request.request_type === "future" && request.gig_id
   );
+
+  const gigIds = Array.from(
+    new Set([
+      ...futureWithGig
+        .map((request) => request.gig_id)
+        .filter((gigId): gigId is number => typeof gigId === "number"),
+      ...playlistSongs.map((song) => song.gig_id)
+    ])
+  );
+
+  return gigIds
+    .map((gigId) => {
+      const gigRequests = futureWithGig.filter(
+        (request) => request.gig_id === gigId
+      );
+
+      const gigPlaylist = playlistSongs.filter(
+        (playlistSong) => playlistSong.gig_id === gigId
+      );
+
+      return {
+        gigId,
+        gig: gigsById[gigId] || null,
+        groups: groupRequests(gigRequests),
+        playlist: gigPlaylist
+      };
+    })
+    .filter((gigGroup) => {
+      if (!gigGroup.gig?.gig_date) return false;
+
+      return gigGroup.gig.gig_date.slice(0, 10) >= todayKey;
+    })
+    .sort((a, b) => {
+      const aDate = a.gig?.gig_date || "";
+      const bDate = b.gig?.gig_date || "";
+      return aDate.localeCompare(bDate);
+    });
+}, [requests, playlistSongs, gigsById]);
 
   async function updateGroup(group: RequestGroup, status: string) {
     const ids = group.items.map((request) => request.id);
