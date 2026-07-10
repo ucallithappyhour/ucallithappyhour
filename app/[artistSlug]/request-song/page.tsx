@@ -286,7 +286,12 @@ if (!visitorId) {
     return;
   }
 
-const requestLimitKey = `ucihh-request-count-${resolvedArtistSlug}-${gigIdFromUrl || "no-gig"}`;
+const todayKey = new Date().toLocaleDateString("en-CA", {
+  timeZone: "America/New_York",
+});
+
+const requestLimitKey =
+  `ucihh-request-count-${resolvedArtistSlug}-${gigIdFromUrl || "no-gig"}-${todayKey}`;
 
 const currentRequestCount = Number(
   localStorage.getItem(requestLimitKey) || "0"
