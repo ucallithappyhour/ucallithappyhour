@@ -847,6 +847,9 @@ export default function AccountPage() {
                       placeholder="Thanks for supporting live music!"
                     />
                   </section>
+</div>
+
+<div className="accountGrid">
 
                   <section className="accountCard">
                     <h2>Upcoming Gigs</h2>
@@ -1067,7 +1070,9 @@ export default function AccountPage() {
                       placeholder="Website URL"
                     />
                   </section>
+</div>
 
+<div className="accountGrid">
                   <section className="accountCard">
                     <h2>Song Library</h2>
 
