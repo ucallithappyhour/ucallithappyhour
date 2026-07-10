@@ -851,348 +851,383 @@ export default function AccountPage() {
 
 <div className="accountGrid">
 
-                  <section className="accountCard">
-                    <h2>Upcoming Gigs</h2>
+     <section className="accountCard">
+  <h2>Upcoming Gigs</h2>
 
-                    {gigs.length === 0 ? (
-                      <p className="empty">No gigs added yet.</p>
-                    ) : (
-                      gigs.map((gig) => (
-                        <div
-                          key={gig.id}
-                          style={{
-                            borderTop: "1px solid rgba(255,255,255,0.18)",
-                            paddingTop: 14,
-                            marginTop: 14
-                          }}
-                        >
-                          <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
-                            {gig.venue_name || "Venue TBD"}
-                          </p>
+  {gigs.length === 0 ? (
+    <p className="empty">No gigs added yet.</p>
+  ) : (
+    <div
+      style={{
+        maxHeight: 500,
+        overflowY: "auto",
+        paddingRight: 8
+      }}
+    >
+      {gigs.map((gig) => (
+        <div
+          key={gig.id}
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.18)",
+            paddingTop: 14,
+            marginTop: 14
+          }}
+        >
+          <p style={{ margin: "0 0 6px", fontWeight: 900 }}>
+            {gig.venue_name || "Venue TBD"}
+          </p>
 
-                          <p style={{ margin: "0 0 6px", color: "#ddd" }}>
-                            {formatGigDate(gig.gig_date)} •{" "}
-                            {formatGigTime(gig.start_time, gig.end_time)}
-                          </p>
+          <p style={{ margin: "0 0 6px", color: "#ddd" }}>
+            {formatGigDate(gig.gig_date)} •{" "}
+            {formatGigTime(gig.start_time, gig.end_time)}
+          </p>
 
-                          <p style={{ margin: "0 0 10px", color: "#bbb" }}>
-                            {gig.venue_address || "Address TBD"} •{" "}
-                            {gig.recurring_type || "One-Time"}
-                          </p>
+          <p style={{ margin: "0 0 10px", color: "#bbb" }}>
+            {gig.venue_address || "Address TBD"} •{" "}
+            {gig.recurring_type || "One-Time"}
+          </p>
 
-                          {gig.special_note && (
-                            <p
-                              style={{
-                                marginTop: 8,
-                                color: "#d4af37",
-                                fontStyle: "italic"
-                              }}
-                            >
-                              {gig.special_note}
-                            </p>
-                          )}
+          {gig.special_note && (
+            <p
+              style={{
+                marginTop: 8,
+                color: "#d4af37",
+                fontStyle: "italic"
+              }}
+            >
+              {gig.special_note}
+            </p>
+          )}
 
-                          <p
-                            style={{
-                              margin: "8px 0 12px",
-                              color:
-                                gig.allow_requests === false
-                                  ? "#ff8a8a"
-                                  : "#8affb2",
-                              fontWeight: 800
-                            }}
-                          >
-                            Requests:{" "}
-                            {gig.allow_requests === false
-                              ? "Off for this gig"
-                              : "On"}
-                          </p>
+          <p
+            style={{
+              margin: "8px 0 12px",
+              color:
+                gig.allow_requests === false
+                  ? "#ff8a8a"
+                  : "#8affb2",
+              fontWeight: 800
+            }}
+          >
+            Requests:{" "}
+            {gig.allow_requests === false
+              ? "Off for this gig"
+              : "On"}
+          </p>
 
-                          <button
-                            className="smallbtn"
-                            type="button"
-                            onClick={() => startEditGig(gig)}
-                            style={{ marginRight: 10 }}
-                          >
-                            Edit Gig
-                          </button>
+          <button
+            className="smallbtn"
+            type="button"
+            onClick={() => startEditGig(gig)}
+            style={{ marginRight: 10 }}
+          >
+            Edit Gig
+          </button>
 
-                          <button
-                            className="smallbtn"
-                            type="button"
-                            onClick={() => deleteGig(gig.id)}
-                          >
-                            Delete Gig
-                          </button>
-                        </div>
-                      ))
-                    )}
+          <button
+            className="smallbtn"
+            type="button"
+            onClick={() => deleteGig(gig.id)}
+          >
+            Delete Gig
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
 
-                    <hr style={{ margin: "22px 0", borderColor: "#333" }} />
+  <hr style={{ margin: "22px 0", borderColor: "#333" }} />
 
-                    <h3>{editingGigId ? "Edit Gig" : "Add New Gig"}</h3>
+  <h3>{editingGigId ? "Edit Gig" : "Add New Gig"}</h3>
 
-                    <label>Venue Name</label>
-                    <input
-                      value={newGig.venue_name}
-                      onChange={(e) =>
-                        updateGigField("venue_name", e.target.value)
-                      }
-                      placeholder="Enter venue name"
-                    />
+  <label>Venue Name</label>
+  <input
+    value={newGig.venue_name}
+    onChange={(e) =>
+      updateGigField("venue_name", e.target.value)
+    }
+    placeholder="Enter venue name"
+  />
 
-                    <label>Venue Address</label>
-                    <input
-                      value={newGig.venue_address}
-                      onChange={(e) =>
-                        updateGigField("venue_address", e.target.value)
-                      }
-                      placeholder="Enter venue address"
-                    />
+  <label>Venue Address</label>
+  <input
+    value={newGig.venue_address}
+    onChange={(e) =>
+      updateGigField("venue_address", e.target.value)
+    }
+    placeholder="Enter venue address"
+  />
 
-                    <label>Gig Date</label>
-                    <input
-                      type="date"
-                      value={newGig.gig_date}
-                      onChange={(e) => updateGigField("gig_date", e.target.value)}
-                    />
+  <label>Gig Date</label>
+  <input
+    type="date"
+    value={newGig.gig_date}
+    onChange={(e) =>
+      updateGigField("gig_date", e.target.value)
+    }
+  />
 
-                    <label>Start Time</label>
-                    <input
-                      type="time"
-                      value={newGig.start_time}
-                      onChange={(e) => updateGigField("start_time", e.target.value)}
-                    />
+  <label>Start Time</label>
+  <input
+    type="time"
+    value={newGig.start_time}
+    onChange={(e) =>
+      updateGigField("start_time", e.target.value)
+    }
+  />
 
-                    <label>End Time</label>
-                    <input
-                      type="time"
-                      value={newGig.end_time}
-                      onChange={(e) => updateGigField("end_time", e.target.value)}
-                    />
+  <label>End Time</label>
+  <input
+    type="time"
+    value={newGig.end_time}
+    onChange={(e) =>
+      updateGigField("end_time", e.target.value)
+    }
+  />
 
-                    <label>Recurring Type</label>
-                    <select
-                      value={newGig.recurring_type}
-                      onChange={(e) =>
-                        updateGigField("recurring_type", e.target.value)
-                      }
-                    >
-                      <option value="One-Time">One-Time</option>
-                      <option value="Weekly">Weekly</option>
-                      <option value="Monthly">Monthly</option>
-                    </select>
+  <label>Recurring Type</label>
+  <select
+    value={newGig.recurring_type}
+    onChange={(e) =>
+      updateGigField("recurring_type", e.target.value)
+    }
+  >
+    <option value="One-Time">One-Time</option>
+    <option value="Weekly">Weekly</option>
+    <option value="Monthly">Monthly</option>
+  </select>
 
-                    <label>Special Note</label>
-                    <textarea
-                      value={newGig.special_note}
-                      onChange={(e) =>
-                        updateGigField("special_note", e.target.value)
-                      }
-                      placeholder="Patio show, birthday party, Eagles game after-party, special guest appearance..."
-                    />
+  <label>Special Note</label>
+  <textarea
+    value={newGig.special_note}
+    onChange={(e) =>
+      updateGigField("special_note", e.target.value)
+    }
+    placeholder="Patio show, birthday party, Eagles game after-party, special guest appearance..."
+  />
 
-                    <label
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        marginTop: 12,
-                        fontWeight: 800
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={newGig.allow_requests !== false}
-                        onChange={(e) =>
-                          updateGigField("allow_requests", e.target.checked)
-                        }
-                        style={{ width: 18, height: 18 }}
-                      />
-                      Allow song requests for this gig
-                    </label>
+  <label
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginTop: 12,
+      fontWeight: 800
+    }}
+  >
+    <input
+      type="checkbox"
+      checked={newGig.allow_requests !== false}
+      onChange={(e) =>
+        updateGigField("allow_requests", e.target.checked)
+      }
+      style={{ width: 18, height: 18 }}
+    />
+    Allow song requests for this gig
+  </label>
 
-                    <p
-                      style={{
-                        marginTop: 6,
-                        marginBottom: 18,
-                        color: "#bbb"
-                      }}
-                    >
-                      Turn this off for ticketed shows, fixed setlists, tribute nights,
-                      or performances where requests are not a good fit.
-                    </p>
+  <p
+    style={{
+      marginTop: 6,
+      marginBottom: 18,
+      color: "#bbb"
+    }}
+  >
+    Turn this off for ticketed shows, fixed setlists, tribute nights,
+    or performances where requests are not a good fit.
+  </p>
 
-                    <button className="btn" type="button" onClick={saveGig}>
-                      {editingGigId ? "Save Changes" : "Save Gig"}
-                    </button>
+  <button className="btn" type="button" onClick={saveGig}>
+    {editingGigId ? "Save Changes" : "Save Gig"}
+  </button>
 
-                    {editingGigId && (
-                      <button
-                        className="btn secondary"
-                        type="button"
-                        onClick={cancelEditGig}
-                        style={{ marginLeft: 10 }}
-                      >
-                        Cancel Edit
-                      </button>
-                    )}
-                  </section>
+  {editingGigId && (
+    <button
+      className="btn secondary"
+      type="button"
+      onClick={cancelEditGig}
+      style={{ marginLeft: 10 }}
+    >
+      Cancel Edit
+    </button>
+  )}
+</section>
 
-                  <section className="accountCard">
-                    <h2>Social Links</h2>
+<section className="accountCard">
+  <h2>Social Links</h2>
 
-                    <label>Facebook</label>
-                    <input
-                      value={profile.facebook}
-                      onChange={(e) => updateField("facebook", e.target.value)}
-                      placeholder="Facebook URL"
-                    />
+  <label>Facebook</label>
+  <input
+    value={profile.facebook}
+    onChange={(e) =>
+      updateField("facebook", e.target.value)
+    }
+    placeholder="Facebook URL"
+  />
 
-                    <label>Instagram</label>
-                    <input
-                      value={profile.instagram}
-                      onChange={(e) => updateField("instagram", e.target.value)}
-                      placeholder="Instagram URL"
-                    />
+  <label>Instagram</label>
+  <input
+    value={profile.instagram}
+    onChange={(e) =>
+      updateField("instagram", e.target.value)
+    }
+    placeholder="Instagram URL"
+  />
 
-                    <label>YouTube</label>
-                    <input
-                      value={profile.youtube}
-                      onChange={(e) => updateField("youtube", e.target.value)}
-                      placeholder="YouTube URL"
-                    />
+  <label>YouTube</label>
+  <input
+    value={profile.youtube}
+    onChange={(e) =>
+      updateField("youtube", e.target.value)
+    }
+    placeholder="YouTube URL"
+  />
 
-                    <label>Website</label>
-                    <input
-                      value={profile.website}
-                      onChange={(e) => updateField("website", e.target.value)}
-                      placeholder="Website URL"
-                    />
-                  </section>
+  <label>Website</label>
+  <input
+    value={profile.website}
+    onChange={(e) =>
+      updateField("website", e.target.value)
+    }
+    placeholder="Website URL"
+  />
+</section>
+
 </div>
 
 <div className="accountGrid">
-                  <section className="accountCard">
-                    <h2>Song Library</h2>
+  <section className="accountCard">
+    <h2>Song Library</h2>
 
-                    <p className="empty">
-                      Manage the songs your audience can request. Add, remove,
-                      organize, and feature songs from your catalog.
-                    </p>
+    <p className="empty">
+      Manage the songs your audience can request. Add, remove,
+      organize, and feature songs from your catalog.
+    </p>
 
-                    <a
-                      className="btn secondary"
-                      href="/account/library"
-                      style={{ marginTop: 12 }}
-                    >
-                      Manage Library
-                    </a>
-                  </section>
+    <a
+      className="btn secondary"
+      href="/account/library"
+      style={{ marginTop: 12 }}
+    >
+      Manage Library
+    </a>
+  </section>
 
-                  <section className="accountCard">
-                    <p className="performer">Marketing Tools</p>
+  <section className="accountCard">
+    <p className="performer">Marketing Tools</p>
 
-                    <p className="empty" style={{ marginTop: 10 }}>
-                      Download your QR code, table tent, flyer, and social media graphics.
-                    </p>
+    <p className="empty" style={{ marginTop: 10 }}>
+      Download your QR code, table tent, flyer, and social media graphics.
+    </p>
 
-                    <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
-                      <Link className="btn" href="/account/marketing-kit">
-                        🎨 Open Marketing Kit
-                      </Link>
-                    </div>
-                  </section>
+    <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
+      <Link className="btn" href="/account/marketing-kit">
+        🎨 Open Marketing Kit
+      </Link>
+    </div>
+  </section>
 
-                  <section className="accountCard">
-                    <h2>Referral Program</h2>
+  <section className="accountCard">
+    <h2>Referral Program</h2>
 
-                    <p className="empty">
-                      Share your referral link with other artists. They save $20 and you earn $20 when they complete setup.
-                    </p>
+    <p className="empty">
+      Share your referral link with other artists. They save $20 and
+      you earn $20 when they complete setup.
+    </p>
 
-                    <div style={{ marginTop: 16, lineHeight: 1.9 }}>
-                      <p><strong>Referral Code:</strong> {profile.referral_code || "Not Available"}</p>
-                      <p><strong>Successful Referrals:</strong> {profile.referral_count || 0}</p>
-                      <p><strong>Referral Earnings:</strong> ${Number(profile.referral_earnings || 0).toFixed(0)}</p>
-                    </div>
+    <div style={{ marginTop: 16, lineHeight: 1.9 }}>
+      <p>
+        <strong>Referral Code:</strong>{" "}
+        {profile.referral_code || "Not Available"}
+      </p>
 
-                    {profile.referral_code && (
-                      <>
-                        <div
-                          style={{
-                            marginTop: 14,
-                            padding: 12,
-                            borderRadius: 8,
-                            background: "rgba(255,255,255,0.06)"
-                          }}
-                        >
-                          <input
-                            readOnly
-                            value={`https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`}
-                            style={{
-                              width: "100%",
-                              background: "transparent",
-                              border: "none",
-                              color: "#fff",
-                              fontSize: 14,
-                              marginBottom: 10
-                            }}
-                          />
+      <p>
+        <strong>Successful Referrals:</strong>{" "}
+        {profile.referral_count || 0}
+      </p>
 
-                          <button
-                            className="btn secondary"
-                            type="button"
-                            onClick={() =>
-                              navigator.clipboard.writeText(
-                                `https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`
-                              )
-                            }
-                          >
-                            Copy Referral Link
-                          </button>
-                        </div>
+      <p>
+        <strong>Referral Earnings:</strong> $
+        {Number(profile.referral_earnings || 0).toFixed(0)}
+      </p>
+    </div>
 
-                        <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
-                          <Link className="btn" href="/account/marketing-kit">
-                            Open Marketing Kit
-                          </Link>
-                        </div>
-                      </>
-                    )}
-                  </section>
+    {profile.referral_code && (
+      <>
+        <div
+          style={{
+            marginTop: 14,
+            padding: 12,
+            borderRadius: 8,
+            background: "rgba(255,255,255,0.06)"
+          }}
+        >
+          <input
+            readOnly
+            value={`https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`}
+            style={{
+              width: "100%",
+              background: "transparent",
+              border: "none",
+              color: "#fff",
+              fontSize: 14,
+              marginBottom: 10
+            }}
+          />
 
-                  <section className="accountCard">
-                    <h2>Artwork</h2>
-
-                    <p className="empty">
-                      Manage the logo or image shown on the artist page.
-                    </p>
-
-                    <a
-                      className="btn secondary"
-                      href="/account/artwork"
-                      style={{ marginTop: 12 }}
-                    >
-                      Manage Artwork
-                    </a>
-                  </section>
-                </div>
-
-                <div className="actions" style={{ marginTop: 28 }}>
-                  <button className="btn" type="button" onClick={saveProfile}>
-                    Save Account Info
-                  </button>
-
-                  <Link className="btn secondary" href="/dashboard">
-                    Cancel
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
+          <button
+            className="btn secondary"
+            type="button"
+            onClick={() =>
+              navigator.clipboard.writeText(
+                `https://www.ucallithappyhour.com/register?ref=${profile.referral_code}`
+              )
+            }
+          >
+            Copy Referral Link
+          </button>
         </div>
-      </div>
-    </main>
-  );
-}
+
+        <div style={{ display: "grid", gap: 12, marginTop: 15 }}>
+          <Link className="btn" href="/account/marketing-kit">
+            Open Marketing Kit
+          </Link>
+        </div>
+      </>
+    )}
+  </section>
+
+  <section className="accountCard">
+    <h2>Artwork</h2>
+
+    <p className="empty">
+      Manage the logo or image shown on the artist page.
+    </p>
+
+    <a
+      className="btn secondary"
+      href="/account/artwork"
+      style={{ marginTop: 12 }}
+    >
+      Manage Artwork
+    </a>
+  </section>
+</div>
+
+<div className="actions" style={{ marginTop: 28 }}>
+  <button className="btn" type="button" onClick={saveProfile}>
+    Save Account Info
+  </button>
+
+  <Link className="btn secondary" href="/dashboard">
+    Cancel
+  </Link>
+</div>
+</>
+)}
+</div>
+</div>
+</div>
+</main>
+);
+}             
