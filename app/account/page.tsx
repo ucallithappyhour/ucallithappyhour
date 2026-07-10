@@ -483,6 +483,47 @@ export default function AccountPage() {
     loadArtists();
   }
 
+  function getNextGigDateValue(gig: Gig) {
+  if (!gig.gig_date) return null;
+
+  const todayKey = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/New_York"
+  });
+
+  const recurringType = (gig.recurring_type || "One-Time").toLowerCase();
+  const nextDate = new Date(`${gig.gig_date}T12:00:00`);
+
+  if (recurringType === "weekly") {
+    while (
+      nextDate.toLocaleDateString("en-CA", {
+        timeZone: "America/New_York"
+      }) < todayKey
+    ) {
+      nextDate.setDate(nextDate.getDate() + 7);
+    }
+  } else if (recurringType === "monthly") {
+    while (
+      nextDate.toLocaleDateString("en-CA", {
+        timeZone: "America/New_York"
+      }) < todayKey
+    ) {
+      nextDate.setMonth(nextDate.getMonth() + 1);
+    }
+  } else {
+    const gigDateKey = nextDate.toLocaleDateString("en-CA", {
+      timeZone: "America/New_York"
+    });
+
+    if (gigDateKey < todayKey) {
+      return null;
+    }
+  }
+
+  return nextDate.toLocaleDateString("en-CA", {
+    timeZone: "America/New_York"
+  });
+}
+
   function formatGigDate(dateValue: string | null) {
     if (!dateValue) return "Date TBD";
 
@@ -678,6 +719,16 @@ export default function AccountPage() {
       </main>
     );
   }
+const visibleGigs = gigs
+  .map((gig) => ({
+    ...gig,
+    displayGigDate: getNextGigDateValue(gig)
+  }))
+  .filter((gig) => gig.displayGigDate !== null)
+  .sort((a, b) =>
+    a.displayGigDate!.localeCompare(b.displayGigDate!)
+  );
+
 
   return (
     <main className="page">
@@ -854,7 +905,7 @@ export default function AccountPage() {
      <section className="accountCard">
   <h2>Upcoming Gigs</h2>
 
-  {gigs.length === 0 ? (
+  {visibleGigs.length === 0 ? (
     <p className="empty">No gigs added yet.</p>
   ) : (
     <div
@@ -864,7 +915,7 @@ export default function AccountPage() {
         paddingRight: 8
       }}
     >
-      {gigs.map((gig) => (
+      {visibleGigs.map((gig) => (
         <div
           key={gig.id}
           style={{
@@ -878,7 +929,7 @@ export default function AccountPage() {
           </p>
 
           <p style={{ margin: "0 0 6px", color: "#ddd" }}>
-            {formatGigDate(gig.gig_date)} •{" "}
+            {formatGigDate(gig.displayGigDate)}
             {formatGigTime(gig.start_time, gig.end_time)}
           </p>
 
