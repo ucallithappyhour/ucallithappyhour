@@ -284,15 +284,27 @@ const [manualSongArtist, setManualSongArtist] = useState("");
     return end ? `${start} - ${end}` : start;
   }
 
-  const tonightGroups = useMemo(
-    () =>
-      groupRequests(
-        requests.filter(
-          (request) => (request.request_type || "tonight") === "tonight"
-        )
-      ),
-    [requests]
+ const tonightGroups = useMemo(() => {
+  const todayKey = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/New_York"
+  });
+
+  return groupRequests(
+    requests.filter((request) => {
+      const isTonight =
+        (request.request_type || "tonight") === "tonight";
+
+      const requestDateKey = new Date(request.created_at).toLocaleDateString(
+        "en-CA",
+        {
+          timeZone: "America/New_York"
+        }
+      );
+
+      return isTonight && requestDateKey === todayKey;
+    })
   );
+}, [requests]);
 
 const upcomingGigGroups = useMemo(() => {
   const todayKey = new Date().toLocaleDateString("en-CA", {
