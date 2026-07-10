@@ -341,6 +341,17 @@ const upcomingGigGroups = useMemo(() => {
     });
 }, [requests, playlistSongs, gigsById]);
 
+const unassignedFutureGroups = useMemo(
+  () =>
+    groupRequests(
+      requests.filter(
+        (request) =>
+          request.request_type === "future" && !request.gig_id
+      )
+    ),
+  [requests]
+);
+
   async function updateGroup(group: RequestGroup, status: string) {
     const ids = group.items.map((request) => request.id);
 
