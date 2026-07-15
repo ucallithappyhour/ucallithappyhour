@@ -353,9 +353,8 @@ setSuccessMode(mode);
 } catch (err) {
   console.error(err);
   alert("Request did not send. Please try again.");
-}
-
-setLoading(false);
+} finally {
+  setLoading(false);
 }
   return (
     <main
@@ -938,4 +937,5 @@ setLoading(false);
       )}
     </main>
   );
+}
 }
