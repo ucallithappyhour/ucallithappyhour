@@ -294,7 +294,6 @@ const requestLimitKey = [
   "ucihh-request-count",
   resolvedArtistSlug,
   gigIdFromUrl || "no-gig",
-  todayKey,
 ].join("-");
 
 const currentRequestCount = parseInt(
@@ -302,9 +301,9 @@ const currentRequestCount = parseInt(
   10
 );
 
-if (mode === "tonight" && currentRequestCount >= 3) {
+if (currentRequestCount >= 3) {
   alert(
-    "You've reached the maximum of 3 requests for this performance. Thanks for helping shape tonight's setlist! We hope you'll join us again at the next show. 🎵"
+    "You've reached the maximum of 3 requests for this performance. Thanks for helping shape the setlist! 🎵"
   );
   return;
 }
