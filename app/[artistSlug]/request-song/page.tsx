@@ -290,11 +290,20 @@ const todayKey = new Date().toLocaleDateString("en-CA", {
   timeZone: "America/New_York",
 });
 
-const requestLimitKey = [
-  "ucihh-request-count",
-  resolvedArtistSlug,
-  gigIdFromUrl || "no-gig",
-].join("-");
+const requestLimitKey =
+  mode === "future"
+    ? [
+        "ucihh-request-count",
+        resolvedArtistSlug,
+        "future",
+        gigIdFromUrl || "no-gig",
+      ].join("-")
+    : [
+        "ucihh-request-count",
+        resolvedArtistSlug,
+        "tonight",
+        gigIdFromUrl || "no-gig",
+      ].join("-");
 
 const currentRequestCount = parseInt(
   localStorage.getItem(requestLimitKey) ?? "0",
