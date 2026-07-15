@@ -290,11 +290,16 @@ const todayKey = new Date().toLocaleDateString("en-CA", {
   timeZone: "America/New_York",
 });
 
-const requestLimitKey =
-  `ucihh-request-count-${resolvedArtistSlug}-${gigIdFromUrl || "no-gig"}-${todayKey}`;
+const requestLimitKey = [
+  "ucihh-request-count",
+  resolvedArtistSlug,
+  gigIdFromUrl || "no-gig",
+  todayKey,
+].join("-");
 
-const currentRequestCount = Number(
-  localStorage.getItem(requestLimitKey) || "0"
+const currentRequestCount = parseInt(
+  localStorage.getItem(requestLimitKey) ?? "0",
+  10
 );
 
 if (mode === "tonight" && currentRequestCount >= 3) {
@@ -324,26 +329,34 @@ visitor_id: visitorId,
       })
     });
 
-    const data = await response.json();
+const data = await response.json();
 
-    if (!response.ok) {
-      alert("Request did not send: " + data.error);
-      setLoading(false);
-      return;
-    }
-
-    localStorage.setItem(requestLimitKey, String(currentRequestCount + 1));
-    if (mode === "tonight" && currentRequestCount + 1 >= 3) {
-  setLimitReached(true);
-}
-    setSuccessMode(mode);
-  } catch (err) {
-    alert("Request did not send. Please try again.");
-  }
-
+if (!response.ok) {
+  alert("Request did not send: " + (data.error || "Unknown error"));
   setLoading(false);
+  return;
 }
 
+// Only count SUCCESSFUL Tonight requests
+if (mode === "tonight") {
+  const newCount = currentRequestCount + 1;
+
+  localStorage.setItem(requestLimitKey, String(newCount));
+
+  if (newCount >= 3) {
+    setLimitReached(true);
+  }
+}
+
+setSuccessMode(mode);
+
+} catch (err) {
+  console.error(err);
+  alert("Request did not send. Please try again.");
+}
+
+setLoading(false);
+}
   return (
     <main
       style={{
