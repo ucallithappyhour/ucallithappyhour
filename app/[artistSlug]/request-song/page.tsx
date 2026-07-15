@@ -356,6 +356,7 @@ setSuccessMode(mode);
 } finally {
   setLoading(false);
 }
+}
   return (
     <main
       style={{
@@ -937,5 +938,4 @@ setSuccessMode(mode);
       )}
     </main>
   );
-}
 }
