@@ -336,15 +336,12 @@ if (!response.ok) {
   return;
 }
 
-// Only count SUCCESSFUL Tonight requests
-if (mode === "tonight") {
-  const newCount = currentRequestCount + 1;
+const newCount = currentRequestCount + 1;
 
-  localStorage.setItem(requestLimitKey, String(newCount));
+localStorage.setItem(requestLimitKey, String(newCount));
 
-  if (newCount >= 3) {
-    setLimitReached(true);
-  }
+if (newCount >= 3) {
+  setLimitReached(true);
 }
 
 setSuccessMode(mode);
