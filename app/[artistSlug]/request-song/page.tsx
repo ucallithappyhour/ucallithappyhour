@@ -23,6 +23,7 @@ export default function DynamicRequestSongPage() {
   const artistSlug = String(params.artistSlug || "");
   const requestTypeFromUrl = searchParams.get("type");
   const gigIdFromUrl = searchParams.get("gig");
+  const occurrenceDateFromUrl = searchParams.get("occurrence");
 
   const isGigFutureRequest =
     requestTypeFromUrl === "future" && Boolean(gigIdFromUrl);
@@ -297,12 +298,14 @@ const requestLimitKey =
         resolvedArtistSlug,
         "future",
         gigIdFromUrl || "no-gig",
+        occurrenceDateFromUrl || "no-occurrence"
       ].join("-")
     : [
         "ucihh-request-count",
         resolvedArtistSlug,
         "tonight",
         gigIdFromUrl || "no-gig",
+        occurrenceDateFromUrl || "no-occurrence"
       ].join("-");
 
 const currentRequestCount = parseInt(
@@ -332,7 +335,8 @@ if (currentRequestCount >= 3) {
         requester_name: name.trim() || null,
         dedication: dedication.trim() || null,
         request_type: mode,
-        gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null,
+gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null,
+occurrence_date: occurrenceDateFromUrl || null,
 visitor_id: visitorId,
       })
     });

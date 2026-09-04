@@ -280,7 +280,10 @@ export default function DynamicArtistPage() {
   className="btn"
   href={
     nextOccurrence
-      ? `/${artist.artist_slug}/request-song?gig=${nextOccurrence.gig.id}`
+      ? `/${artist.artist_slug}/request-song?gig=${
+          nextOccurrence.gig.id
+        }&occurrence=${nextOccurrence.occurrenceDate
+          .toLocaleDateString("en-CA")}`
       : `/${artist.artist_slug}/request-song`
   }
 >
@@ -404,11 +407,15 @@ export default function DynamicArtistPage() {
         >
           {occurrence.gig.allow_requests !== false ? (
             <Link
-              className="btn secondary"
-              href={`/${artist.artist_slug}/request-song?type=future&gig=${occurrence.gig.id}`}
-            >
-              Request Songs For This Gig
-            </Link>
+  className="btn secondary"
+  href={`/${artist.artist_slug}/request-song?type=future&gig=${
+    occurrence.gig.id
+  }&occurrence=${occurrence.occurrenceDate.toLocaleDateString(
+    "en-CA"
+  )}`}
+>
+  Request Songs For This Gig
+</Link>
           ) : (
             <div
               style={{
