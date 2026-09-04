@@ -1389,7 +1389,28 @@ export default function DashboardPage() {
 
            
           </section>
+{unassignedFutureGroups.length >
+            0 && (
+            <section
+              style={{
+                marginTop: 40
+              }}
+            >
+              <h2>
+                ⭐ Unassigned Future
+                Suggestions
+              </h2>
 
+              {unassignedFutureGroups.map(
+                (group) => (
+                  <RequestGroupCard
+                    key={`${group.song}-${group.artist}-${group.requestType}`}
+                    group={group}
+                  />
+                )
+              )}
+            </section>
+          )}
           <section
             style={{ marginTop: 40 }}
           >
@@ -1429,28 +1450,7 @@ export default function DashboardPage() {
             )}
           </section>
 
-          {unassignedFutureGroups.length >
-            0 && (
-            <section
-              style={{
-                marginTop: 40
-              }}
-            >
-              <h2>
-                ⭐ Unassigned Future
-                Suggestions
-              </h2>
-
-              {unassignedFutureGroups.map(
-                (group) => (
-                  <RequestGroupCard
-                    key={`${group.song}-${group.artist}-${group.requestType}`}
-                    group={group}
-                  />
-                )
-              )}
-            </section>
-          )}
+          
         </>
       )}
 
