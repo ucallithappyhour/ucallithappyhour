@@ -49,13 +49,22 @@ function formatTime(time: string | null) {
   const [hours, minutes] = time.split(":");
   const hour = Number(hours);
 
-  return new Date(2000, 0, 1, hour, Number(minutes)).toLocaleTimeString([], {
+  return new Date(
+    2000,
+    0,
+    1,
+    hour,
+    Number(minutes)
+  ).toLocaleTimeString([], {
     hour: "numeric",
     minute: "2-digit",
   });
 }
 
-function formatGigTime(start: string | null, end: string | null) {
+function formatGigTime(
+  start: string | null,
+  end: string | null
+) {
   if (!start && !end) return "Time TBD";
   if (start && !end) return formatTime(start);
   if (!start && end) return formatTime(end);
@@ -66,388 +75,1105 @@ function formatGigTime(start: string | null, end: string | null) {
 function gigDetails(gig: Gig | undefined) {
   if (!gig) return "Next gig TBD";
 
-  const venue = gig.venue_name || "Venue TBD";
-  const date = formatGigDate(gig.gig_date);
-  const time = formatGigTime(gig.start_time, gig.end_time);
+  const venue =
+    gig.venue_name || "Venue TBD";
+
+  const date =
+    formatGigDate(gig.gig_date);
+
+  const time =
+    formatGigTime(
+      gig.start_time,
+      gig.end_time
+    );
 
   return `${venue} • ${date} • ${time}`;
 }
-function getLocalDateString() {
-  const now = new Date();
 
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+
+/***************************************************************
+ * LOCAL DATE HELPERS
+ ***************************************************************/
+
+function getLocalDateString() {
+
+  const now =
+    new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(
+      now.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      now.getDate()
+    ).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 }
-function isToday(dateValue: string | null) {
-  if (!dateValue) return false;
 
-  const today = getLocalDateString();
 
-  return dateValue === today;
+function dateToLocalString(
+  date: Date
+) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
-function todayGigDetails(gig: Gig | undefined) {
-  if (!gig) return "";
 
-  const venue = gig.venue_name || "Venue TBD";
-  const time = formatGigTime(gig.start_time, gig.end_time);
+/***************************************************************
+ * CALCULATE NEXT OCCURRENCE
+ *
+ * Handles:
+ *   One-Time
+ *   Weekly
+ *   Monthly
+ ***************************************************************/
+
+function getNextGigDate(
+  gig: Gig
+): string | null {
+
+  if (!gig.gig_date) {
+    return null;
+  }
+
+
+  const todayString =
+    getLocalDateString();
+
+
+  const original =
+    new Date(
+      `${gig.gig_date}T12:00:00`
+    );
+
+
+  const today =
+    new Date(
+      `${todayString}T12:00:00`
+    );
+
+
+  const recurring =
+    String(
+      gig.recurring_type || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  /***********************************************************
+   * ONE-TIME
+   ***********************************************************/
+
+  if (
+    !recurring ||
+    recurring === "one-time" ||
+    recurring === "one time" ||
+    recurring === "once"
+  ) {
+
+    return gig.gig_date >= todayString
+      ? gig.gig_date
+      : null;
+  }
+
+
+  /***********************************************************
+   * WEEKLY
+   ***********************************************************/
+
+  if (
+    recurring.includes("week")
+  ) {
+
+    const next =
+      new Date(original);
+
+
+    while (
+      next < today
+    ) {
+
+      next.setDate(
+        next.getDate() + 7
+      );
+    }
+
+
+    return dateToLocalString(
+      next
+    );
+  }
+
+
+  /***********************************************************
+   * MONTHLY
+   ***********************************************************/
+
+  if (
+    recurring.includes("month")
+  ) {
+
+    const originalDay =
+      original.getDate();
+
+
+    let next =
+      new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        originalDay,
+        12,
+        0,
+        0
+      );
+
+
+    if (
+      next < today
+    ) {
+
+      next =
+        new Date(
+          today.getFullYear(),
+          today.getMonth() + 1,
+          originalDay,
+          12,
+          0,
+          0
+        );
+    }
+
+
+    return dateToLocalString(
+      next
+    );
+  }
+
+
+  /***********************************************************
+   * FALLBACK
+   ***********************************************************/
+
+  return gig.gig_date >= todayString
+    ? gig.gig_date
+    : null;
+}
+
+
+function isToday(
+  dateValue: string | null
+) {
+
+  if (!dateValue) {
+    return false;
+  }
+
+  return (
+    dateValue ===
+    getLocalDateString()
+  );
+}
+
+
+function todayGigDetails(
+  gig: Gig | undefined
+) {
+
+  if (!gig) {
+    return "";
+  }
+
+  const venue =
+    gig.venue_name || "Venue TBD";
+
+  const time =
+    formatGigTime(
+      gig.start_time,
+      gig.end_time
+    );
 
   return `${venue} • ${time}`;
 }
 
+
+/***************************************************************
+ * HOME
+ ***************************************************************/
+
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const [artists, setArtists] = useState<Artist[]>([]);
-  const [gigsByArtist, setGigsByArtist] = useState<Record<string, Gig>>({});
-  const [todayGig, setTodayGig] = useState<Gig | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+
+  const [query, setQuery] =
+    useState("");
+
+  const [artists, setArtists] =
+    useState<Artist[]>([]);
+
+  const [
+    gigsByArtist,
+    setGigsByArtist
+  ] =
+    useState<
+      Record<string, Gig>
+    >({});
+
+  const [
+    todayGig,
+    setTodayGig
+  ] =
+    useState<Gig | null>(
+      null
+    );
+
+  const [
+    loading,
+    setLoading
+  ] =
+    useState(true);
+
+  const [
+    message,
+    setMessage
+  ] =
+    useState("");
+
+
+  /*************************************************************
+   * LOAD ARTISTS + GIGS
+   *************************************************************/
 
   async function loadArtistsAndGigs() {
+
     setLoading(true);
     setMessage("");
 
-    const { data: artistData, error: artistError } = await supabase
-      .from("artists")
-      .select("artist_slug, artist_name, genres, logo_url")
-      .eq("is_active", true)
-      .order("artist_name", { ascending: true });
+
+    /***********************************************************
+     * ACTIVE ARTISTS
+     ***********************************************************/
+
+    const {
+      data: artistData,
+      error: artistError
+    } =
+      await supabase
+        .from("artists")
+        .select(
+          "artist_slug, artist_name, genres, logo_url"
+        )
+        .eq(
+          "is_active",
+          true
+        )
+        .order(
+          "artist_name",
+          {
+            ascending: true
+          }
+        );
+
 
     if (artistError) {
-      setMessage("Could not load artists right now.");
+
+      setMessage(
+        "Could not load artists right now."
+      );
+
       setArtists([]);
       setLoading(false);
+
       return;
     }
 
-    const activeArtists = artistData || [];
-    setArtists(activeArtists);
 
-    const activeArtistSlugs = activeArtists.map((artist) => artist.artist_slug);
-    const today = getLocalDateString();
+    const activeArtists =
+      artistData || [];
 
-    const { data: gigData, error: gigError } = await supabase
-      .from("gigs")
-      .select(
-        "artist_slug, venue_name, gig_date, start_time, end_time, recurring_type"
-      )
-      .in("artist_slug", activeArtistSlugs.length > 0 ? activeArtistSlugs : [""])
-      .gte("gig_date", today)
-      .order("gig_date", { ascending: true })
-      .order("start_time", { ascending: true });
+
+    setArtists(
+      activeArtists
+    );
+
+
+    const activeArtistSlugs =
+      activeArtists.map(
+        artist =>
+          artist.artist_slug
+      );
+
+
+    /***********************************************************
+     * LOAD ALL GIG RECORDS FOR ACTIVE ARTISTS
+     *
+     * IMPORTANT:
+     * Do NOT filter .gte("gig_date", today) here.
+     *
+     * Recurring gigs may have an OLD original gig_date even
+     * though their next occurrence is today or in the future.
+     ***********************************************************/
+
+    const {
+      data: gigData,
+      error: gigError
+    } =
+      await supabase
+        .from("gigs")
+        .select(
+          "artist_slug, venue_name, gig_date, start_time, end_time, recurring_type"
+        )
+        .in(
+          "artist_slug",
+          activeArtistSlugs.length > 0
+            ? activeArtistSlugs
+            : [""]
+        );
+
 
     if (gigError) {
-      setMessage("Artists loaded, but upcoming gigs could not be loaded.");
+
+      setMessage(
+        "Artists loaded, but upcoming gigs could not be loaded."
+      );
+
       setGigsByArtist({});
       setTodayGig(null);
       setLoading(false);
+
       return;
     }
 
-    const nextGigs: Record<string, Gig> = {};
-    let firstTodayGig: Gig | null = null;
 
-    (gigData || []).forEach((gig) => {
-      if (!nextGigs[gig.artist_slug]) {
-        nextGigs[gig.artist_slug] = gig;
+    /***********************************************************
+     * EXPAND EACH RECORD TO ITS NEXT OCCURRENCE
+     ***********************************************************/
+
+    const upcomingGigs:
+      Gig[] =
+      [];
+
+
+    (gigData || []).forEach(
+      gig => {
+
+        const nextDate =
+          getNextGigDate(
+            gig
+          );
+
+
+        if (!nextDate) {
+          return;
+        }
+
+
+        upcomingGigs.push({
+          ...gig,
+          gig_date:
+            nextDate
+        });
       }
+    );
 
-      if (!firstTodayGig && isToday(gig.gig_date)) {
-        firstTodayGig = gig;
+
+    /***********************************************************
+     * SORT BY NEXT ACTUAL DATE + START TIME
+     ***********************************************************/
+
+    upcomingGigs.sort(
+      (a, b) => {
+
+        const dateA =
+          a.gig_date || "";
+
+        const dateB =
+          b.gig_date || "";
+
+
+        if (
+          dateA !== dateB
+        ) {
+
+          return (
+            dateA.localeCompare(
+              dateB
+            )
+          );
+        }
+
+
+        const timeA =
+          a.start_time || "99:99";
+
+        const timeB =
+          b.start_time || "99:99";
+
+
+        return (
+          timeA.localeCompare(
+            timeB
+          )
+        );
       }
-    });
+    );
 
-    setGigsByArtist(nextGigs);
-    setTodayGig(firstTodayGig);
+
+    /***********************************************************
+     * NEXT GIG FOR EACH ARTIST
+     *
+     * Because upcomingGigs is already sorted,
+     * first appearance for an artist = nearest gig.
+     ***********************************************************/
+
+    const nextGigs:
+      Record<string, Gig> =
+      {};
+
+
+    let firstTodayGig:
+      Gig | null =
+      null;
+
+
+    upcomingGigs.forEach(
+      gig => {
+
+        if (
+          !nextGigs[
+            gig.artist_slug
+          ]
+        ) {
+
+          nextGigs[
+            gig.artist_slug
+          ] =
+            gig;
+        }
+
+
+        if (
+          !firstTodayGig &&
+          isToday(
+            gig.gig_date
+          )
+        ) {
+
+          firstTodayGig =
+            gig;
+        }
+      }
+    );
+
+
+    setGigsByArtist(
+      nextGigs
+    );
+
+    setTodayGig(
+      firstTodayGig
+    );
+
     setLoading(false);
   }
 
+
   useEffect(() => {
+
     loadArtistsAndGigs();
+
   }, []);
 
-  const artistBySlug = useMemo(() => {
-    const lookup: Record<string, Artist> = {};
 
-    artists.forEach((artist) => {
-      lookup[artist.artist_slug] = artist;
-    });
+  /*************************************************************
+   * ARTIST LOOKUP
+   *************************************************************/
 
-    return lookup;
-  }, [artists]);
+  const artistBySlug =
+    useMemo(
+      () => {
 
-  const filteredArtists = useMemo(() => {
-    const q = query.trim().toLowerCase();
+        const lookup:
+          Record<
+            string,
+            Artist
+          > =
+          {};
 
-    if (!q) return artists;
 
-    return artists.filter((artist) =>
-      `${artist.artist_name || ""} ${artist.genres || ""}`
-        .toLowerCase()
-        .includes(q)
+        artists.forEach(
+          artist => {
+
+            lookup[
+              artist.artist_slug
+            ] =
+              artist;
+          }
+        );
+
+
+        return lookup;
+      },
+      [artists]
     );
-  }, [query, artists]);
 
-  const todayArtist = todayGig ? artistBySlug[todayGig.artist_slug] : null;
-  const todayArtistName = todayArtist?.artist_name || "Tonight's Artist";
+
+  /*************************************************************
+   * SEARCH
+   *************************************************************/
+
+  const filteredArtists =
+    useMemo(
+      () => {
+
+        const q =
+          query
+            .trim()
+            .toLowerCase();
+
+
+        if (!q) {
+          return artists;
+        }
+
+
+        return artists.filter(
+          artist =>
+
+            `${
+              artist.artist_name ||
+              ""
+            } ${
+              artist.genres ||
+              ""
+            }`
+              .toLowerCase()
+              .includes(q)
+        );
+      },
+      [
+        query,
+        artists
+      ]
+    );
+
+
+  const todayArtist =
+    todayGig
+      ? artistBySlug[
+          todayGig.artist_slug
+        ]
+      : null;
+
+
+  const todayArtistName =
+    todayArtist?.artist_name ||
+    "Tonight's Artist";
+
+
+  /*************************************************************
+   * PAGE
+   *************************************************************/
 
   return (
+
     <main className="page">
+
       <div className="overlay">
+
         <div className="container">
+
           <div className="hero">
-            {todayGig && todayArtist && (
+
+
+            {/***************************************************
+             * TONIGHT'S LIVE MUSIC
+             ***************************************************/}
+
+            {todayGig &&
+              todayArtist && (
+
               <div
                 className="event-card"
                 style={{
                   marginBottom: 28,
-                  border: "1px solid rgba(255, 209, 102, 0.7)",
-                  boxShadow: "0 0 35px rgba(255, 209, 102, 0.12)",
+                  border:
+                    "1px solid rgba(255, 209, 102, 0.7)",
+                  boxShadow:
+                    "0 0 35px rgba(255, 209, 102, 0.12)",
                 }}
               >
+
                 <div
                   className="details"
-                  style={{ color: "#ffd166", fontWeight: 900 }}
+                  style={{
+                    color: "#ffd166",
+                    fontWeight: 900
+                  }}
                 >
                   Tonight&apos;s Live Music
                 </div>
 
-                <p className="performer">{todayArtistName}</p>
 
-                <div className="details">{todayGigDetails(todayGig)}</div>
+                <p className="performer">
+                  {todayArtistName}
+                </p>
 
-                <Link className="btn" href={`/${todayArtist.artist_slug}`}>
+
+                <div className="details">
+                  {todayGigDetails(
+                    todayGig
+                  )}
+                </div>
+
+
+                <Link
+                  className="btn"
+                  href={
+                    `/${todayArtist.artist_slug}`
+                  }
+                >
                   Request Songs Now
                 </Link>
+
               </div>
             )}
 
-<h1 className="title">
-  Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
-</h1>
 
-<p
-  className="tagline"
-  style={{
-    maxWidth: 760,
-    margin: "0 auto 28px",
-    lineHeight: 1.7,
-    fontStyle: "italic",
-    opacity: 0.82,
-    fontSize: "1.05rem",
-  }}
->
-  Think TouchTunes, but for live music. Browse an artist&apos;s song
-  library, send requests, and help shape the show.
-</p>
+            <h1 className="title">
+              Request tonight&apos;s songs. Influence tomorrow&apos;s setlist.
+            </h1>
+
+
+            <p
+              className="tagline"
+              style={{
+                maxWidth: 760,
+                margin:
+                  "0 auto 28px",
+                lineHeight: 1.7,
+                fontStyle:
+                  "italic",
+                opacity: 0.82,
+                fontSize:
+                  "1.05rem",
+              }}
+            >
+              Think TouchTunes, but for live music. Browse an artist&apos;s song
+              library, send requests, and help shape the show.
+            </p>
+
+
+            {/***************************************************
+             * AVAILABLE ARTISTS
+             ***************************************************/}
 
             <div className="section">
-              <h2 style={{ color: "#ffd84d" }}>Available Artists</h2>
+
+              <h2
+                style={{
+                  color: "#ffd84d"
+                }}
+              >
+                Available Artists
+              </h2>
+
 
               <input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={
+                  e =>
+                    setQuery(
+                      e.target.value
+                    )
+                }
                 placeholder="Search artist..."
                 style={{
                   width: "100%",
                   padding: 16,
                   fontSize: 18,
                   borderRadius: 10,
-                  border: "1px solid rgba(255,255,255,0.25)",
+                  border:
+                    "1px solid rgba(255,255,255,0.25)",
                   marginBottom: 22,
                 }}
               />
 
-              {message && <div className="message">{message}</div>}
+
+              {message && (
+                <div className="message">
+                  {message}
+                </div>
+              )}
+
 
               {loading ? (
+
                 <div className="event-card">
-                  <p className="performer">Loading artists...</p>
+
+                  <p className="performer">
+                    Loading artists...
+                  </p>
+
                 </div>
+
               ) : filteredArtists.length === 0 ? (
+
                 <div className="event-card">
-                  <p className="performer">No artists found</p>
+
+                  <p className="performer">
+                    No artists found
+                  </p>
+
                   <div className="details">
                     Try searching a different artist name.
                   </div>
+
                 </div>
+
               ) : (
-                filteredArtists.map((artist) => {
-                  const name = artist.artist_name || "Unnamed Artist";
-                  const logo = artist.logo_url || fallbackLogo(artist.artist_slug);
-                  const nextGig = gigsByArtist[artist.artist_slug];
 
-                  return (
-                    <div
-                      key={artist.artist_slug}
-                      className="event-card"
-                      style={{
-                        position: "relative",
-                        minHeight: 190,
-                        paddingRight: 230,
-                      }}
-                    >
-                      <p className="performer">{name}</p>
+                filteredArtists.map(
+                  artist => {
 
-                      <div className="details">{gigDetails(nextGig)}</div>
+                    const name =
+                      artist.artist_name ||
+                      "Unnamed Artist";
 
-                      {artist.genres && (
-                        <p style={{ marginTop: 10, opacity: 0.8 }}>
-                          {artist.genres}
+
+                    const logo =
+                      artist.logo_url ||
+                      fallbackLogo(
+                        artist.artist_slug
+                      );
+
+
+                    const nextGig =
+                      gigsByArtist[
+                        artist.artist_slug
+                      ];
+
+
+                    return (
+
+                      <div
+                        key={
+                          artist.artist_slug
+                        }
+                        className="event-card"
+                        style={{
+                          position:
+                            "relative",
+                          minHeight:
+                            190,
+                          paddingRight:
+                            230,
+                        }}
+                      >
+
+                        <p className="performer">
+                          {name}
                         </p>
-                      )}
 
-                      <Link className="btn" href={`/${artist.artist_slug}`}>
-                        {artistButtonName(name)}
-                      </Link>
 
-                      {logo && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 24,
-                            right: 32,
-                            width: 150,
-                            height: 140,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <img
-                            src={logo}
-                            alt={`${name} Logo`}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "contain",
-                              display: "block",
-                            }}
-                          />
+                        <div className="details">
+                          {gigDetails(
+                            nextGig
+                          )}
                         </div>
-                      )}
-                    </div>
-                  );
-                })
+
+
+                        {artist.genres && (
+
+                          <p
+                            style={{
+                              marginTop: 10,
+                              opacity: 0.8
+                            }}
+                          >
+                            {
+                              artist.genres
+                            }
+                          </p>
+
+                        )}
+
+
+                        <Link
+                          className="btn"
+                          href={
+                            `/${artist.artist_slug}`
+                          }
+                        >
+                          {
+                            artistButtonName(
+                              name
+                            )
+                          }
+                        </Link>
+
+
+                        {logo && (
+
+                          <div
+                            style={{
+                              position:
+                                "absolute",
+                              top: 24,
+                              right: 32,
+                              width: 150,
+                              height: 140,
+                              display:
+                                "flex",
+                              alignItems:
+                                "center",
+                              justifyContent:
+                                "center",
+                            }}
+                          >
+
+                            <img
+                              src={logo}
+                              alt={`${name} Logo`}
+                              style={{
+                                width:
+                                  "100%",
+                                height:
+                                  "100%",
+                                objectFit:
+                                  "contain",
+                                display:
+                                  "block",
+                              }}
+                            />
+
+                          </div>
+
+                        )}
+
+                      </div>
+                    );
+                  }
+                )
               )}
+
             </div>
+
+
+            {/***************************************************
+             * FOR ARTISTS
+             ***************************************************/}
 
             <div className="section">
-              <h2 style={{ color: "#ffd84d" }}>For Artists</h2>
+
+              <h2
+                style={{
+                  color: "#ffd84d"
+                }}
+              >
+                For Artists
+              </h2>
+
 
               <div className="event-card">
-  <p className="performer">
-    Your Fans Already Have Their Phones Out. Use Them.
-  </p>
 
-  <div
-    style={{
-      width: 80,
-      height: 4,
-      background: "#ffd84d",
-      borderRadius: 999,
-      margin: "12px 0 18px"
-    }}
-  />
-
-  <p
-    style={{
-      fontSize: "1.1rem",
-      fontWeight: 800,
-      marginTop: 12
-    }}
-  >
-    Turn every show into an interactive experience.
-  </p>
-
-  <p style={{ marginTop: 14, lineHeight: 1.7 }}>
-    Give fans a simple way to request songs, tip you directly, and stay
-    connected after the music stops.
-  </p>
-
-  <div
-    style={{
-      marginTop: 18,
-      lineHeight: 1.9,
-      fontSize: 14,
-      fontWeight: 700
-    }}
-  >
-    <div>✓ Personalized artist page</div>
-    <div>✓ Searchable song library</div>
-    <div>✓ Live request dashboard</div>
-    <div>✓ Fan email collection</div>
-    <div>✓ Venmo & Cash App integration</div>
-    <div>✓ QR marketing kit included</div>
-    <div>✓ Audience insights & future setlist data</div>
-  </div>
-
-  <p
-    style={{
-      marginTop: 18,
-      fontStyle: "italic",
-      opacity: 0.9
-    }}
-  >
-    Build your audience, increase tips, and give venues a reason to bring you back.
-  </p>
-
-  <p
-    style={{
-      marginTop: 16,
-      fontWeight: 900,
-      fontSize: "1.05rem",
-      color: "#ffd84d"
-    }}
-  >
-    🎤 One extra booking can pay for your entire setup.
-  </p>
-
-  <Link className="btn" href="/register">
-    Apply for Artist Setup
-  </Link>
-</div>
+                <p className="performer">
+                  Your Fans Already Have Their Phones Out. Use Them.
+                </p>
 
 
-                            <div className="actions" style={{ marginTop: 18 }}>
-                <Link className="btn secondary" href="/account">
+                <div
+                  style={{
+                    width: 80,
+                    height: 4,
+                    background:
+                      "#ffd84d",
+                    borderRadius:
+                      999,
+                    margin:
+                      "12px 0 18px"
+                  }}
+                />
+
+
+                <p
+                  style={{
+                    fontSize:
+                      "1.1rem",
+                    fontWeight:
+                      800,
+                    marginTop:
+                      12
+                  }}
+                >
+                  Turn every show into an interactive experience.
+                </p>
+
+
+                <p
+                  style={{
+                    marginTop: 14,
+                    lineHeight: 1.7
+                  }}
+                >
+                  Give fans a simple way to request songs, tip you directly, and stay
+                  connected after the music stops.
+                </p>
+
+
+                <div
+                  style={{
+                    marginTop: 18,
+                    lineHeight: 1.9,
+                    fontSize: 14,
+                    fontWeight: 700
+                  }}
+                >
+                  <div>✓ Personalized artist page</div>
+                  <div>✓ Searchable song library</div>
+                  <div>✓ Live request dashboard</div>
+                  <div>✓ Fan email collection</div>
+                  <div>✓ Venmo & Cash App integration</div>
+                  <div>✓ QR marketing kit included</div>
+                  <div>✓ Audience insights & future setlist data</div>
+                </div>
+
+
+                <p
+                  style={{
+                    marginTop: 18,
+                    fontStyle:
+                      "italic",
+                    opacity: 0.9
+                  }}
+                >
+                  Build your audience, increase tips, and give venues a reason to bring you back.
+                </p>
+
+
+                <p
+                  style={{
+                    marginTop: 16,
+                    fontWeight: 900,
+                    fontSize:
+                      "1.05rem",
+                    color:
+                      "#ffd84d"
+                  }}
+                >
+                  🎤 One extra booking can pay for your entire setup.
+                </p>
+
+
+                <Link
+                  className="btn"
+                  href="/register"
+                >
+                  Apply for Artist Setup
+                </Link>
+
+              </div>
+
+
+              <div
+                className="actions"
+                style={{
+                  marginTop: 18
+                }}
+              >
+
+                <Link
+                  className="btn secondary"
+                  href="/account"
+                >
                   Artist Login
                 </Link>
-              </div>
-            </div>
-                   </div>
 
-          {/* FOR BOOKING AGENTS */}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/*****************************************************
+           * FOR BOOKING AGENTS
+           *****************************************************/}
+
           <div className="section">
-            <h2 style={{ color: "#ffd84d" }}>For Booking Agents & Talent Buyers</h2>
+
+            <h2
+              style={{
+                color: "#ffd84d"
+              }}
+            >
+              For Booking Agents & Talent Buyers
+            </h2>
+
 
             <div className="event-card">
+
               <p className="performer">
                 Earn $25 Per Completed Artist Setup
               </p>
 
-<div
-  style={{
-    width: 80,
-    height: 4,
-    background: "#ffd84d",
-    borderRadius: 999,
-    margin: "12px 0 18px"
-  }}
-/>
 
-              <p style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: 12 }}>
+              <div
+                style={{
+                  width: 80,
+                  height: 4,
+                  background:
+                    "#ffd84d",
+                  borderRadius:
+                    999,
+                  margin:
+                    "12px 0 18px"
+                }}
+              />
+
+
+              <p
+                style={{
+                  fontSize:
+                    "1.1rem",
+                  fontWeight:
+                    800,
+                  marginTop:
+                    12
+                }}
+              >
                 Help artists grow their audience while earning commissions.
               </p>
 
-              <p style={{ marginTop: 14, lineHeight: 1.7 }}>
+
+              <p
+                style={{
+                  marginTop: 14,
+                  lineHeight: 1.7
+                }}
+              >
                 Share your referral link with artists in your roster. When they
                 complete setup, they receive a discount and you earn a $25
                 referral commission.
               </p>
+
 
               <div
                 style={{
@@ -468,85 +1194,149 @@ export default function Home() {
                 <div>✓ Build recurring revenue</div>
               </div>
 
-              <div className="details" style={{ marginTop: 18 }}>
-                Referral links • QR codes • Agent dashboard • Commission
-                tracking
+
+              <div
+                className="details"
+                style={{
+                  marginTop: 18
+                }}
+              >
+                Referral links • QR codes • Agent dashboard • Commission tracking
               </div>
 
-              <p style={{ marginTop: 18, fontStyle: "italic", opacity: 0.9 }}>
+
+              <p
+                style={{
+                  marginTop: 18,
+                  fontStyle:
+                    "italic",
+                  opacity: 0.9
+                }}
+              >
                 Perfect for booking agents, talent buyers, artist managers,
                 entertainment companies, and venue managers.
               </p>
+
 
               <p
                 style={{
                   marginTop: 16,
                   fontWeight: 900,
-                  fontSize: "1.05rem"
+                  fontSize:
+                    "1.05rem"
                 }}
               >
                 💰 Refer 10 artists. Earn $250.
               </p>
 
-              <p style={{ opacity: 0.9, marginTop: 12 }}>
+
+              <p
+                style={{
+                  opacity: 0.9,
+                  marginTop: 12
+                }}
+              >
                 Free to join. No monthly fees.
               </p>
 
-              <Link className="btn" href="/agents">
+
+              <Link
+                className="btn"
+                href="/agents"
+              >
                 Request Agent Account
               </Link>
 
-              <div className="actions" style={{ marginTop: 18 }}>
-                <Link className="btn secondary" href="/agents">
+
+              <div
+                className="actions"
+                style={{
+                  marginTop: 18
+                }}
+              >
+
+                <Link
+                  className="btn secondary"
+                  href="/agents"
+                >
                   Agent Login
                 </Link>
+
               </div>
+
             </div>
-          </div> 
+
+          </div>
+
         </div>
+
+
+        {/*******************************************************
+         * HAPPY
+         *******************************************************/}
 
         <div
           style={{
-            textAlign: "center",
+            textAlign:
+              "center",
             marginTop: 40,
             marginBottom: 0,
           }}
         >
+
           <img
             src="/happy.png"
             alt="Happy"
             style={{
               width: "100%",
-              maxWidth: "180px",
+              maxWidth:
+                "180px",
               height: "auto",
-              margin: "0 auto",
-              display: "block",
+              margin:
+                "0 auto",
+              display:
+                "block",
             }}
           />
 
-          <div style={{ textAlign: "center", marginTop: 8 }}>
+
+          <div
+            style={{
+              textAlign:
+                "center",
+              marginTop: 8
+            }}
+          >
+
             <p
               style={{
                 fontWeight: 700,
-                color: "#d4af37",
+                color:
+                  "#d4af37",
                 marginBottom: 4,
               }}
             >
               🐾 Happy, Chief Happiness Officer
             </p>
 
+
             <p
               style={{
                 fontSize: 14,
                 opacity: 0.8,
-                fontStyle: "italic",
+                fontStyle:
+                  "italic",
               }}
             >
               &quot;Powered by requests. Approved by Happy.&quot;
             </p>
+
           </div>
+
         </div>
+
       </div>
+
     </main>
   );
 }
