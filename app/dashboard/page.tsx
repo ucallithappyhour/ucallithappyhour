@@ -599,20 +599,7 @@ export default function DashboardPage() {
       [requests]
     );
 
-  const unassignedTonightGroups =
-    useMemo(
-      () =>
-        groupRequests(
-          requests.filter(
-            (request) =>
-              (request.request_type ||
-                "tonight") === "tonight" &&
-              (!request.gig_id ||
-                !request.occurrence_date)
-          )
-        ),
-      [requests]
-    );
+  
 
   async function updateGroup(
     group: RequestGroup,
@@ -1400,28 +1387,7 @@ export default function DashboardPage() {
               )
             )}
 
-            {unassignedTonightGroups.length >
-              0 && (
-              <div
-                style={{
-                  marginTop: 24
-                }}
-              >
-                <h3>
-                  Older Unassigned
-                  Tonight Requests
-                </h3>
-
-                {unassignedTonightGroups.map(
-                  (group) => (
-                    <RequestGroupCard
-                      key={`${group.song}-${group.artist}-${group.requestType}`}
-                      group={group}
-                    />
-                  )
-                )}
-              </div>
-            )}
+           
           </section>
 
           <section
