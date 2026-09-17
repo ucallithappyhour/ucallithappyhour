@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#111111" />
+    <title>U Call It Happy Hour — Offline</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #111; color: #fff; font-family: Arial, Helvetica, sans-serif; text-align: center; }
+      main { max-width: 430px; }
+      img { width: min(320px, 85vw); height: auto; }
+      h1 { margin: 16px 0 8px; font-size: 30px; }
+      p { margin: 0 0 22px; color: #d7d7d7; line-height: 1.5; }
+      button { border: 0; border-radius: 999px; padding: 14px 22px; background: #f4c76b; color: #111; font-size: 16px; font-weight: 900; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/ucallit-logo.png.png" alt="U Call It Happy Hour" />
+      <h1>You're offline</h1>
+      <p>Reconnect to view artists, upcoming gigs, and submit song requests.</p>
+      <button type="button" onclick="location.reload()">Try Again</button>
+    </main>
+  </body>
+</html>
