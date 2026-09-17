@@ -86,17 +86,13 @@ body {
   text-align: center;
 }
 
-.qrWelcomeMark {
-  display: grid;
-  place-items: center;
-  width: 58px;
-  height: 58px;
+.qrWelcomeLogo {
+  display: block;
+  width: 82px;
+  height: 82px;
   margin: 0 auto 17px;
-  border-radius: 50%;
-  background: #f4c76b;
-  color: #111;
-  font-size: 32px;
-  font-weight: 900;
+  border-radius: 16px;
+  object-fit: contain;
 }
 
 .qrWelcomeEyebrow {

@@ -28,6 +28,9 @@ export default function PwaInstaller() {
   const [showIosHelp, setShowIosHelp] = useState(false);
   const [canInstallOnIos, setCanInstallOnIos] = useState(false);
   const [showQrWelcome, setShowQrWelcome] = useState(false);
+  const [welcomeType, setWelcomeType] = useState<
+    "artist" | "agent" | "main"
+  >("main");
 
   const reservedPaths = new Set([
     "account",
@@ -53,16 +56,19 @@ export default function PwaInstaller() {
 
     setCanInstallOnIos(isIosDevice() && !isStandalone());
 
-    const arrivedDirectly = document.referrer === "";
-    const forcedQrEntry = new URLSearchParams(window.location.search).has("qr");
+    const params = new URLSearchParams(window.location.search);
+    const isAgentReferral = pathname === "/register" && params.has("agent");
+    const isMainPage = pathname === "/";
     const alreadyWelcomed = sessionStorage.getItem("qr-welcome-seen") === "1";
 
     if (
-      isArtistPage &&
       !isStandalone() &&
       !alreadyWelcomed &&
-      (arrivedDirectly || forcedQrEntry)
+      (isArtistPage || isAgentReferral || isMainPage)
     ) {
+      setWelcomeType(
+        isAgentReferral ? "agent" : isArtistPage ? "artist" : "main"
+      );
       setShowQrWelcome(true);
     }
 
@@ -83,7 +89,7 @@ export default function PwaInstaller() {
       window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
       window.removeEventListener("appinstalled", handleInstalled);
     };
-  }, [isArtistPage]);
+  }, [isArtistPage, pathname]);
 
   function closeQrWelcome() {
     sessionStorage.setItem("qr-welcome-seen", "1");
@@ -108,6 +114,30 @@ export default function PwaInstaller() {
   }
 
   if (showQrWelcome && !isStandalone()) {
+    const welcomeContent = {
+      artist: {
+        eyebrow: "Welcome to U Call It Happy Hour",
+        title: "Request songs tonight",
+        copy: "No account required. Install for the quickest access, or continue in your browser.",
+        installLabel: "Install Free App",
+        continueLabel: "Continue in Browser"
+      },
+      agent: {
+        eyebrow: "Your agent invited you",
+        title: "Put your crowd in the show",
+        copy: "Install the app for quick access, or continue to create your artist account.",
+        installLabel: "Install Free App",
+        continueLabel: "Continue to Artist Signup"
+      },
+      main: {
+        eyebrow: "Welcome to U Call It Happy Hour",
+        title: "Live music gets interactive",
+        copy: "No account required. Install for the quickest access, or explore in your browser.",
+        installLabel: "Install Free App",
+        continueLabel: "Explore in Browser"
+      }
+    }[welcomeType];
+
     return (
       <div className="qrWelcomeBackdrop" role="presentation">
         <section
@@ -116,12 +146,14 @@ export default function PwaInstaller() {
           aria-modal="true"
           aria-labelledby="qr-welcome-title"
         >
-          <div className="qrWelcomeMark" aria-hidden="true">♪</div>
-          <p className="qrWelcomeEyebrow">Welcome to U Call It Happy Hour</p>
-          <h2 id="qr-welcome-title">Request songs tonight</h2>
-          <p className="qrWelcomeCopy">
-            Install the app for quick access, or continue now without an account.
-          </p>
+          <img
+            className="qrWelcomeLogo"
+            src="/icons/icon-192.png"
+            alt="U Call It Happy Hour"
+          />
+          <p className="qrWelcomeEyebrow">{welcomeContent.eyebrow}</p>
+          <h2 id="qr-welcome-title">{welcomeContent.title}</h2>
+          <p className="qrWelcomeCopy">{welcomeContent.copy}</p>
 
           {showIosHelp ? (
             <div className="qrWelcomeHelp" aria-live="polite">
@@ -145,24 +177,26 @@ export default function PwaInstaller() {
               type="button"
               onClick={installApp}
             >
-              Download the App
+              {welcomeContent.installLabel}
             </button>
             <button
               className="qrWelcomeSecondary"
               type="button"
               onClick={closeQrWelcome}
             >
-              Continue as Guest
+              {welcomeContent.continueLabel}
             </button>
           </div>
 
-          <Link
-            className="qrWelcomeArtistLink"
-            href="/register"
-            onClick={closeQrWelcome}
-          >
-            Artist? Create an account
-          </Link>
+          {welcomeType !== "agent" ? (
+            <Link
+              className="qrWelcomeArtistLink"
+              href="/register"
+              onClick={closeQrWelcome}
+            >
+              Artist? Create an account
+            </Link>
+          ) : null}
         </section>
       </div>
     );

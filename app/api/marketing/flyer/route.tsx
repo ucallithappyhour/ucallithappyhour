@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   }
 
   const artistName = artist.artist_name || artist.artist_slug;
-  const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
+  const artistUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}?qr=1`;
 
  const qrUrl = buildQrUrl(artistUrl, 900);
 
