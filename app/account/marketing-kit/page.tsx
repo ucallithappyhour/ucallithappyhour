@@ -84,7 +84,7 @@ export default function MarketingKitPage() {
 
   const artistName = artist.artist_name || artist.artist_slug;
 
-  const artistPageUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}`;
+  const artistPageUrl = `https://www.ucallithappyhour.com/${artist.artist_slug}?qr=1`;
   const referralUrl = `https://www.ucallithappyhour.com/register?ref=${
     artist.referral_code || ""
   }`;

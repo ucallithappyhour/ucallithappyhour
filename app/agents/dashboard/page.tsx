@@ -26,7 +26,7 @@ export default function AgentDashboard() {
 
   const referralLink = useMemo(() => {
     if (!agent?.referral_code) return "";
-    return `https://www.ucallithappyhour.com/register?agent=${agent.referral_code}`;
+    return `https://www.ucallithappyhour.com/register?agent=${agent.referral_code}&qr=1`;
   }, [agent]);
 
   const qrUrl = useMemo(() => {

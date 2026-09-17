@@ -44,7 +44,7 @@ export default function MarketingKitPage() {
 
     setArtist(data);
 
-    const artistPageUrl = `https://www.ucallithappyhour.com/${data.artist_slug}`;
+    const artistPageUrl = `https://www.ucallithappyhour.com/${data.artist_slug}?qr=1`;
 
     const plainQr = await QRCode.toDataURL(artistPageUrl, {
       width: 900,

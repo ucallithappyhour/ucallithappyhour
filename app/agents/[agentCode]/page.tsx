@@ -58,7 +58,7 @@ export default function AgentDashboardPage() {
   const [message, setMessage] = useState("");
 
   const referralUrl = agentCode
-    ? `https://www.ucallithappyhour.com/register?agent=${agentCode}`
+    ? `https://www.ucallithappyhour.com/register?agent=${agentCode}&qr=1`
     : "";
 
 const qrUrl = buildQrUrl(referralUrl, 300);
