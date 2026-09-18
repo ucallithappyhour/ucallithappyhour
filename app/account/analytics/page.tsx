@@ -20,6 +20,7 @@ export default function ArtistAnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [expandedGig, setExpandedGig] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -32,7 +33,12 @@ export default function ArtistAnalyticsPage() {
       if (params.get("artist")) query.set("artist", params.get("artist")!);
       const response = await fetch(`/api/artist-analytics?${query}`, { headers: { Authorization: `Bearer ${token}` } });
       const result = await response.json();
-      if (!response.ok) { setMessage(result.error || "Could not load analytics."); setData(null); } else setData(result);
+      if (!response.ok) { setMessage(result.error || "Could not load analytics."); setData(null); }
+      else {
+        setData(result);
+        const newestGig = result.gigs?.[0];
+        setExpandedGig(newestGig ? gigKey(newestGig) : null);
+      }
       setLoading(false);
     }
     load();
@@ -81,13 +87,24 @@ export default function ArtistAnalyticsPage() {
       <section className="analyticsGrid analyticsInsightsGrid"><div className="analyticsPanel"><h2>Top requested songs</h2>{data.top_songs.length ? <ol className="analyticsTopSongs">{data.top_songs.map((song) => <li key={`${song.song}-${song.artist}`}><span><strong>{song.song}</strong><small>{song.artist}</small></span><b>{song.count}</b></li>)}</ol> : <p className="analyticsEmpty">No song requests in this period.</p>}</div>
         <div className="analyticsPanel"><h2>Venue performance</h2>{data.gigs.length ? <ul className="analyticsSources">{data.gigs.map((gig) => <li key={`${gig.gig_id}-${gig.occurrence_date}`}><span><strong>{gig.venue_name}</strong><small>{formatDate(gig.occurrence_date)}</small></span><strong>{gig.total_requests} requests</strong></li>)}</ul> : <p className="analyticsEmpty">No gig activity in this period.</p>}</div>
       </section>
-      <section className="analyticsPanel analyticsGigPanel"><h2>Songs requested by gig</h2>{data.gigs.length ? <div className="analyticsGigList">{data.gigs.map((gig) => <article className="analyticsGig" key={`${gig.gig_id}-${gig.occurrence_date}`}><header><div><h3>{gig.venue_name}</h3><span>{formatDate(gig.occurrence_date)}</span></div><strong>{gig.total_requests} requests</strong></header><ul>{gig.songs.map((song) => <li key={`${song.song}-${song.artist}`}><span><b>{song.song}</b><small>{song.artist || "Artist not listed"}</small></span><span className="analyticsSongMeta"><em>{song.status || "pending"}</em><strong>×{song.count}</strong></span></li>)}</ul></article>)}</div> : <p className="analyticsEmpty">No song requests in this period.</p>}</section>
+      <section className="analyticsPanel analyticsGigPanel"><h2>Songs requested by gig</h2>{data.gigs.length ? <div className="analyticsGigList">{data.gigs.map((gig) => {
+        const key = gigKey(gig);
+        const isExpanded = expandedGig === key;
+        return <article className={`analyticsGig${isExpanded ? " analyticsGigOpen" : ""}`} key={key}>
+          <button className="analyticsGigToggle" type="button" aria-expanded={isExpanded} onClick={() => setExpandedGig(isExpanded ? null : key)}>
+            <span><b>{gig.venue_name}</b><small>{formatDate(gig.occurrence_date)}</small></span>
+            <span className="analyticsGigSummary"><strong>{gig.total_requests} requests</strong><i aria-hidden="true">⌄</i></span>
+          </button>
+          {isExpanded ? <ul>{gig.songs.map((song) => <li key={`${song.song}-${song.artist}`}><span><b>{song.song}</b><small>{song.artist || "Artist not listed"}</small></span><span className="analyticsSongMeta"><em>{song.status || "pending"}</em><strong>×{song.count}</strong></span></li>)}</ul> : null}
+        </article>;
+      })}</div> : <p className="analyticsEmpty">No song requests in this period.</p>}</section>
       <p className="analyticsFootnote">Comparisons use the immediately preceding {days}-day period. Tip-link clicks show intent; payments go directly to the artist, so U Call It cannot verify amounts.</p>
     </> : null}
   </div></main>;
 }
 
 function formatDate(value: string) { return new Date(`${value}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); }
+function gigKey(gig: { gig_id: number | null; occurrence_date: string }) { return `${gig.gig_id}-${gig.occurrence_date}`; }
 function Metric({ label, value, detail, change }: { label: string; value: number; detail?: string; change?: number }) {
   return <article className="analyticsMetric"><span>{label}</span><strong>{value}</strong>{detail ? <small>{detail}</small> : null}{change !== undefined ? <small className={change >= 0 ? "analyticsUp" : "analyticsDown"}>{change >= 0 ? "+" : ""}{change}% vs prior period</small> : null}</article>;
 }
