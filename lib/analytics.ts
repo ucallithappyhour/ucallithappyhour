@@ -11,6 +11,7 @@ type AnalyticsEvent = {
 };
 
 const VISITOR_ID_KEY = "ucihh-visitor-id";
+const SESSION_SOURCE_KEY = "ucihh-session-source";
 
 export function getAnalyticsVisitorId() {
   let visitorId = window.localStorage.getItem(VISITOR_ID_KEY);
@@ -27,21 +28,35 @@ function getTrafficSource() {
   const params = new URLSearchParams(window.location.search);
   const explicitSource = params.get("source") || params.get("utm_source");
 
-  if (explicitSource) return explicitSource.slice(0, 100);
-  if (!document.referrer) return "direct";
+  if (explicitSource) {
+    const source = explicitSource.slice(0, 100);
+    window.sessionStorage.setItem(SESSION_SOURCE_KEY, source);
+    return source;
+  }
+
+  const savedSource = window.sessionStorage.getItem(SESSION_SOURCE_KEY);
+  if (savedSource) return savedSource;
+
+  if (!document.referrer) {
+    window.sessionStorage.setItem(SESSION_SOURCE_KEY, "direct");
+    return "direct";
+  }
 
   try {
     const referrerHost = new URL(document.referrer).hostname;
+    let source = "referral";
 
-    if (referrerHost.includes("google.")) return "google";
+    if (referrerHost.includes("google.")) source = "google";
     if (referrerHost.includes("facebook.") || referrerHost.includes("fb.")) {
-      return "facebook";
+      source = "facebook";
     }
-    if (referrerHost.includes("instagram.")) return "instagram";
-    if (referrerHost === window.location.hostname) return "internal";
+    if (referrerHost.includes("instagram.")) source = "instagram";
+    if (referrerHost === window.location.hostname) source = "internal";
 
-    return "referral";
+    window.sessionStorage.setItem(SESSION_SOURCE_KEY, source);
+    return source;
   } catch {
+    window.sessionStorage.setItem(SESSION_SOURCE_KEY, "referral");
     return "referral";
   }
 }
