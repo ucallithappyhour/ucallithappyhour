@@ -848,6 +848,10 @@ const visibleGigs = gigs
                 Dashboard
               </Link>
 
+              <Link className="btn secondary" href={`/account/analytics${isAdmin && selectedArtist ? `?artist=${selectedArtist}` : ""}`}>
+                Analytics
+              </Link>
+
               <button className="btn secondary" type="button" onClick={handleLogout}>
                 Log Out
               </button>

@@ -342,6 +342,42 @@ body {
   border-bottom: 0;
 }
 
+.analyticsPage { min-height: 100vh; padding: 32px 18px; background: #070707; color: #fff; }
+.analyticsWrap { width: min(1100px, 100%); margin: 0 auto; }
+.analyticsHeader { display: flex; justify-content: space-between; align-items: end; gap: 22px; flex-wrap: wrap; margin-bottom: 28px; }
+.analyticsHeader h1 { margin: 4px 0 8px; font-size: clamp(30px, 5vw, 48px); }
+.analyticsHeader p { margin: 0; color: #bbb; }
+.analyticsEyebrow { color: #f4c76b !important; font-weight: 900; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; }
+.analyticsHeaderActions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.analyticsHeaderActions select { padding: 12px 14px; border-radius: 999px; border: 1px solid #555; background: #171717; color: #fff; font-weight: 700; }
+.analyticsCards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.analyticsMetric, .analyticsPanel, .analyticsNotice { background: #171717; border: 1px solid #333; border-radius: 18px; padding: 22px; }
+.analyticsMetric span { color: #bbb; font-weight: 700; }
+.analyticsMetric strong { display: block; margin-top: 10px; color: #f4c76b; font-size: 38px; }
+.analyticsMetric small { display: block; margin-top: 5px; color: #aaa; }
+.analyticsGrid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 18px; margin-top: 18px; }
+.analyticsPanel h2 { margin: 0 0 18px; }
+.analyticsBars { display: grid; gap: 12px; }
+.analyticsBarRow { display: grid; grid-template-columns: 58px 1fr 28px; gap: 10px; align-items: center; font-size: 13px; color: #bbb; }
+.analyticsBarRow div { height: 10px; overflow: hidden; border-radius: 999px; background: #292929; }
+.analyticsBarRow i { display: block; height: 100%; border-radius: inherit; background: #f4c76b; }
+.analyticsBarRow strong { color: #fff; text-align: right; }
+.analyticsSources { list-style: none; padding: 0; margin: 0; }
+.analyticsSources li { display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-bottom: 1px solid #333; }
+.analyticsSources li:last-child { border-bottom: 0; }
+.analyticsSources strong { color: #f4c76b; }
+.analyticsEmpty, .analyticsFootnote { color: #aaa; }
+.analyticsFootnote { margin: 18px 2px 0; font-size: 13px; }
+
+@media (max-width: 800px) {
+  .analyticsCards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .analyticsGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .analyticsCards { grid-template-columns: 1fr; }
+}
+
 .accountGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
