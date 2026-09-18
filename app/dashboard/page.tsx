@@ -1307,12 +1307,14 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <Link
-          className="btn secondary"
-          href="/account"
-        >
-          Artist Account
-        </Link>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <Link className="btn secondary" href={artist ? `/account/analytics?artist=${artist.artist_slug}` : "/account/analytics"}>
+            Analytics
+          </Link>
+          <Link className="btn secondary" href="/account">
+            Artist Account
+          </Link>
+        </div>
       </div>
 
       {loading ? (
