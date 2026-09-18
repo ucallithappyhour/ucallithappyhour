@@ -364,6 +364,13 @@ if (!response.ok) {
   return;
 }
 
+trackAnalyticsEvent({
+  artist_slug: resolvedArtistSlug,
+  event_type: "song_request_submitted",
+  gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null,
+  occurrence_date: occurrenceDateFromUrl || null
+});
+
 const newCount = currentRequestCount + 1;
 
 localStorage.setItem(requestLimitKey, String(newCount));

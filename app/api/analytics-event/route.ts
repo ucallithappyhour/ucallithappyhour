@@ -9,7 +9,8 @@ const supabase = createClient(
 const allowedEventTypes = new Set([
   "artist_page_view",
   "request_page_view",
-  "tip_link_click"
+  "tip_link_click",
+  "song_request_submitted"
 ]);
 
 function optionalText(value: unknown, maxLength: number) {
