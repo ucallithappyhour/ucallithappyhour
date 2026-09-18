@@ -164,8 +164,10 @@ export default function PwaInstaller() {
                 </>
               ) : (
                 <>
-                  Open your browser menu and choose <strong>Install app</strong>{" "}
-                  or <strong>Add to Home screen</strong>.
+                  Already installed? In your browser&apos;s address bar, select{" "}
+<strong>Open in app</strong>. Otherwise, open the browser menu and
+choose <strong>Install app</strong> or
+<strong> Add to Home screen</strong>.
                 </>
               )}
             </div>
@@ -177,7 +179,9 @@ export default function PwaInstaller() {
               type="button"
               onClick={installApp}
             >
-              {welcomeContent.installLabel}
+              {installPrompt
+  ? welcomeContent.installLabel
+  : "Install or Open App"}
             </button>
             <button
               className="qrWelcomeSecondary"
