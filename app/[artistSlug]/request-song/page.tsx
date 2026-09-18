@@ -3,6 +3,7 @@
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import { trackAnalyticsEvent } from "../../../lib/analytics";
 
 type Song = {
   title: string;
@@ -90,8 +91,14 @@ const [audienceSaved, setAudienceSaved] = useState(false);
 
     if (artistSlug) {
       loadArtistAndSongs();
+      trackAnalyticsEvent({
+        artist_slug: artistSlug,
+        event_type: "request_page_view",
+        gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null,
+        occurrence_date: occurrenceDateFromUrl || null
+      });
     }
-  }, [artistSlug]);
+  }, [artistSlug, gigIdFromUrl, occurrenceDateFromUrl]);
 
   useEffect(() => {
     if (requestTypeFromUrl === "future") {
@@ -219,6 +226,14 @@ function openFutureSuggestion() {
 
   function openTipLink() {
     if (!artist?.tip_link) return;
+
+    trackAnalyticsEvent({
+      artist_slug: resolvedArtistSlug,
+      event_type: "tip_link_click",
+      gig_id: gigIdFromUrl ? Number(gigIdFromUrl) : null,
+      occurrence_date: occurrenceDateFromUrl || null
+    });
+
     window.open(artist.tip_link, "_blank", "noopener,noreferrer");
   }
 
