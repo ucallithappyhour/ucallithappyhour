@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { trackAnalyticsEvent } from "../../lib/analytics";
 
 type ArtistProfile = {
   artist_slug: string;
@@ -177,6 +178,10 @@ export default function DynamicArtistPage() {
     if (artistSlug) {
       loadArtist();
       loadGigs();
+      trackAnalyticsEvent({
+        artist_slug: artistSlug,
+        event_type: "artist_page_view"
+      });
     }
   }, [artistSlug]);
 
@@ -222,6 +227,20 @@ export default function DynamicArtistPage() {
 
   const upcomingOccurrences = buildGigOccurrences(gigs);
   const nextOccurrence = upcomingOccurrences[0] || null;
+
+  function openTipLink() {
+    if (!tipUrl) return;
+
+    trackAnalyticsEvent({
+      artist_slug: artistSlug,
+      event_type: "tip_link_click",
+      gig_id: nextOccurrence?.gig.id || null,
+      occurrence_date:
+        nextOccurrence?.occurrenceDate.toLocaleDateString("en-CA") || null
+    });
+
+    window.open(tipUrl, "_blank", "noopener,noreferrer");
+  }
 
   return (
     <main className="page" style={{ position: "relative", overflow: "hidden" }}>
@@ -331,14 +350,13 @@ export default function DynamicArtistPage() {
     <br />
     <br />
 
-    <a
+    <button
       className="btn secondary"
-      href={tipUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+      type="button"
+      onClick={openTipLink}
     >
       Tip {artistName}
-    </a>
+    </button>
   </div>
 )}
 
