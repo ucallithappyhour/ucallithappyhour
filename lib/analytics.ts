@@ -1,7 +1,8 @@
 export type AnalyticsEventType =
   | "artist_page_view"
   | "request_page_view"
-  | "tip_link_click";
+  | "tip_link_click"
+  | "song_request_submitted";
 
 type AnalyticsEvent = {
   artist_slug: string;

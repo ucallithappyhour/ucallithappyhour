@@ -351,10 +351,13 @@ body {
 .analyticsHeaderActions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .analyticsHeaderActions select { padding: 12px 14px; border-radius: 999px; border: 1px solid #555; background: #171717; color: #fff; font-weight: 700; }
 .analyticsCards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.analyticsCardsSix { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .analyticsMetric, .analyticsPanel, .analyticsNotice { background: #171717; border: 1px solid #333; border-radius: 18px; padding: 22px; }
 .analyticsMetric span { color: #bbb; font-weight: 700; }
 .analyticsMetric strong { display: block; margin-top: 10px; color: #f4c76b; font-size: 38px; }
 .analyticsMetric small { display: block; margin-top: 5px; color: #aaa; }
+.analyticsUp { color: #65d38e !important; }
+.analyticsDown { color: #ff7b7b !important; }
 .analyticsGrid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 18px; margin-top: 18px; }
 .analyticsPanel h2 { margin: 0 0 18px; }
 .analyticsBars { display: grid; gap: 12px; }
@@ -368,14 +371,40 @@ body {
 .analyticsSources strong { color: #f4c76b; }
 .analyticsEmpty, .analyticsFootnote { color: #aaa; }
 .analyticsFootnote { margin: 18px 2px 0; font-size: 13px; }
+.analyticsInsightsGrid { grid-template-columns: 1fr 1.2fr; }
+.analyticsTopSongs { margin: 0; padding-left: 24px; }
+.analyticsTopSongs li { display: flex; justify-content: space-between; gap: 18px; padding: 12px 0; border-bottom: 1px solid #333; }
+.analyticsTopSongs li:last-child { border-bottom: 0; }
+.analyticsTopSongs span, .analyticsSources li > span { display: grid; gap: 3px; }
+.analyticsTopSongs small, .analyticsSources small { color: #999; }
+.analyticsGigPanel { margin-top: 18px; }
+.analyticsGigList { display: grid; gap: 14px; }
+.analyticsGig { border: 1px solid #333; border-radius: 14px; overflow: hidden; background: #111; }
+.analyticsGig header { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 15px 18px; background: #1d1d1d; }
+.analyticsGig h3 { margin: 0 0 4px; }
+.analyticsGig header span { color: #aaa; font-size: 13px; }
+.analyticsGig ul { list-style: none; margin: 0; padding: 0 18px; }
+.analyticsGig li { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 13px 0; border-bottom: 1px solid #2d2d2d; }
+.analyticsGig li:last-child { border-bottom: 0; }
+.analyticsGig li > span:first-child { display: grid; gap: 3px; }
+.analyticsGig li small { color: #aaa; }
+.analyticsSongMeta { display: flex; align-items: center; gap: 10px; }
+.analyticsSongMeta em { font-style: normal; font-size: 11px; text-transform: uppercase; color: #bbb; border: 1px solid #444; border-radius: 999px; padding: 4px 7px; }
+
+@media (max-width: 1000px) {
+  .analyticsCardsSix { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
 @media (max-width: 800px) {
   .analyticsCards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .analyticsGrid { grid-template-columns: 1fr; }
+  .analyticsCardsSix { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .analyticsInsightsGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
   .analyticsCards { grid-template-columns: 1fr; }
+  .analyticsCardsSix { grid-template-columns: 1fr; }
 }
 
 .accountGrid {
