@@ -380,9 +380,14 @@ body {
 .analyticsGigPanel { margin-top: 18px; }
 .analyticsGigList { display: grid; gap: 14px; }
 .analyticsGig { border: 1px solid #333; border-radius: 14px; overflow: hidden; background: #111; }
-.analyticsGig header { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 15px 18px; background: #1d1d1d; }
+.analyticsGigToggle { width: 100%; display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 15px 18px; border: 0; color: #fff; background: #1d1d1d; text-align: left; cursor: pointer; }
+.analyticsGigToggle:hover { background: #252525; }
+.analyticsGigToggle > span:first-child { display: grid; gap: 4px; }
+.analyticsGigToggle small { color: #aaa; }
+.analyticsGigSummary { display: flex; align-items: center; gap: 14px; white-space: nowrap; }
+.analyticsGigSummary i { color: #f4c76b; font-size: 22px; font-style: normal; transition: transform .2s ease; }
+.analyticsGigOpen .analyticsGigSummary i { transform: rotate(180deg); }
 .analyticsGig h3 { margin: 0 0 4px; }
-.analyticsGig header span { color: #aaa; font-size: 13px; }
 .analyticsGig ul { list-style: none; margin: 0; padding: 0 18px; }
 .analyticsGig li { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 13px 0; border-bottom: 1px solid #2d2d2d; }
 .analyticsGig li:last-child { border-bottom: 0; }
